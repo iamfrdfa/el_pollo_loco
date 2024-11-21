@@ -5,14 +5,14 @@ class Bottle extends MovableObject {
     
     BOTTLE_ON_GROUND = [
         'img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
-    ]
+    ];
     
-    BOTTLE_THROW = [
+    BOTTLE_THROWN = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
         'img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
         'img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
         'img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
-    ]
+    ];
     
     constructor() {
         super().loadImage('img/6_salsa_bottle/1_salsa_bottle_on_ground.png');

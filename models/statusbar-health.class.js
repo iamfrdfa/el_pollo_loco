@@ -1,4 +1,4 @@
-class StatusBar extends DrawableObject {
+class StatusBarHealth extends DrawableObject {
     IMAGES_HEALTH = [
         'img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png', //Index 0
         'img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png',
@@ -8,22 +8,12 @@ class StatusBar extends DrawableObject {
         'img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png' //Index 5
     ];
     
-    IMAGES_BOTTLE = [
-        'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/0.png',
-        'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/20.png',
-        'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/40.png',
-        'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/60.png',
-        'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/80.png',
-        'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/100.png'
-    ];
-    
     percentage = 100;
     
     constructor() {
         super();
         this.loadImages(this.IMAGES_HEALTH);
-        this.loadImages(this.IMAGES_BOTTLE);
-        this.x = 50;
+        this.x = 20;
         this.y = 10;
         this.width = 200;
         this.height = 40;
@@ -33,12 +23,6 @@ class StatusBar extends DrawableObject {
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.IMAGES_HEALTH[this.resolveImageIndex()];
-        this.img = this.imageCache[path];
-    }
-    
-    setPercentageBottle(percentage) {
-        this.percentage = percentage;
-        let path = this.IMAGES_BOTTLE[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
     
