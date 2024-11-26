@@ -7,7 +7,6 @@ class DrawableObject {
     imageCache = {};
     currentImage = 0;
     
-    //loadImage('img/test.png');
     loadImage(path) {
         this.img = new Image();
         this.img.src = path;
@@ -18,7 +17,7 @@ class DrawableObject {
     }
     
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Chicken) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof Bottle || this instanceof Coins) {
             ctx.beginPath();
             ctx.lineWidth = '4';
             ctx.strokeStyle = 'red';
