@@ -2,6 +2,15 @@ class Character extends MovableObject {
     height = 200;
     y =  130;
     speed = 20;
+    world;
+    walking_sound = new Audio('audio/walking.mp3');
+    offset = {
+        top: 120,
+        bottom: 30,
+        left: 40,
+        right: 30
+    }
+    
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -38,9 +47,6 @@ class Character extends MovableObject {
         'img/2_character_pepe/4_hurt/H-42.png',
         'img/2_character_pepe/4_hurt/H-43.png'
     ];
-    
-    world;
-    walking_sound = new Audio('audio/walking.mp3');
     
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
@@ -91,7 +97,6 @@ class Character extends MovableObject {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
             }
-            
         }, 60);
     }
     jump() {

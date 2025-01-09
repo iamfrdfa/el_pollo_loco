@@ -46,16 +46,8 @@ class MovableObject extends DrawableObject {
     }
     
     isDead() {
-        return this.energy == 0;
+        return this.energy === 0;
     }
-    
-    //character.isColliding(chicken);
-    /*isColliding (mo) {
-        return (this.x + this.width) >= mo.x && this.x <= (mo.x + mo.width) &&
-            (this.y + this.offsetY + this.height) >= mo.y &&
-            (this.y + this.offsetY) <= (mo.y + mo.height) &&
-            mo.onCollisionCourse; // Optional: hiermit könnten wir schauen, ob ein Objekt sich in die richtige Richtung bewegt. Nur dann kollidieren wir. Nützlich bei Gegenständen, auf denen man stehen kann.
-    }*/
     
     playAnimation(images) {
         let i = this.currentImage % images.length;
@@ -75,4 +67,12 @@ class MovableObject extends DrawableObject {
     jump() {
         this.speedY = 30;
     }
+    
+    //character.isColliding(chicken);
+    /*isColliding (mo) {
+        return (this.x + this.width) >= mo.x && this.x <= (mo.x + mo.width) &&
+            (this.y + this.offsetY + this.height) >= mo.y &&
+            (this.y + this.offsetY) <= (mo.y + mo.height) &&
+            mo.onCollisionCourse; // Optional: hiermit könnten wir schauen, ob ein Objekt sich in die richtige Richtung bewegt. Nur dann kollidieren wir. Nützlich bei Gegenständen, auf denen man stehen kann.
+    }*/
 }

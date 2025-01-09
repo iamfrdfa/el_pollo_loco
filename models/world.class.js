@@ -62,7 +62,7 @@ class World {
         this.addToMap(this.statusBarCoin);
         this.ctx.translate(this.camera_x, 0);
         
-        // ------ Space for fixed objects ------//
+        // ------ Space for absolute fixed objects (e.g. health-bar) ------//
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
@@ -85,7 +85,6 @@ class World {
         })
     }
     
-    //mo = movable
     addToMap(mo) {
         if (mo.otherDirection) {
             this.flipImage(mo);
