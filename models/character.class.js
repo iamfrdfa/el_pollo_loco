@@ -4,11 +4,11 @@ class Character extends MovableObject {
     speed = 20;
     world;
     walking_sound = new Audio('audio/walking.mp3');
-    offset = {
-        top: 120,
-        bottom: 30,
-        left: 40,
-        right: 30
+    innerOffset = {
+        top: 70,
+        bottom: 75,
+        left: 20,
+        right: 35
     }
     
     IMAGES_WALKING = [
@@ -32,6 +32,13 @@ class Character extends MovableObject {
       'img/2_character_pepe/3_jump/J-39.png'
     ];
     
+    IMAGES_HURT = [
+        
+        'img/2_character_pepe/4_hurt/H-41.png',
+        'img/2_character_pepe/4_hurt/H-42.png',
+        'img/2_character_pepe/4_hurt/H-43.png'
+    ];
+    
     IMAGES_DEAD = [
         'img/2_character_pepe/5_dead/D-51.png',
         'img/2_character_pepe/5_dead/D-52.png',
@@ -42,18 +49,12 @@ class Character extends MovableObject {
         'img/2_character_pepe/5_dead/D-57.png'
     ];
     
-    IMAGES_HURT = [
-        'img/2_character_pepe/4_hurt/H-41.png',
-        'img/2_character_pepe/4_hurt/H-42.png',
-        'img/2_character_pepe/4_hurt/H-43.png'
-    ];
-    
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
         super.loadImages(this.IMAGES_WALKING);
         super.loadImages(this.IMAGES_JUMPING);
-        super.loadImages(this.IMAGES_DEAD);
         super.loadImages(this.IMAGES_HURT);
+        super.loadImages(this.IMAGES_DEAD);
         this.applyGravity();
         this.animate();
     }

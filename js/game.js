@@ -6,11 +6,11 @@ function init() {
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
     
-    console.log('My Character is', world.character);
+    //console.log('My Character is', world.character);
 }
 
 window.addEventListener("keydown", (e) => {
-    console.log("keyboard key", e.keyCode);
+    //console.log("keyboard key", e.keyCode);
     if (e.keyCode === 32) {
         keyboard.SPACE = true;
     }
@@ -61,5 +61,5 @@ window.addEventListener("keyup", (e) => {
     if (e.keyCode === 68) {
         keyboard.D = false;
     }
-   console.log("Keyup", e);
+   //console.log("Keyup", e);
 });

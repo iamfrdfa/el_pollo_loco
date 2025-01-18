@@ -40,5 +40,6 @@ class statusBarCoin extends DrawableObject {
         } else {
             return 0;
         }
+        console.log('TEST:',this.percentage);
     }
 }

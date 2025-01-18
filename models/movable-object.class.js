@@ -5,6 +5,8 @@ class MovableObject extends DrawableObject {
     acceleration = 1;
     energy = 100;
     lastHit = 0;
+    maxCoinAmount = 5;
+    maxBottleAmount = 5;
     
     applyGravity() {
         setInterval(() => {
@@ -16,7 +18,7 @@ class MovableObject extends DrawableObject {
     }
     
     isAboveGround(){
-        if (!this instanceof ThrowableObject) { //ThrowableObject should always fall
+        if (this instanceof ThrowableObject) { //ThrowableObject should always fall
             return true;
         } else {
             return this.y < 230;
@@ -24,10 +26,11 @@ class MovableObject extends DrawableObject {
     }
     
     isColliding(mo) {
-        return this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-            this.x < mo.x &&
-            this.y < mo.y + mo.height;
+        //Offset is defined in drawableObject.js
+        return this.x + this.width > mo.x + mo.offset.left &&
+            this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+            this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+            this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
     
     hit() {
@@ -67,12 +70,4 @@ class MovableObject extends DrawableObject {
     jump() {
         this.speedY = 30;
     }
-    
-    //character.isColliding(chicken);
-    /*isColliding (mo) {
-        return (this.x + this.width) >= mo.x && this.x <= (mo.x + mo.width) &&
-            (this.y + this.offsetY + this.height) >= mo.y &&
-            (this.y + this.offsetY) <= (mo.y + mo.height) &&
-            mo.onCollisionCourse; // Optional: hiermit könnten wir schauen, ob ein Objekt sich in die richtige Richtung bewegt. Nur dann kollidieren wir. Nützlich bei Gegenständen, auf denen man stehen kann.
-    }*/
 }
