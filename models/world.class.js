@@ -8,6 +8,7 @@ class World {
     statusBar = new StatusBarHealth();
     statusBarBottle = new statusBarBottle();
     statusBarCoin = new statusBarCoin();
+    statusBarEndboss = new statusBarEndboss();
     throwableObjects = [];
     
     constructor(canvas, keyboard) {
@@ -27,13 +28,16 @@ class World {
         setInterval(() => {
             this.checkCollisions();
             this.checkThrowObjects();
-        }, 200);
+        }, 100);
     }
     
     checkThrowObjects() {
-        if (this.keyboard.D) {
+        if (this.keyboard.D && this.character.bottleAmount > 0) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 110);
             this.throwableObjects.push(bottle);
+            this.character.bottleAmount -= 1;
+            this.statusBarBottle.setPercentageBottle(this.character.bottleAmount);
+            this.character.throwBottle_sound.play();
         }
     }
     
@@ -41,16 +45,29 @@ class World {
         this.level.enemies.forEach(enemy => {
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
-                console.log('Collision with character: ', enemy)
                 this.statusBar.setPercentage(this.character.energy);
-                console.log('Energy: ', this.character.energy);
             }
         });
         
         this.level.coins.forEach(coin => {
            if (this.character.isColliding(coin)) {
-               this.statusBarCoin.setPercentage(this.character.maxCoinAmount);
-               console.log('Coin: ', this.character.coinAmount);
+               if (this.character.coinAmount <= this.character.maxCoinAmount) {
+                   this.character.coin_sound.play();
+                   this.character.coinAmount++;
+                   this.statusBarCoin.setPercentageCoin(this.character.coinAmount);
+                   this.level.coins.splice(this.level.coins.indexOf(coin), 1);
+               }
+           }
+        });
+        
+        this.level.bottles.forEach(bottle => {
+           if (this.character.isColliding(bottle)) {
+               if (this.character.bottleAmount <= this.character.maxBottleAmount) {
+                   this.character.bottle_sound.play();
+                   this.character.bottleAmount++;
+                   this.statusBarBottle.setPercentageBottle(this.character.bottleAmount);
+                   this.level.bottles.splice(this.level.bottles.indexOf(bottle), 1);
+               }
            }
         });
     }
@@ -66,6 +83,7 @@ class World {
         this.addToMap(this.statusBar);
         this.addToMap(this.statusBarBottle);
         this.addToMap(this.statusBarCoin);
+        this.addToMap(this.statusBarEndboss);
         this.ctx.translate(this.camera_x, 0);
         
         // ------ Space for fixed objects in Canvas ------//
@@ -96,8 +114,8 @@ class World {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
-        mo.drawRedFrame(this.ctx);
+        // mo.drawFrame(this.ctx);
+        mo.drawBlueFrame(this.ctx);
         
         if (mo.otherDirection) {
             this.flipImageBack(mo);

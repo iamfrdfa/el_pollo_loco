@@ -1,12 +1,12 @@
 class Bottle extends MovableObject {
-    y = 370;
+    y = 380;
     height = 400 / 8;
     width = 400 / 8;
-    innerOffset = {
+    offset = {
         top: 10,
-        bottom: 15,
-        left: 13,
-        right: 20,
+        bottom: 5,
+        left: 20,
+        right: 10,
     }
     
     BOTTLE_ON_GROUND = [
@@ -16,13 +16,6 @@ class Bottle extends MovableObject {
     constructor() {
         super().loadImage('img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
         this.loadImages(this.BOTTLE_ON_GROUND);
-        
-        this.x = 300 + Math.random() * 1850;
-    }
-    
-    animate() {
-        setInterval(() => {
-            this.playAnimation(this.BOTTLE_ON_GROUND);
-        }, 160);
+        this.x = 300 + Math.random() * 2000;
     }
 }

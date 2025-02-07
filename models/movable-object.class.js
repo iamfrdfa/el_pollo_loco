@@ -5,8 +5,8 @@ class MovableObject extends DrawableObject {
     acceleration = 1;
     energy = 100;
     lastHit = 0;
-    maxCoinAmount = 5;
-    maxBottleAmount = 5;
+    maxCoinAmount = 4;
+    maxBottleAmount = 4;
     
     applyGravity() {
         setInterval(() => {
@@ -27,8 +27,8 @@ class MovableObject extends DrawableObject {
     
     isColliding(mo) {
         //Offset is defined in drawableObject.js
-        return this.x + this.width > mo.x + mo.offset.left &&
-            this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+        return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+            this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
             this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
             this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }

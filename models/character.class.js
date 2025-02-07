@@ -4,12 +4,19 @@ class Character extends MovableObject {
     speed = 20;
     world;
     walking_sound = new Audio('audio/walking.mp3');
-    innerOffset = {
-        top: 70,
-        bottom: 75,
-        left: 20,
-        right: 35
+    hurt_sound = new Audio('audio/hurt_sound.mp3');
+    game_over = new Audio('audio/game_over.mp3');
+    coin_sound = new Audio('audio/coin_collect.mp3');
+    bottle_sound = new Audio('audio/glass-bottles.mp3');
+    throwBottle_sound = new Audio('audio/throw_sound.mp3');
+    offset = {
+        top: 80,
+        bottom: 10,
+        left: 25,
+        right: 25
     }
+    coinAmount = 0;
+    bottleAmount = 0;
     
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
@@ -79,15 +86,18 @@ class Character extends MovableObject {
             }
             
             this.world.camera_x = -this.x + 100;
-        }, 1000 / 10);
+        }, 1000 / 30);
         
         
-        setInterval(() => {
+        let myInterval = setInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
+                this.game_over.play();
+                clearInterval(myInterval);
             }
             else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
+                this.hurt_sound.play();
             }
             else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);

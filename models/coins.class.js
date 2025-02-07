@@ -1,13 +1,13 @@
 class Coins extends MovableObject {
-    y = 300;
+    y = 550;
     height = 120;
     width = 120;
-    coinAmount = 20;
-    innerOffset = {
-        top: 35,
-        bottom: 70,
-        left: 35,
-        right: 70,
+    coinAmount = 0;
+    offset = {
+        top: 42,
+        bottom: 42,
+        left: 42,
+        right: 42,
     }
     
     COLLECTIBLE_COINS = [
