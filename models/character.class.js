@@ -9,6 +9,7 @@ class Character extends MovableObject {
     coin_sound = new Audio('audio/coin_collect.mp3');
     bottle_sound = new Audio('audio/glass-bottles.mp3');
     throwBottle_sound = new Audio('audio/throw_sound.mp3');
+    chickenDeath_sound = new Audio('audio/chicken_death.mp3');
     offset = {
         top: 80,
         bottom: 10,

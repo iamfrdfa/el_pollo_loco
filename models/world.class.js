@@ -49,6 +49,13 @@ class World {
             }
         });
         
+        this.throwableObjects.forEach(thrownBottle => {
+            if (thrownBottle.isColliding(this.throwableObjects)) {
+                this.character.chickenDeath_sound.play();
+                console.log("HIT!");
+            }
+        });
+        
         this.level.coins.forEach(coin => {
            if (this.character.isColliding(coin)) {
                if (this.character.coinAmount <= this.character.maxCoinAmount) {
