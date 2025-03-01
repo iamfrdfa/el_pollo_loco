@@ -17,7 +17,7 @@ class Character extends MovableObject {
         right: 25
     }
     coinAmount = 0;
-    bottleAmount = 0;
+    bottleAmount = 5;
     
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',

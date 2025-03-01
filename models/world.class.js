@@ -41,7 +41,11 @@ class World {
         }
     }
     
+    /**
+     * Function which is checking collision between character and enemies or bottle with enemies
+     */
     checkCollisions() {
+        // Is Checking collision/hit between Character and enemy
         this.level.enemies.forEach(enemy => {
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
@@ -49,13 +53,17 @@ class World {
             }
         });
         
-        this.throwableObjects.forEach(thrownBottle => {
-            if (thrownBottle.isColliding(this.throwableObjects)) {
-                this.character.chickenDeath_sound.play();
-                console.log("HIT!");
-            }
+        // Is Checking hit between bottle and enemy
+        this.throwableObjects.forEach((thrownBottle) => {
+            this.level.enemies.forEach(enemy => {
+                if (thrownBottle.isColliding(enemy)) {
+                    this.character.chickenDeath_sound.play();
+                    console.log("HIT!");
+                }
+            });
         });
         
+        // Is Checking collision between character and coins to collect them
         this.level.coins.forEach(coin => {
            if (this.character.isColliding(coin)) {
                if (this.character.coinAmount <= this.character.maxCoinAmount) {
@@ -67,6 +75,7 @@ class World {
            }
         });
         
+        // Is Checking collision between character and bottles to collect them
         this.level.bottles.forEach(bottle => {
            if (this.character.isColliding(bottle)) {
                if (this.character.bottleAmount <= this.character.maxBottleAmount) {
