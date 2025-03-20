@@ -10,6 +10,11 @@ class World {
     statusBarCoin = new statusBarCoin();
     statusBarEndboss = new statusBarEndboss();
     throwableObjects = [];
+    bottleHit = 20;
+    
+    //Flags
+    enemyIsHitted = false;
+    bottleThrow = false;
     
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
@@ -27,17 +32,25 @@ class World {
     run() {
         setInterval(() => {
             this.checkCollisions();
-            this.checkThrowObjects();
-        }, 100);
+            if (this.keyboard.D && !this.bottleThrow) {
+                this.bottleThrow = true;
+                this.checkThrowObjects();
+                setTimeout(() => {
+                    this.bottleThrow = false;
+                }, 100)
+            }
+        }, 1000 / 60);
     }
     
     checkThrowObjects() {
-        if (this.keyboard.D && this.character.bottleAmount > 0) {
-            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 110);
+        if (this.character.bottleAmount > 0) {
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 100, this.character.otherDirection);
             this.throwableObjects.push(bottle);
-            this.character.bottleAmount -= 1;
+            this.character.bottleAmount--;
             this.statusBarBottle.setPercentageBottle(this.character.bottleAmount);
             this.character.throwBottle_sound.play();
+        } else if (this.keyboard.D && this.character.bottleAmount === 0) {
+            this.character.weaponFail_sound.play();
         }
     }
     
@@ -56,9 +69,16 @@ class World {
         // Is Checking hit between bottle and enemy
         this.throwableObjects.forEach((thrownBottle) => {
             this.level.enemies.forEach(enemy => {
-                if (thrownBottle.isColliding(enemy)) {
+                if (thrownBottle.isColliding(enemy) && this.enemyIsHitted === false) {
+                    this.enemyIsHitted = true;
                     this.character.chickenDeath_sound.play();
-                    console.log("HIT!");
+                    this.character.endbossEnergy -= this.bottleHit;
+                    this.statusBarEndboss.setPercentageEndboss(this.character.endbossEnergy);
+                    console.log(this.character.endbossEnergy);
+                    this.enemyIsHitted = false;
+                }
+                if (thrownBottle.y > 450) {
+                    this.throwableObjects.splice(thrownBottle);
                 }
             });
         });

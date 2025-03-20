@@ -32,7 +32,50 @@
 </head>
 
 <body onload="init()">
-    <h1>El Pollo Loco</h1>
-    <canvas width="720" height="480" id="canvas"></canvas>
+    <div id="pageWrapper" class="pageWrapper">
+        <h1>El Pollo Loco</h1>
+        <canvas width="720" height="480" id="canvas"></canvas>
+        <div class="explanationBar">
+            <div class="explanationIcon">
+                <div class="icon">
+                    <img src="./img/buttonD.png" alt="">
+                </div>
+                <div>
+                    <p>
+                        Throw Bottle
+                    </p>
+                </div>
+            </div>
+            <div class="explanationIcon">
+                <div class="icon">
+                    <img src="./img/space.png" alt="SpaceButton">
+                </div>
+                <div>
+                    <p>
+                        Jump
+                    </p>
+                </div>
+            </div>
+            <div class="explanationIcon">
+                <div class="icon">
+                    <img src="./img/arrowLeft.png" alt="ArrowLeft">
+                    <img src="./img/arrowRight.png" alt="ArrowRight">
+                </div>
+                <div>
+                    <p>
+                        Walk
+                    </p>
+                </div>
+            </div>
+            <div class="explanationIcon">
+                <div class="icon info">
+                    <img src="./img/info.png" alt="infoButton" onclick="gameInfo()">
+                </div>
+            </div>
+        </div>
+        <div class="imprint">
+            <a href="imprint.html" target="_blank">Impressum</a>
+        </div>
+    </div>
 </body>
 </html>

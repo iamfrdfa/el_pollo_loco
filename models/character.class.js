@@ -10,6 +10,7 @@ class Character extends MovableObject {
     bottle_sound = new Audio('audio/glass-bottles.mp3');
     throwBottle_sound = new Audio('audio/throw_sound.mp3');
     chickenDeath_sound = new Audio('audio/chicken_death.mp3');
+    weaponFail_sound = new Audio('audio/fail.mp3');
     offset = {
         top: 80,
         bottom: 10,
@@ -17,7 +18,7 @@ class Character extends MovableObject {
         right: 25
     }
     coinAmount = 0;
-    bottleAmount = 5;
+    bottleAmount = 0;
     
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',

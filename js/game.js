@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let bottleDirection = true;
 
 function init() {
     canvas = document.getElementById("canvas");
@@ -15,6 +16,7 @@ window.addEventListener("keydown", (e) => {
     
     if (e.keyCode === 37) {
         keyboard.LEFT = true;
+        bottleDirection = false;
     }
     
     if (e.keyCode === 38) {
@@ -23,6 +25,7 @@ window.addEventListener("keydown", (e) => {
     
     if (e.keyCode === 39) {
         keyboard.RIGHT = true;
+        bottleDirection = true;
     }
     
     if (e.keyCode === 40) {

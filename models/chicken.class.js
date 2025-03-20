@@ -19,7 +19,7 @@ class Chicken extends MovableObject {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
         
-        this.x = 200 + Math.random() * 500; //Irgendeine Zahl zwischen 200 - 700 zum Positionieren der Chicken
+        this.x = 400 + Math.random() * 500; //Irgendeine Zahl zwischen 200 - 700 zum Positionieren der Chicken
         this.speed = 0.15 + Math.random() * 0.25; //Zufällige Zahl für unterschiedliche Geschwindigkeit für die Hühnchen
         this.animate();
     }

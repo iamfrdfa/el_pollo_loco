@@ -8,15 +8,19 @@ html {
 }
 
 body {
+    margin: 0;
+    background-image: url('img/0_background/desert.png');
+    background-position: center;
+    font-family: 'zabars', Arial, Helvetica, sans-serif;
+}
+
+#pageWrapper {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
-    background-image: url('img/0_background/desert.png');
-    background-position: center;
-    font-family: 'zabars', Arial, Helvetica, sans-serif;
+    width: 100%;
 }
 
 h1 {
@@ -28,6 +32,67 @@ h1 {
 canvas {
     background-color: black;
     display: block;
+}
+
+.explanationBar {
+    width: 660px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.explanationIcon {
+    margin: 8px;
+    padding: 4px;
+    border: 1px solid #BF0000;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.explanationIcon p {
+    margin-left: 8px;
+}
+
+p {
+    color: #BF0000;
+}
+
+.icon > img {
+    width: 40px;
+    height: 40px;
+}
+
+.info > img {
+    cursor: pointer;
+}
+
+.imprint {
+    margin-top: 24px;
+}
+
+.imprint a {
+    color: #BF0000;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.imprintWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.imprintData > p {
+    color: #000000;
+}
+
+.imprintData > a {
+    color: #000000;
+    text-decoration: none;
 }
 
 /* Smartphones ---------- */

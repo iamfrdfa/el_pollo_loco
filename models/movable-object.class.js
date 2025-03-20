@@ -7,6 +7,7 @@ class MovableObject extends DrawableObject {
     lastHit = 0;
     maxCoinAmount = 4;
     maxBottleAmount = 4;
+    endbossEnergy = 100;
     
     applyGravity() {
         setInterval(() => {
