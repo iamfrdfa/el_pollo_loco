@@ -67,16 +67,22 @@ class World {
         });
         
         // Is Checking hit between bottle and enemy
+        // In der checkCollisions-Methode der world.class.js ändern:
         this.throwableObjects.forEach((thrownBottle) => {
             this.level.enemies.forEach(enemy => {
                 if (thrownBottle.isColliding(enemy) && this.enemyIsHitted === false) {
-                    this.enemyIsHitted = true;
-                    this.character.chickenDeath_sound.play();
-                    this.character.endbossEnergy -= this.bottleHit;
-                    this.statusBarEndboss.setPercentageEndboss(this.character.endbossEnergy);
-                    console.log(this.character.endbossEnergy);
-                    this.enemyIsHitted = false;
+                    if(!thrownBottle.hasHitObstacle) {
+                        thrownBottle.hasHitObstacle = true;
+                        this.enemyIsHitted = true;
+                        enemy.hit(); // Ruft die hit() Methode des Endbosses auf
+                        thrownBottle.playSplashAnimation(); // Hier die Splash-Animation starten
+                        this.character.chickenDeath_sound.play();
+                        this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy); // Hier enemy.endbossEnergy statt enemy.energy
+                        this.enemyIsHitted = false;
+                        console.log(enemy.endbossEnergy); // Hier auch enemy.endbossEnergy statt this.character.endbossEnergy
+                    }
                 }
+                
                 if (thrownBottle.y > 450) {
                     this.throwableObjects.splice(thrownBottle);
                 }
