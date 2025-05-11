@@ -34,11 +34,26 @@
 <body onload="init()">
     <div id="pageWrapper" class="pageWrapper">
         <h1>El Pollo Loco</h1>
-        <canvas width="720" height="480" id="canvas"></canvas>
+        <div class="canvas-container">
+            <canvas width="720" height="480" id="canvas"></canvas>
+            <div class="canvas-controls">
+                <div class="canvas-icons">
+                    <img src="img/10_icons/icons8-neu-starten-50.png" alt="Arrow Left" id="reload">
+                </div>
+                <div class="canvas-icons">
+                    <img src="img/10_icons/mute.png" alt="Mute Button" id="mute">
+                    <img src="img/10_icons/unmute.png" alt="Mute Button" id="unmute" style="display: none;">
+                </div>
+                <div class="canvas-icons">
+                    <img src="img/10_icons/fullscreen.png" alt="Fullscreen" id="fullscreen">
+                </div>
+            </div>
+        </div>
+        
         <div class="explanationBar">
             <div class="explanationIcon">
                 <div class="icon">
-                    <img src="./img/buttonD.png" alt="">
+                    <img src="img/10_icons/buttonD.png" alt="">
                 </div>
                 <div>
                     <p>
@@ -48,7 +63,7 @@
             </div>
             <div class="explanationIcon">
                 <div class="icon">
-                    <img src="./img/space.png" alt="SpaceButton">
+                    <img src="img/10_icons/space.png" alt="SpaceButton">
                 </div>
                 <div>
                     <p>
@@ -58,8 +73,8 @@
             </div>
             <div class="explanationIcon">
                 <div class="icon">
-                    <img src="./img/arrowLeft.png" alt="ArrowLeft">
-                    <img src="./img/arrowRight.png" alt="ArrowRight">
+                    <img src="img/10_icons/arrowLeft.png" alt="ArrowLeft">
+                    <img src="img/10_icons/arrowRight.png" alt="ArrowRight">
                 </div>
                 <div>
                     <p>
@@ -69,7 +84,7 @@
             </div>
             <div class="explanationIcon">
                 <div class="icon info">
-                    <img src="./img/info.png" alt="infoButton" onclick="gameInfo()">
+                    <img src="img/10_icons/info.png" alt="infoButton" onclick="gameInfo()">
                 </div>
             </div>
         </div>
