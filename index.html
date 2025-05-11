@@ -37,11 +37,17 @@
 <body onload="init()">
     <div id="pageWrapper" class="pageWrapper">
         <h1 id="headline">El Pollo Loco</h1>
+        
+        <div id="startScreen">
+            <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Startscreen" id="startImage">
+            <img src="img/10_icons/icons8-circled-play-100.png" alt="Startscreen" id="startButton" onclick="startGame()">
+        </div>
+        
         <div class="canvas-container">
             <canvas width="720" height="480" id="canvas"></canvas>
             <div class="canvas-controls">
                 <div class="canvas-icons">
-                    <img src="img/10_icons/icons8-neu-starten-50.png" alt="Arrow Left" id="reload">
+                    <img src="img/10_icons/icons8-neu-starten-50.png" alt="Arrow Left" id="reload" onclick="restartGame()">
                 </div>
                 <div class="canvas-icons">
                     <img src="img/10_icons/mute.png" alt="Mute Button" id="mute" onclick="muteGame()">

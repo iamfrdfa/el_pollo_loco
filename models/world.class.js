@@ -45,6 +45,7 @@ class World {
     run() {
         setInterval(() => {
             this.checkCollisions();
+            this.checkGameEnd();
             if (this.keyboard.D && !this.bottleThrow) {
                 this.bottleThrow = true;
                 this.checkThrowObjects();
@@ -54,6 +55,20 @@ class World {
             }
         }, 1000 / 60);
     }
+    
+    checkGameEnd() {
+        // Prüfen ob der Character tot ist
+        if (this.character.isDead()) {
+            stopGame();
+        }
+        
+        // Prüfen ob der Endboss besiegt wurde
+        const endboss = this.level.enemies.find(e => e instanceof Endboss);
+        if (endboss && endboss.isDead()) {
+            stopGame();
+        }
+    }
+    
     
     checkThrowObjects() {
         if (this.character.bottleAmount > 0) {
@@ -222,9 +237,10 @@ class World {
         
         // Draw wird immer wieder aufgerufen
         let self = this;
-        requestAnimationFrame(function () {
+        this.animationFrame = requestAnimationFrame(function () {
             self.draw();
         });
+        
     }
     
     addObjectsToMap(objects) {

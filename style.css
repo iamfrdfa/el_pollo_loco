@@ -29,6 +29,43 @@ h1 {
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
 }
 
+#startImage {
+    width: 720px;
+    height: 480px;
+    margin-top: -416px !important;
+}
+
+#startScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+#startScreen h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+#startButton {
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: -290px !important;
+}
+
+#startButton:hover {
+    transform: scale(1.1);
+}
+
+
 canvas {
     background-color: black;
     display: block;
