@@ -6,6 +6,11 @@ let bottleDirection = true;
 function init() {
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
+    
+    // Falls das Spiel bereits stumm geschaltet war
+    if (gameIsMuted) {
+        muteSounds();
+    }
 }
 
 window.addEventListener("keydown", (e) => {
