@@ -15,6 +15,8 @@ class World {
     //Flags
     enemyIsHitted = false;
     bottleThrow = false;
+    initialSpawnDistance = 300; // Initialer Mindestabstand
+    isGameStart = true;        // Flag für Spielstart
     
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
@@ -24,17 +26,21 @@ class World {
         this.setWorld();
         this.run();
         this.initChickenSpawning();
+        
+        // Nach 10 Sekunden auf normalen Spawn-Abstand umschalten
+        setTimeout(() => {
+            this.isGameStart = false;
+        }, 10000);
     }
     
     setWorld() {
         this.character.world = this;
-        // Neue Zeile hinzufügen:
+        // Setze die World-Referenz für alle Gegner
         this.level.enemies.forEach(enemy => {
-            if (enemy instanceof Endboss) {
-                enemy.world = this;
-            }
+            enemy.world = this;
         });
     }
+    
     
     run() {
         setInterval(() => {
@@ -85,41 +91,85 @@ class World {
         }, 2000);
     }
     
+    /**
+     * Prüft ob der Character von oben auf einen Gegner springt
+     * @param {MovableObject} enemy - Der Gegner
+     * @returns {boolean} true wenn der Character von oben auf den Gegner springt
+     */
+    isJumpingOnEnemy(enemy) {
+        return this.character.isAboveGround() &&
+            this.character.speedY < 0 &&
+            this.character.y + this.character.height > enemy.y &&
+            this.character.x + this.character.width > enemy.x &&
+            this.character.x < enemy.x + enemy.width;
+    }
     
     /**
      * Function which is checking collision between character and enemies or bottle with enemies
      */
     checkCollisions() {
-        // Is Checking collision/hit between Character and enemy
-        this.level.enemies.forEach(enemy => {
+        // Kollision mit Gegnern prüfen
+        this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.statusBar.setPercentage(this.character.energy);
+                if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
+                    if (this.isJumpingOnEnemy(enemy)) {
+                        // Character springt auf das Chicken
+                        enemy.playDeathAnimation();
+                        this.character.speedY = 15; // Kleiner Aufsprung
+                        this.character.chickenDeath_sound.play();
+                    } else if (!enemy.isDying) {
+                        // Normale Kollision nur wenn das Chicken noch nicht stirbt
+                        this.character.hit();
+                    }
+                } else {
+                    // Kollision mit anderen Gegnern (z.B. Endboss)
+                    this.character.hit();
+                }
             }
         });
         
+        
+        // Is Checking collision between character and coins to collect them
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                if (this.character.coinAmount <= this.character.maxCoinAmount) {
+                    this.character.coin_sound.play();
+                    this.character.coinAmount++;
+                    this.statusBarCoin.setPercentageCoin(this.character.coinAmount);
+                    this.level.coins.splice(index, 1);
+                    
+                    // Prüfen ob Heilung möglich ist
+                    this.character.healWithCoins();
+                }
+            }
+        });
+        
+        
         // Is Checking hit between bottle and enemy
-        // In der checkCollisions-Methode der world.class.js ändern:
         this.throwableObjects.forEach((thrownBottle) => {
             this.level.enemies.forEach(enemy => {
-                if (thrownBottle.isColliding(enemy) && this.enemyIsHitted === false) {
-                    if(!thrownBottle.hasHitObstacle) {
-                        thrownBottle.hasHitObstacle = true;
-                        this.enemyIsHitted = true;
-                        enemy.hit(); // Ruft die hit() Methode des Endbosses auf
-                        thrownBottle.playSplashAnimation(); // Hier die Splash-Animation starten
+                if (thrownBottle.isColliding(enemy) && !thrownBottle.hasHitObstacle) {
+                    thrownBottle.hasHitObstacle = true;
+                    
+                    if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
+                        // Normale und kleine Hühner sterben sofort
+                        enemy.playDeathAnimation();
                         this.character.chickenDeath_sound.play();
-                        this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy); // Hier enemy.endbossEnergy statt enemy.energy
-                        this.enemyIsHitted = false;
-                        console.log(enemy.endbossEnergy); // Hier auch enemy.endbossEnergy statt this.character.endbossEnergy
+                    } else if (enemy instanceof Endboss) {
+                        // Endboss nimmt nur Schaden
+                        enemy.hit();
+                        this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy);
                     }
-                }
-                
-                if (thrownBottle.y > 450) {
-                    this.throwableObjects.splice(thrownBottle);
+                    
+                    thrownBottle.playSplashAnimation();
                 }
             });
+            
+            if (thrownBottle.y > 450) {
+                this.throwableObjects.splice(thrownBottle);
+            }
         });
+        
         
         // Is Checking collision between character and coins to collect them
         this.level.coins.forEach(coin => {

@@ -8,7 +8,7 @@ class MovableObject extends DrawableObject {
     maxCoinAmount = 4;
     maxBottleAmount = 4;
     endbossEnergy = 100;
-    immunityTime = 1.5; // Variable für die Immunitätsdauer in Sekunden
+    immunityTime = 1; // Variable für die Immunitätsdauer in Sekunden
     
     
     applyGravity() {
@@ -41,12 +41,15 @@ class MovableObject extends DrawableObject {
      * Reduziert die Energie nur wenn keine Immunität aktiv ist
      */
     hit() {
-        if (!this.isImmune()) { // Prüft ob der Character gerade immun ist
-            this.energy -= 5;    // Reduziert die Energie um 5
+        if (!this.isImmune()) { // Prüft, ob der Character gerade immun ist
+            this.energy -= 20;   // Reduziert die Energie um 20 für bessere Übereinstimmung mit der Statusbar
             if (this.energy < 0) {
                 this.energy = 0; // Verhindert negative Energie
             }
             this.lastHit = new Date().getTime(); // Speichert den Zeitpunkt des Treffers
+            if (this instanceof Character) {
+                this.world.statusBar.setPercentage(this.energy);
+            }
         }
     }
     

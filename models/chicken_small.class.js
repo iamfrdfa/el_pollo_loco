@@ -16,27 +16,40 @@ class TinyChicken extends MovableObject {
         'img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
     ];
     
+    IMAGES_DEAD = [
+        'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
+    ]
+    
+    isDying = false;
+    
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
+        super.loadImages(this.IMAGES_DEAD);  // Todesbild laden
         
         this.x = this.getRandomPosition();
-        this.speed = 0.2 + Math.random() * 0.6; // Noch höhere Geschwindigkeitsvarianz für kleine Hühner
+        this.speed = 0.2 + Math.random() * 0.6;
         this.animate();
     }
     
     /**
-     * Generiert eine zufällige Position unter Berücksichtigung des Mindestabstands zum Character und Endboss
+     * Generiert eine zufällige Position für Gegner
+     * @returns {number} X-Position für den Gegner
      */
     getRandomPosition() {
         const endBossPosition = 2200;        // Position des Endbosses
         const safetyDistanceBoss = 350;      // Mindestabstand zum Endboss
-        const safetyDistanceCharacter = 100;  // Mindestabstand zum Character
+        const normalSafetyDistance = 100;    // Normaler Mindestabstand zum Character
         
         // Hole die aktuelle Character-Position aus der World
         let characterX = this.world?.character?.x || 0;
         
-        // Generiere so lange neue Positionen bis eine gültige gefunden wird
+        // Wähle den passenden Mindestabstand basierend auf Spielstart
+        let safetyDistanceCharacter = this.world?.isGameStart ?
+            this.world.initialSpawnDistance :
+            normalSafetyDistance;
+        
+        // Generiere so lange neue Positionen, bis eine gültige gefunden wird
         let position;
         do {
             position = Math.random() * (endBossPosition - safetyDistanceBoss);
@@ -47,13 +60,39 @@ class TinyChicken extends MovableObject {
         return position;
     }
     
+    
+    /**
+     * Spielt die Todesanimation ab und entfernt das Chicken nach 2 Sekunden
+     */
+    playDeathAnimation() {
+        if (this.isDying) return; // Verhindert mehrfaches Auslösen
+        
+        this.isDying = true;
+        this.speed = 0; // Bewegung stoppen
+        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Todesbild anzeigen
+        
+        setTimeout(() => {
+            // Direkte Entfernung aus dem enemies Array
+            const index = this.world?.level?.enemies?.indexOf(this);
+            if (this.world && index > -1) {
+                this.world.level.enemies.splice(index, 1);
+            }
+        }, 2000);
+    }
+    
+    
+    
     animate() {
         setInterval(() => {
-            this.moveLeft();
+            if (!this.isDying) {
+                this.moveLeft();
+            }
         }, 1000 / 60);
         
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            if (!this.isDying) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 200);
     }
 }

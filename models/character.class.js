@@ -189,6 +189,22 @@ class Character extends MovableObject {
     }
     
     /**
+     * Heilt den Character wenn 5 Münzen gesammelt wurden
+     * @returns {boolean} true wenn Heilung erfolgt ist
+     */
+    healWithCoins() {
+        if (this.coinAmount >= 5 && this.energy < 100) {
+            this.coinAmount -= 5; // 5 Münzen abziehen
+            this.energy = Math.min(this.energy + 20, 100); // Energie um 20 erhöhen, maximal 100
+            this.world.statusBar.setPercentage(this.energy); // Statusbar aktualisieren
+            this.world.statusBarCoin.setPercentageCoin(this.coinAmount); // Münzen-Statusbar aktualisieren
+            return true;
+        }
+        return false;
+    }
+    
+    
+    /**
      * Lässt den Character springen
      */
     jump() {
