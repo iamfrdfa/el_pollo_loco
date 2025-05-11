@@ -27,6 +27,12 @@ class World {
     
     setWorld() {
         this.character.world = this;
+        // Neue Zeile hinzufügen:
+        this.level.enemies.forEach(enemy => {
+            if (enemy instanceof Endboss) {
+                enemy.world = this;
+            }
+        });
     }
     
     run() {
