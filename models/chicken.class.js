@@ -1,4 +1,5 @@
 class Chicken extends MovableObject {
+    world; // Neue Property
     y = 360;
     height = 70;
     width = 50;
@@ -19,9 +20,31 @@ class Chicken extends MovableObject {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
         
-        this.x = 400 + Math.random() * 500; //Irgendeine Zahl zwischen 200 - 700 zum Positionieren der Chicken
-        this.speed = 0.15 + Math.random() * 0.25; //Zufällige Zahl für unterschiedliche Geschwindigkeit für die Hühnchen
+        this.x = this.getRandomPosition();
+        this.speed = 0.15 + Math.random() * 0.5; // Erhöhte Geschwindigkeitsvarianz
         this.animate();
+    }
+    
+    /**
+     * Generiert eine zufällige Position unter Berücksichtigung des Mindestabstands zum Character und Endboss
+     */
+    getRandomPosition() {
+        const endBossPosition = 2200;        // Position des Endbosses
+        const safetyDistanceBoss = 350;      // Mindestabstand zum Endboss
+        const safetyDistanceCharacter = 100;  // Mindestabstand zum Character
+        
+        // Hole die aktuelle Character-Position aus der World
+        let characterX = this.world?.character?.x || 0;
+        
+        // Generiere so lange neue Positionen bis eine gültige gefunden wird
+        let position;
+        do {
+            position = Math.random() * (endBossPosition - safetyDistanceBoss);
+        } while (
+            Math.abs(position - characterX) < safetyDistanceCharacter
+            );
+        
+        return position;
     }
     
     animate() {

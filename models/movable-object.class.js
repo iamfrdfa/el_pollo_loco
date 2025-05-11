@@ -8,6 +8,8 @@ class MovableObject extends DrawableObject {
     maxCoinAmount = 4;
     maxBottleAmount = 4;
     endbossEnergy = 100;
+    immunityTime = 1.5; // Variable für die Immunitätsdauer in Sekunden
+    
     
     applyGravity() {
         setInterval(() => {
@@ -34,19 +36,40 @@ class MovableObject extends DrawableObject {
             this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
     
+    /**
+     * Wird aufgerufen, wenn der Character getroffen wird
+     * Reduziert die Energie nur wenn keine Immunität aktiv ist
+     */
     hit() {
-        this.energy -= 5;
-        if (this.energy < 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
+        if (!this.isImmune()) { // Prüft ob der Character gerade immun ist
+            this.energy -= 5;    // Reduziert die Energie um 5
+            if (this.energy < 0) {
+                this.energy = 0; // Verhindert negative Energie
+            }
+            this.lastHit = new Date().getTime(); // Speichert den Zeitpunkt des Treffers
         }
     }
     
+    /**
+     * Prüft ob der Character gerade verletzt ist (für Animation)
+     * @returns {boolean} true wenn der letzte Treffer weniger als 0.5 Sekunden her ist
+     */
     isHurt() {
-        let timepassed =  new Date().getTime() - this.lastHit; //Difference in ms
-        timepassed = timepassed / 1000; //Difference in sec
-        return timepassed < 0.5;
+        let timepassed = new Date().getTime() - this.lastHit; // Berechnet die Zeit seit dem letzten Treffer in ms
+        timepassed = timepassed / 1000; // Differenz in Sekunden
+        return timepassed < 0.5; // Gibt true zurück wenn weniger als 0.5 Sekunden vergangen sind
+    }
+    
+    /**
+     * Prüft ob der Character aktuell immun gegen Schaden ist
+     * @returns {boolean} true wenn der Character immun ist
+     */
+    isImmune() {
+        if (this.lastHit === 0) return false; // Character wurde noch nie getroffen
+        
+        let timepassed = new Date().getTime() - this.lastHit; // Berechnet die Zeit seit dem letzten Treffer in ms
+        timepassed = timepassed / 1000; // Konvertiert zu Sekunden
+        return timepassed < this.immunityTime; // Gibt true zurück wenn die Immunitätszeit noch nicht abgelaufen ist
     }
     
     isDead() {

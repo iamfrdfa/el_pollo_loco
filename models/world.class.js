@@ -23,6 +23,7 @@ class World {
         this.draw();
         this.setWorld();
         this.run();
+        this.initChickenSpawning();
     }
     
     setWorld() {
@@ -59,6 +60,31 @@ class World {
             this.character.weaponFail_sound.play();
         }
     }
+    
+    /**
+     * Initialisiert das zufällige Spawnen von Hühnern
+     */
+    initChickenSpawning() {
+        setInterval(() => {
+            if (this.level.enemies.length < 10) { // Maximale Anzahl von Hühnern
+                let newChicken;
+                if (Math.random() < 0.5) { // 50% Chance für normales oder kleines Huhn
+                    newChicken = new Chicken();
+                } else {
+                    newChicken = new TinyChicken();
+                }
+                // Setze die World-Referenz
+                newChicken.world = this;
+                this.level.enemies.push(newChicken);
+            }
+            
+            // Entferne Hühner, die zu weit links sind
+            this.level.enemies = this.level.enemies.filter(enemy => {
+                return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
+            });
+        }, 2000);
+    }
+    
     
     /**
      * Function which is checking collision between character and enemies or bottle with enemies
