@@ -28,6 +28,17 @@ class Endboss extends MovableObject {
         'img/4_enemy_boss_chicken/4_hurt/G23.png'
     ];
     
+    IMAGES_ALERT = [
+        'img/4_enemy_boss_chicken/2_alert/G5.png',
+        'img/4_enemy_boss_chicken/2_alert/G6.png',
+        'img/4_enemy_boss_chicken/2_alert/G7.png',
+        'img/4_enemy_boss_chicken/2_alert/G8.png',
+        'img/4_enemy_boss_chicken/2_alert/G9.png',
+        'img/4_enemy_boss_chicken/2_alert/G10.png',
+        'img/4_enemy_boss_chicken/2_alert/G11.png',
+        'img/4_enemy_boss_chicken/2_alert/G12.png'
+    ];
+    
     IMAGES_DEATH = [
         'img/4_enemy_boss_chicken/5_dead/G24.png',
         'img/4_enemy_boss_chicken/5_dead/G25.png',
@@ -49,6 +60,9 @@ class Endboss extends MovableObject {
     maxStepsForward = 5;
     maxStepsBackward = 3;
     speed = 5;
+    hasTriggeredAlert = false; // Flag für einmalige Alert-Animation
+    isPlayingAlert = false;    // Flag für laufende Alert-Animation
+    alertAnimationFrame = 0;   // Zähler für Alert-Animation
     
     /**
      * Initialisiert den Endboss mit Bildern und startet die Animationen
@@ -58,15 +72,33 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEATH);
+        this.loadImages(this.IMAGES_ALERT);  // Alert-Bilder laden
         this.x = 2200;
         this.startAnimation();
         this.initMovement();
     }
     
     /**
-     * Startet die Animations-Logik des Endbosses
-     * Wechselt zwischen verschiedenen Animationen basierend auf dem Zustand
+     * Startet die Alert-Animation einmalig
      */
+    playAlertAnimation() {
+        if (this.hasTriggeredAlert || this.isPlayingAlert) return;
+        
+        this.isPlayingAlert = true;
+        this.alertAnimationFrame = 0;
+        
+        const alertInterval = setInterval(() => {
+            if (this.alertAnimationFrame < this.IMAGES_ALERT.length) {
+                this.img = this.imageCache[this.IMAGES_ALERT[this.alertAnimationFrame]];
+                this.alertAnimationFrame++;
+            } else {
+                this.isPlayingAlert = false;
+                this.hasTriggeredAlert = true;
+                clearInterval(alertInterval);
+            }
+        }, 150); // Geschwindigkeit der Alert-Animation
+    }
+    
     startAnimation() {
         this.animationInterval = setInterval(() => {
             if (this.endbossEnergy <= 0) {
@@ -75,33 +107,23 @@ class Endboss extends MovableObject {
                 }
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
-            } else {
+            } else if (!this.isPlayingAlert) { // Nur normale Animation wenn keine Alert-Animation läuft
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 150);
     }
     
-    /**
-     * Initialisiert die Bewegungslogik des Endbosses
-     * Überprüft regelmäßig die Distanz zum Character und bewegt sich entsprechend
-     */
-    initMovement() {
-        this.movementInterval = setInterval(() => {
-            if (this.endbossEnergy > 0) {
-                this.moveBasedOnDistance();
-            }
-        }, 50);
-    }
-    
-    /**
-     * Berechnet die Distanz zum Character und steuert die Bewegung
-     * Bewegt sich 5 Schritte vorwärts und 3 Schritte rückwärts wenn der Character in Reichweite ist
-     */
     moveBasedOnDistance() {
         if (!this.world || !this.world.character) return;
         
         const distance = this.x - this.world.character.x;
         
+        // Alert-Animation triggern wenn Character in die Nähe kommt
+        if (distance <= 400 && !this.hasTriggeredAlert) {
+            this.playAlertAnimation();
+        }
+        
+        // Bestehende Bewegungslogik
         if (distance <= 300) {
             if (this.isMovingForward) {
                 if (this.stepsForward < this.maxStepsForward) {
@@ -121,6 +143,18 @@ class Endboss extends MovableObject {
                 }
             }
         }
+    }
+    
+    /**
+     * Initialisiert die Bewegungslogik des Endbosses
+     * Überprüft regelmäßig die Distanz zum Character und bewegt sich entsprechend
+     */
+    initMovement() {
+        this.movementInterval = setInterval(() => {
+            if (this.endbossEnergy > 0) {
+                this.moveBasedOnDistance();
+            }
+        }, 50);
     }
     
     /**

@@ -60,7 +60,6 @@ class Chicken extends MovableObject {
         return position;
     }
     
-    
     /**
      * Spielt die Todesanimation ab und entfernt das Chicken nach 2 Sekunden
      */
@@ -77,7 +76,7 @@ class Chicken extends MovableObject {
             if (this.world && index > -1) {
                 this.world.level.enemies.splice(index, 1);
             }
-        }, 2000);
+        }, 1000);
     }
     
     
