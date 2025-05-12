@@ -25,7 +25,7 @@ class ThrowableObject extends MovableObject {
         right: 20
     };
     
-    constructor(x, y, direction) {
+    constructor(x, y, direction, otherDirection) {
         super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
         super.loadImages(this.BOTTLE_ROTATION);
         super.loadImages(this.BOTTLE_SPLASH);
@@ -34,8 +34,24 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60;
         this.width = 50;
+        this.otherDirection = otherDirection; // Die Richtung vom Character übernehmen
         this.animate();
         this.throw();
+    }
+    
+    throw() {
+        this.speedY = 10;
+        this.applyGravity();
+        
+        setInterval(() => {
+            if (!this.isSplashing) {
+                if (this.otherDirection) {
+                    this.x -= 15;
+                } else {
+                    this.x += 15;
+                }
+            }
+        }, 50);
     }
     
     
@@ -62,26 +78,5 @@ class ThrowableObject extends MovableObject {
                 this.height = 0;
             }
         }, 100);
-    }
-    
-    // Gravitation-configuration for thrown bottle
-    throw() {
-        if (bottleDirection) {
-            this.speedY = 10;
-            this.applyGravity();
-            setInterval(() => {
-                if (!this.isSplashing) {
-                    this.x += 15;
-                }
-            }, 50);
-        } else {
-            this.speedY = 10;
-            this.applyGravity();
-            setInterval(() => {
-                if (!this.isSplashing) {
-                    this.x -= 15;
-                }
-            }, 50);
-        }
     }
 }

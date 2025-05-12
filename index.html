@@ -40,14 +40,18 @@
         
         <div id="startScreen">
             <img src="img/9_intro_outro_screens/start/startscreen_1.png" alt="Startscreen" id="startImage">
-            <img src="img/10_icons/icons8-circled-play-100.png" alt="Startscreen" id="startButton" onclick="startGame()">
+            <img src="img/10_icons/icon-play100.png" alt="Startscreen" id="startButton" onclick="startGame()">
+            
+            <img src="img/9_intro_outro_screens/game_over/oh_no_you_lost.png" alt="Lost Screen" id="lost" style="display: none;">
+            <img src="img/9_intro_outro_screens/win/win_2.png" alt="Win Screen" id="win" style="display: none;">
+            <button id="restartButton" onclick="startGame()" style="display: none">Wanna play again?</button>
         </div>
         
         <div class="canvas-container">
             <canvas width="720" height="480" id="canvas"></canvas>
             <div class="canvas-controls">
                 <div class="canvas-icons">
-                    <img src="img/10_icons/icons8-neu-starten-50.png" alt="Arrow Left" id="reload" onclick="restartGame()">
+                    <img src="img/10_icons/icon-reload50.png" alt="Arrow Left" id="reload" onclick="startGame()">
                 </div>
                 <div class="canvas-icons">
                     <img src="img/10_icons/mute.png" alt="Mute Button" id="mute" onclick="muteGame()">
@@ -63,7 +67,27 @@
         <div class="explanationBar">
             <div class="explanationIcon">
                 <div class="icon">
-                    <img src="img/10_icons/buttonD.png" alt="">
+                    <img src="img/10_icons/button-s100.png" alt="Button S">
+                </div>
+                <div>
+                    <p>
+                        Start / Restart Game
+                    </p>
+                </div>
+            </div>
+            <!--<div class="explanationIcon">
+                <div class="icon">
+                    <img src="img/10_icons/button-r100.png" alt="Button R">
+                </div>
+                <div>
+                    <p>
+                        Restart Game
+                    </p>
+                </div>
+            </div>-->
+            <div class="explanationIcon">
+                <div class="icon">
+                    <img src="img/10_icons/button-d100.png" alt="Button D">
                 </div>
                 <div>
                     <p>

@@ -39,26 +39,29 @@ class TinyChicken extends MovableObject {
     getRandomPosition() {
         const endBossPosition = 2200;        // Position des Endbosses
         const safetyDistanceBoss = 350;      // Mindestabstand zum Endboss
-        const normalSafetyDistance = 100;    // Normaler Mindestabstand zum Character
-        
-        // Hole die aktuelle Character-Position aus der World
-        let characterX = this.world?.character?.x || 0;
-        
-        // Wähle den passenden Mindestabstand basierend auf Spielstart
-        let safetyDistanceCharacter = this.world?.isGameStart ?
-            this.world.initialSpawnDistance :
-            normalSafetyDistance;
-        
-        // Generiere so lange neue Positionen, bis eine gültige gefunden wird
+        const maxAttempts = 10;              // Maximale Versuche eine Position zu finden
+        let attempts = 0;
         let position;
+        
         do {
             position = Math.random() * (endBossPosition - safetyDistanceBoss);
+            attempts++;
+            
+            // Wenn nach maxAttempts keine valide Position gefunden wurde,
+            // position weit rechts vom Character platzieren
+            if (attempts >= maxAttempts) {
+                position = this.world?.character?.x + 500 || 500;
+                break;
+            }
         } while (
-            Math.abs(position - characterX) < safetyDistanceCharacter
+            this.world &&
+            this.world.character &&
+            !this.world.isValidSpawnPosition(position)
             );
         
         return position;
     }
+    
     
     /**
      * Spielt die Todesanimation ab und entfernt das Chicken nach 2 Sekunden

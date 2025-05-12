@@ -11,6 +11,7 @@ class Character extends MovableObject {
     throwBottle_sound = new Audio('audio/throw_sound.mp3');
     chickenDeath_sound = new Audio('audio/chicken_death.mp3');
     weaponFail_sound = new Audio('audio/fail.mp3');
+    snoring_sound = new Audio('audio/snoring.mp3');
     offset = {
         top: 80,
         bottom: 10,
@@ -164,6 +165,7 @@ class Character extends MovableObject {
         else if (this.isIdle()) {
             this.playAnimation(this.IMAGES_SLEEPING);
             this.isSleeping = true;
+            this.snoring_sound.play();
         }
         else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMAGES_WALKING);
@@ -186,6 +188,7 @@ class Character extends MovableObject {
     resetIdleTimer() {
         this.lastActivity = new Date().getTime();
         this.isSleeping = false;
+        this.snoring_sound.pause();
     }
     
     /**
@@ -202,7 +205,6 @@ class Character extends MovableObject {
         }
         return false;
     }
-    
     
     /**
      * Lässt den Character springen

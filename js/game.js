@@ -11,7 +11,7 @@ function init() {
     document.getElementById('startButton').addEventListener('click', startGame);
     
     // Reload-Button Event Listener hinzufügen
-    document.getElementById('reload').addEventListener('click', restartGame);
+    document.getElementById('reload').addEventListener('click', startGame);
     
 }
 
@@ -23,11 +23,15 @@ function startGame() {
     world = new World(canvas, keyboard);
     gameStarted = true;
     
+    // Chicken-Spawning starten
+    world.startChickenSpawning();
+    
     // Falls das Spiel bereits stumm geschaltet war
     if (gameIsMuted) {
         muteSounds();
     }
 }
+
 
 function stopGame() {
     // Spiel anhalten
@@ -43,23 +47,39 @@ function stopGame() {
         cancelAnimationFrame(world.animationFrame);
     }
     
-    // Game Over Screen anzeigen
+    // Startscreen einblenden (enthält die anderen Elemente)
     document.getElementById('startScreen').style.display = 'flex';
     
-    // Text je nach Spielausgang anpassen
-    const gameOverImage = document.getElementById('startImage');
+    // Start-Button ausblenden
+    document.getElementById('startButton').style.display = 'none';
+    // Start-Bild ausblenden
+    document.getElementById('startImage').style.display = 'none';
+    
+    // Game Over Screens verwalten
     if (world.character.isDead()) {
-        gameOverImage.src = 'img/9_intro_outro_screens/game_over/game over.png';
-    } else if (world.level.enemies.find(e => e instanceof Endboss)?.isDead()) {
-        gameOverImage.src = 'img/9_intro_outro_screens/game_over/you win.png';
+        // Verloren-Bildschirm anzeigen
+        document.getElementById('lost').style.display = 'block';
+        document.getElementById('win').style.display = 'none';
+    } else {
+        // Gewonnen-Bildschirm anzeigen
+        document.getElementById('win').style.display = 'block';
+        document.getElementById('lost').style.display = 'none';
     }
     
-    // Start-Button Text ändern
-    const startButton = document.getElementById('startButton');
-    startButton.onclick = restartGame;
+    // Restart Button einblenden
+    /*document.getElementById('restartButton').style.display = 'block';*/
 }
 
-function restartGame() {
+/*function restartGame() {
+    // Game Over Screens ausblenden
+    document.getElementById('lost').style.display = 'none';
+    document.getElementById('win').style.display = 'none';
+    document.getElementById('restartButton').style.display = 'none';
+    
+    // Start-Bild und Button wieder einblenden
+    document.getElementById('startImage').style.display = 'block';
+    document.getElementById('startButton').style.display = 'block';
+    
     // Aufräumen der alten Intervalle und Event-Listener
     if (world) {
         // Alle laufenden Intervalle stoppen
@@ -178,7 +198,7 @@ function restartGame() {
     if (gameIsMuted) {
         muteSounds();
     }
-}
+}*/
 
 
 // Die Keyboard-Events nur aktivieren, wenn das Spiel gestartet wurde
@@ -235,7 +255,7 @@ document.addEventListener('keydown', evt => {
         toggleFullscreen();
     }
     
-    else if (evt.key === 'r') {
-        restartGame();
+    else if (evt.key === 's') {
+        startGame();
     }
 })

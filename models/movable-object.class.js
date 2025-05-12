@@ -5,8 +5,8 @@ class MovableObject extends DrawableObject {
     acceleration = 1;
     energy = 100;
     lastHit = 0;
-    maxCoinAmount = 4;
-    maxBottleAmount = 4;
+    maxCoinAmount = 5;
+    maxBottleAmount = 5;
     endbossEnergy = 100;
     immunityTime = 1; // Variable für die Immunitätsdauer in Sekunden
     
@@ -76,7 +76,10 @@ class MovableObject extends DrawableObject {
     }
     
     isDead() {
-        return this.energy === 0;
+        if (this instanceof Endboss) {
+            return this.endbossEnergy <= 0;
+        }
+        return this.energy <= 0;
     }
     
     playAnimation(images) {
