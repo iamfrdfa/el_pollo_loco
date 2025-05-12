@@ -132,13 +132,9 @@ class World {
     
     stopEndbossSounds(endboss) {
         // Alle Endboss-Sounds stoppen, falls vorhanden
-        if (endboss.alert_sound) endboss.alert_sound.pause();
         if (endboss.hurt_sound) endboss.hurt_sound.pause();
-        if (endboss.dead_sound) endboss.dead_sound.pause();
+        if (endboss.endboss_hit) endboss.endboss_hit.pause();
     }
-    
-    
-    
     
     checkThrowObjects() {
         if (this.character.bottleAmount > 0) {
@@ -154,7 +150,6 @@ class World {
         } else if (this.keyboard.D && this.character.bottleAmount === 0) {
             this.character.weaponFail_sound.play();
         }
-        
     }
     
     /**
@@ -241,7 +236,6 @@ class World {
         return distanceToCharacter >= minDistance;
     }
     
-    
     /**
      * Prüft ob der Character von oben auf einen Gegner springt
      * @param {MovableObject} enemy - Der Gegner
@@ -278,7 +272,8 @@ class World {
                 }
             }
         });
-        // Is Checking hit between bottle and enemy
+        
+        // Kollision zwischen Gegner und Flasche überprüfen
         this.throwableObjects.forEach((thrownBottle) => {
             this.level.enemies.forEach(enemy => {
                 if (thrownBottle.isColliding(enemy) && !thrownBottle.hasHitObstacle) {
@@ -289,8 +284,8 @@ class World {
                         enemy.playDeathAnimation();
                         this.character.chickenDeath_sound.play();
                     } else if (enemy instanceof Endboss) {
-                        // Endboss nimmt nur Schaden
-                        enemy.hit();
+                        // Endboss nimmt Schaden
+                        enemy.hit(); // Der Sound wird jetzt in der hit() Methode des Endbosses abgespielt
                         this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy);
                     }
                     

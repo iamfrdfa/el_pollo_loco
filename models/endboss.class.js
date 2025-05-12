@@ -60,6 +60,7 @@ class Endboss extends MovableObject {
     maxStepsForward = 5;
     maxStepsBackward = 3;
     speed = 5;
+    endboss_hit = new Audio('audio/endboss-sound-intro.mp3');
     hasTriggeredAlert = false; // Flag für einmalige Alert-Animation
     isPlayingAlert = false;    // Flag für laufende Alert-Animation
     alertAnimationFrame = 0;   // Zähler für Alert-Animation
@@ -183,11 +184,14 @@ class Endboss extends MovableObject {
      * Reduziert die Energie und setzt den Zeitpunkt des letzten Treffers
      */
     hit() {
-        this.endbossEnergy -= 20;
-        if (this.endbossEnergy < 0) {
-            this.endbossEnergy = 0;
+        if (!this.isImmune()) {
+            this.endbossEnergy -= 20;
+            if (this.endbossEnergy < 0) {
+                this.endbossEnergy = 0;
+            }
+            this.lastHit = new Date().getTime();
+            this.endboss_hit.play(); // Spielt den Sound beim Treffer ab
         }
-        this.lastHit = new Date().getTime();
     }
     
     /**

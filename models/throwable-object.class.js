@@ -25,6 +25,8 @@ class ThrowableObject extends MovableObject {
         right: 20
     };
     
+    splashing_bottle = new Audio('audio/breaking-bottle.mp3');
+    
     constructor(x, y, direction, otherDirection) {
         super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
         super.loadImages(this.BOTTLE_ROTATION);
@@ -67,6 +69,9 @@ class ThrowableObject extends MovableObject {
         this.isSplashing = true;
         let splashIndex = 0;
         
+        // Sound beim Start der Splash-Animation abspielen
+        this.splashing_bottle.play();
+        
         this.splashAnimation = setInterval(() => {
             if (splashIndex < this.BOTTLE_SPLASH.length) {
                 this.img = this.imageCache[this.BOTTLE_SPLASH[splashIndex]];
@@ -79,4 +84,5 @@ class ThrowableObject extends MovableObject {
             }
         }, 100);
     }
+    
 }
