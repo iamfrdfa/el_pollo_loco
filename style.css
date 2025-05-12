@@ -32,19 +32,22 @@ h1 {
 #startImage {
     width: 720px;
     height: 480px;
-    margin-top: -416px !important;
+    margin-top: -412px !important;
+    border-radius: 2vw;
 }
 
 #win {
     width: 720px;
     height: 480px;
     margin-top: -250px !important;
+    border-radius: 2vw;
 }
 
 #lost {
     width: 720px;
     height: 480px;
     margin-top: -258px !important;
+    border-radius: 2vw;
 }
 
 #startScreen {
@@ -58,11 +61,6 @@ h1 {
     align-items: center;
     flex-direction: column;
     z-index: 1000;
-}
-
-#startScreen h2 {
-    color: white;
-    margin-bottom: 20px;
 }
 
 #startButton,
@@ -81,6 +79,7 @@ h1 {
 canvas {
     background-color: black;
     display: block;
+    border-radius: 2vw;
 }
 
 .explanationBar {
@@ -122,6 +121,8 @@ p {
     position: relative;
     width: 720px;
     height: 480px;
+    border: 3px solid #000000;
+    border-radius: 2vw;
 }
 
 .canvas-controls {
