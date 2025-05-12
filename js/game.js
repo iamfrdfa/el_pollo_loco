@@ -10,30 +10,29 @@ function init() {
     // Start-Button Event Listener hinzufügen
     document.getElementById('startButton').addEventListener('click', startGame);
     
-    // Reload-Button Event Listener hinzufügen
-    document.getElementById('reload').addEventListener('click', startGame);
+    // Diese Zeile entfernen oder ändern zu:
+    // document.getElementById('reload').addEventListener('click', restartGame);
     
     // Audio-Zustand initialisieren
     initAudioControl();
 }
 
 function startGame() {
-    // Startscreen ausblenden
+    // Startbildschirm ausblenden
     document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('canvas').style.display = 'block';
     
-    // Spiel initialisieren
+    // Neues Level und Welt erstellen
+    level1 = initLevel1(); // Funktion aus level1.js
     world = new World(canvas, keyboard);
+    
     gameStarted = true;
     
-    // Chicken-Spawning starten
-    world.startChickenSpawning();
-    
-    // Falls das Spiel bereits stumm geschaltet war
+    // Audio-Einstellungen beibehalten
     if (gameIsMuted) {
         muteSounds();
     }
 }
-
 
 function stopGame() {
     // Spiel anhalten
@@ -73,128 +72,26 @@ function stopGame() {
 }
 
 function restartGame() {
-    // Game Over Screens ausblenden
+    // Canvas ausblenden und alle Game Over Elemente zurücksetzen
+    document.getElementById('canvas').style.display = 'none';
     document.getElementById('lost').style.display = 'none';
     document.getElementById('win').style.display = 'none';
     document.getElementById('restartButton').style.display = 'none';
     
-    // Start-Bild und Button wieder einblenden
+    // Wichtig: startScreen wieder sichtbar machen
+    document.getElementById('startScreen').style.display = 'block';
     document.getElementById('startImage').style.display = 'block';
     document.getElementById('startButton').style.display = 'block';
     
-    // Aufräumen der alten Intervalle und Event-Listener
-    if (world) {
-        // Alle laufenden Intervalle stoppen
-        for (let i = 1; i < 9999; i++) {
-            window.clearInterval(i);
-        }
-        
-        // Animation Frame stoppen
-        if (world.animationFrame) {
-            cancelAnimationFrame(world.animationFrame);
-        }
-        
-        // Alle Arrays leeren
-        if (world.level) {
-            world.level.enemies = [];
-            world.level.clouds = [];
-            world.level.bottles = [];
-            world.level.coins = [];
-            world.throwableObjects = [];
-        }
-    }
+    // Spiel-Instanz aufräumen
+    cleanupGameInstance();
     
-    // Level komplett neu initialisieren
-    level1 = new Level(
-        [
-            new Chicken(),
-            new Chicken(),
-            new Chicken(),
-            new TinyChicken(),
-            new TinyChicken(),
-            new Endboss()
-        ],
-        [
-            new Cloud()
-        ],
-        [
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-            new Bottle(),
-        ],
-        [
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-            new Coins(),
-        ],
-[
-            // Hier deine ursprünglichen Background Objects einfügen
-            new BackgroundObject('img/5_background/layers/air.png', -719),
-            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', -719),
-            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', -719),
-            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', -719),
-            
-            new BackgroundObject('img/5_background/layers/air.png', 0),
-            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 0),
-            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 0),
-            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 0),
-            
-            new BackgroundObject('img/5_background/layers/air.png', 719),
-            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 719),
-            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 719),
-            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 719),
-            
-            new BackgroundObject('img/5_background/layers/air.png', 719 * 2),
-            new BackgroundObject('img/5_background/layers/3_third_layer/1.png', 719 * 2),
-            new BackgroundObject('img/5_background/layers/2_second_layer/1.png', 719 * 2),
-            new BackgroundObject('img/5_background/layers/1_first_layer/1.png', 719 * 2),
-            
-            new BackgroundObject('img/5_background/layers/air.png', 719 * 3),
-            new BackgroundObject('img/5_background/layers/3_third_layer/2.png', 719 * 3),
-            new BackgroundObject('img/5_background/layers/2_second_layer/2.png', 719 * 3),
-            new BackgroundObject('img/5_background/layers/1_first_layer/2.png', 719 * 3)
-        ]
-    );
+    // Spielzustand zurücksetzen
+    gameStarted = false;
     
-    // Keyboard-Zustand zurücksetzen
+    // Tastatur-Events zurücksetzen
     keyboard = new Keyboard();
     bottleDirection = true;
-    
-    // Canvas leeren
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Neue Welt mit neuem Level erstellen
-    world = new World(canvas, keyboard);
-    
-    // Alle Statusbars zurücksetzen
-    world.statusBar.setPercentage(100);
-    world.statusBarBottle.setPercentageBottle(0);
-    world.statusBarCoin.setPercentageCoin(0);
-    world.statusBarEndboss.setPercentageEndboss(100);
-    
-    // Character zurücksetzen
-    world.character.x = 100;
-    world.character.y = 230;
-    world.character.energy = 100;
-    world.character.coinAmount = 0;
-    world.character.bottleAmount = 0;
-    
-    gameStarted = true;
     
     // Audio-Einstellungen beibehalten
     if (gameIsMuted) {
@@ -202,6 +99,32 @@ function restartGame() {
     }
 }
 
+
+function cleanupGameInstance() {
+    if (world) {
+        // Animation Frame stoppen
+        if (world.animationFrame) {
+            cancelAnimationFrame(world.animationFrame);
+        }
+        
+        // Alle Intervalle stoppen
+        for (let i = 1; i < 9999; i++) {
+            window.clearInterval(i);
+        }
+        
+        // Alle Sounds stoppen
+        if (world.character) {
+            world.stopCharacterSounds();
+        }
+        
+        // Canvas leeren
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // World-Referenz löschen
+        world = null;
+    }
+}
 
 // Die Keyboard-Events nur aktivieren, wenn das Spiel gestartet wurde
 window.addEventListener("keydown", (e) => {
