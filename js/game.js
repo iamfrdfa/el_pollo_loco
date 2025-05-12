@@ -72,7 +72,7 @@ function stopGame() {
     /*document.getElementById('restartButton').style.display = 'block';*/
 }
 
-/*function restartGame() {
+function restartGame() {
     // Game Over Screens ausblenden
     document.getElementById('lost').style.display = 'none';
     document.getElementById('win').style.display = 'none';
@@ -200,7 +200,7 @@ function stopGame() {
     if (gameIsMuted) {
         muteSounds();
     }
-}*/
+}
 
 
 // Die Keyboard-Events nur aktivieren, wenn das Spiel gestartet wurde
@@ -224,8 +224,9 @@ window.addEventListener("keydown", (e) => {
     if (e.keyCode === 40) {
         keyboard.DOWN = true;
     }
-    if (e.keyCode === 68) {
+    if (e.keyCode === 68 && !keyboard.D_pressed) { // D-Taste
         keyboard.D = true;
+        keyboard.D_pressed = true; // Markiere die Taste als gedrückt
     }
 });
 
@@ -247,8 +248,9 @@ window.addEventListener("keyup", (e) => {
     if (e.keyCode === 40) {
         keyboard.DOWN = false;
     }
-    if (e.keyCode === 68) {
+    if (e.keyCode === 68) { // D-Taste
         keyboard.D = false;
+        keyboard.D_pressed = false; // Setze den Status zurück
     }
 });
 

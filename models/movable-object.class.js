@@ -20,7 +20,7 @@ class MovableObject extends DrawableObject {
         }, 1000 / 25);
     }
     
-    isAboveGround(){
+    isAboveGround() {
         if (this instanceof ThrowableObject) { //ThrowableObject should always fall
             return true;
         } else {

@@ -44,7 +44,6 @@ class World {
         });
     }
     
-    
     run() {
         setInterval(() => {
             this.checkCollisions();
@@ -54,10 +53,11 @@ class World {
                 this.checkThrowObjects();
                 setTimeout(() => {
                     this.bottleThrow = false;
-                }, 100)
+                }, 500);
             }
         }, 1000 / 60);
     }
+    
     
     checkGameEnd() {
         // Prüfen ob der Character tot ist oder der Endboss besiegt wurde
@@ -145,8 +145,14 @@ class World {
             );
             this.throwableObjects.push(bottle);
             this.character.bottleAmount--;
-            this.statusBarBottle.setPercentageBottle(this.character.bottleAmount * 20); // Prozentuale Anpassung
+            this.statusBarBottle.setPercentageBottle(this.character.bottleAmount * 20);
             this.character.throwBottle_sound.play();
+            
+            // Füge eine kurze Verzögerung hinzu, bevor die nächste Flasche geworfen werden kann
+            this.bottleThrow = true;
+            setTimeout(() => {
+                this.bottleThrow = false;
+            }, 500);
         } else if (this.keyboard.D && this.character.bottleAmount === 0) {
             this.character.weaponFail_sound.play();
         }

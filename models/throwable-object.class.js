@@ -42,7 +42,7 @@ class ThrowableObject extends MovableObject {
     }
     
     throw() {
-        this.speedY = 10;
+        this.speedY = 10; // Erhöhen für höheren Wurf
         this.applyGravity();
         
         setInterval(() => {
@@ -52,8 +52,19 @@ class ThrowableObject extends MovableObject {
                 } else {
                     this.x += 15;
                 }
+                
+                // Prüfen ob die Flasche den Boden berührt (y + height für die untere Kante der Flasche)
+                if (this.y + this.height > 430 && !this.hasHitObstacle) {
+                    this.playSplashAnimation();
+                    this.hasHitObstacle = true;
+                }
             }
         }, 50);
+    }
+    
+    isAboveGround() {
+        // Diese Methode lässt die Flasche immer fallen, bis sie den Boden berührt
+        return this.y + this.height < 430;
     }
     
     
