@@ -4,19 +4,42 @@ function muteGame() {
     gameIsMuted = true;
     muteSounds();
     
-    // Icons wechseln
-    document.getElementById('mute').style.display = 'none';
-    document.getElementById('unmute').style.display = 'block';
+    localStorage.setItem('gameIsMuted', JSON.stringify(gameIsMuted));
+    updateMuteUI();
 }
 
 function unmuteGame() {
     gameIsMuted = false;
     unmuteSounds();
-    
-    // Icons wechseln
-    document.getElementById('mute').style.display = 'block';
-    document.getElementById('unmute').style.display = 'none';
+    localStorage.setItem('gameIsMuted', JSON.stringify(gameIsMuted));
+    updateMuteUI();
 }
+
+// Beim Laden der Seite den gespeicherten Zustand abrufen
+function initAudioControl() {
+    const savedMuteState = localStorage.getItem('gameIsMuted');
+    if (savedMuteState !== null) {
+        gameIsMuted = JSON.parse(savedMuteState);
+        updateMuteUI();
+    }
+}
+
+function updateMuteUI() {
+    const muteButton = document.getElementById('mute');
+    const unmuteButton = document.getElementById('unmute');
+    
+    if (gameIsMuted) {
+        muteButton.style.display = 'none';
+        unmuteButton.style.display = 'block';
+    } else {
+        muteButton.style.display = 'block';
+        unmuteButton.style.display = 'none';
+    }
+}
+
+// Initialisierung beim Laden der Seite
+document.addEventListener('DOMContentLoaded', initAudioControl);
+
 
 function muteSounds() {
     if (typeof world !== 'undefined' && world && world.character) {
@@ -67,7 +90,6 @@ function checkAudioMute(audio) {
     }
 }
 
-// Alternative Methode: Überschreibe die Audio.prototype.play Methode
 const originalPlay = Audio.prototype.play;
 Audio.prototype.play = function() {
     if (!gameIsMuted) {

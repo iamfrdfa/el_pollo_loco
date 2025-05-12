@@ -13,6 +13,8 @@ function init() {
     // Reload-Button Event Listener hinzufügen
     document.getElementById('reload').addEventListener('click', startGame);
     
+    // Audio-Zustand initialisieren
+    initAudioControl();
 }
 
 function startGame() {
