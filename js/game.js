@@ -7,6 +7,18 @@ let gameStarted = false;
 function init() {
     canvas = document.getElementById("canvas");
     
+    // Orientierung initial prüfen
+    checkOrientation();
+    
+    // Event-Listener für Orientierungsänderungen
+    window.addEventListener('orientationchange', checkOrientation);
+    window.addEventListener('resize', checkOrientation);
+    
+    // Media Query Listener
+    const mediaQuery = window.matchMedia("(orientation: landscape)");
+    mediaQuery.addListener(checkOrientation);
+    
+    
     // Start-Button Event Listener hinzufügen
     document.getElementById('startButton').addEventListener('click', startGame);
     

@@ -192,7 +192,6 @@ canvas {
 .explanationIcon {
     display: flex;
     align-items: center;
-    gap: 10px;
 }
 
 p {
@@ -216,12 +215,11 @@ p {
 
 .imprint a {
     color: #BF0000;
-    font-size: 20px;
+    font-size: 22px;
     text-decoration: none;
 }
 
-.imprintWrapper {
-    width: 100%;
+.imprintData {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -230,11 +228,21 @@ p {
 
 .imprintData > p {
     color: #000000;
+    font-size: 22px;
 }
 
 .imprintData > a {
     color: #000000;
     text-decoration: none;
+    font-size: 22px;
+}
+
+.imprintWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 /* Anpassungen für die Game Over/Win Screens */
@@ -291,37 +299,92 @@ p {
     font-weight: lighter;
 }
 
-/* Responsive Anpassungen */
-@media (max-width: 768px) {
+/* Grundstil für das Orientierungs-Info */
+#orientationInfo {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#orientationInfo p {
+    color: white;
+    font-size: 24px;
+    padding: 20px;
+}
+
+/* Mobile Geräte im Hochformat */
+@media screen and (orientation: portrait) and (max-width: 768px) {
+    #orientationInfo {
+        display: flex !important;
+    }
+
     .canvas-container {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 720/480; /* Behält das Seitenverhältnis bei */
+        display: none;
     }
 
-    .explanationBar {
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-/* Smartphones ---------- */
-@media only screen and (max-width: 720px) {
-    canvas {
-        width: 100%;
-    }
-}
-
-/* Smartphones ---------- */
-@media only screen and (max-height: 760px) {
-    canvas {
-        height: 100vh;
-    }
-
-    h1 {
+    #explanationBar {
         display: none;
     }
 }
+
+/* Tablets und kleine Bildschirme */
+@media screen and (max-width: 1024px) {
+    .canvas-container {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    #canvas {
+        width: 100%;
+        height: auto;
+    }
+
+    .explanationBar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .explanationIcon {
+        margin: 10px;
+    }
+}
+
+/* Sehr kleine Bildschirme */
+@media screen and (max-width: 480px) {
+    h1#headline {
+        font-size: 24px;
+    }
+
+    .explanationIcon {
+        width: calc(50% - 20px);
+    }
+}
+
+/* Landscape-Modus auf Mobilgeräten */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    h1#headline {
+        font-size: 20px;
+        margin: 5px 0;
+    }
+
+    .canvas-container {
+        margin: 5px auto;
+    }
+
+    .explanationBar {
+        display: none;
+    }
+}
+
 
 .d-none {
     display: none !important;
