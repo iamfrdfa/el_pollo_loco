@@ -84,6 +84,7 @@ h1 {
 canvas {
     border-radius: 2vw;
 }
+
 #canvas {
     position: absolute;
     top: 0;
@@ -92,7 +93,7 @@ canvas {
     height: 100%;
 }
 
-/* Steuerelemente */
+/* Steuerelemente für Einstellungen */
 .canvas-controls {
     position: absolute;
     bottom: 10px;
@@ -100,47 +101,6 @@ canvas {
     z-index: 4;
     display: flex;
     gap: 10px;
-}
-
-/* Restart Button */
-#restartButton {
-    position: absolute;
-    bottom: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .canvas-container {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 720/480;
-    }
-
-    #startImage,
-    #lost,
-    #win {
-        width: 100%;
-        height: 100%;
-    }
-
-    #startButton {
-        width: 15%; /* Prozentuale Größe für responsive Darstellung */
-        min-width: 50px; /* Minimale Größe */
-        max-width: 100px; /* Maximale Größe */
-    }
-}
-
-/* Optional: Füge eine maximale Breite für sehr große Bildschirme hinzu */
-@media (min-width: 1200px) {
-    .canvas-container {
-        max-width: 720px;
-        max-height: 480px;
-    }
 }
 
 .canvas-icons {
@@ -164,6 +124,56 @@ canvas {
     height: 100%;
     object-fit: contain;
     opacity: 1;
+}
+
+.mobile-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: none;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.mobile-icons {
+    width: 40px !important;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.mobile-icons img {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    touch-action: auto;
+}
+
+.mobile-controls img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.move-button,
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 30% !important;
+}
+
+/* Restart Button */
+#restartButton {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    padding: 10px 20px;
+    cursor: pointer;
 }
 
 /* Erklärungsleiste unter dem Canvas */
@@ -299,7 +309,6 @@ p {
     font-weight: lighter;
 }
 
-/* Grundstil für das Orientierungs-Info */
 #orientationInfo {
     display: none;
     position: fixed;
@@ -320,18 +329,50 @@ p {
     padding: 20px;
 }
 
-/* Mobile Geräte im Hochformat */
-@media screen and (orientation: portrait) and (max-width: 768px) {
+/* Responsive Design */
+@media (max-width: 768px) {
+    #startImage,
+    #lost,
+    #win {
+        width: 100%;
+        height: 100%;
+    }
+
+    #startButton {
+        width: 15%; /* Prozentuale Größe für responsive Darstellung */
+        min-width: 50px; /* Minimale Größe */
+        max-width: 100px; /* Maximale Größe */
+    }
+}
+
+/* Optional: Füge eine maximale Breite für sehr große Bildschirme hinzu */
+@media (min-width: 1200px) {
+    .canvas-container {
+        max-width: 720px;
+        max-height: 480px;
+    }
+}
+
+/* Zeige orientationInfo nur wenn BEIDE Bedingungen erfüllt sind:
+   1. Bildschirmbreite unter 1000px
+   2. Portrait-Orientierung */
+@media screen and (max-width: 1000px) and (orientation: portrait) {
     #orientationInfo {
         display: flex !important;
     }
+}
 
-    .canvas-container {
-        display: none;
-    }
-
+/* Mobile Geräte im Hochformat */
+@media screen and (orientation: portrait) and (max-width: 768px) {
     #explanationBar {
         display: none;
+    }
+}
+
+@media screen and (orientation: landscape) and (max-width: 750px) {
+    .canvas-icons {
+        height: 30px;
+        width: 40px;
     }
 }
 
@@ -341,11 +382,6 @@ p {
         width: 100%;
         max-width: 720px;
         margin: 0 auto;
-    }
-
-    #canvas {
-        width: 100%;
-        height: auto;
     }
 
     .explanationBar {
@@ -372,19 +408,38 @@ p {
 /* Landscape-Modus auf Mobilgeräten */
 @media screen and (orientation: landscape) and (max-height: 500px) {
     h1#headline {
-        font-size: 20px;
-        margin: 5px 0;
+        display: none;
     }
 
     .canvas-container {
         margin: 5px auto;
     }
 
-    .explanationBar {
+    .explanationBar,
+    .imprint,
+    .canvas-controls {
         display: none;
+    }
+
+    #mobile-controls {
+        display: flex;
+        justify-content: space-between;
     }
 }
 
+@media screen and (orientation: landscape) and (max-height: 650px) {
+    h1#headline,
+    #explanationBar,
+    .imprint {
+        display: none;
+    }
+
+    #pageWrapper {
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+    }
+}
 
 .d-none {
     display: none !important;

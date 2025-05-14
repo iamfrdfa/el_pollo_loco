@@ -34,17 +34,27 @@ function startGame() {
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('canvas').style.display = 'block';
     
+    // Canvas-Steuerung ausblenden auf mobilen Geräten
+    if (window.matchMedia("(max-width: 1000px)").matches) {
+        document.querySelector('.canvas-controls').style.display = 'none';
+    }
+    
     // Neues Level und Welt erstellen
-    level1 = initLevel1(); // Funktion aus level1.js
+    level1 = initLevel1();
     world = new World(canvas, keyboard);
     
     gameStarted = true;
+    
+    // Mobile Touch Buttons hier initialisieren
+    mobileTouchButtons();
     
     // Audio-Einstellungen beibehalten
     if (gameIsMuted) {
         muteSounds();
     }
 }
+
+
 
 function stopGame() {
     // Spiel anhalten
@@ -59,6 +69,10 @@ function stopGame() {
     if (world && world.animationFrame) {
         cancelAnimationFrame(world.animationFrame);
     }
+    
+    // Mobile Steuerung ausblenden und Canvas-Steuerung einblenden
+    document.getElementById('mobileControls').style.display = 'none';
+    document.querySelector('.canvas-controls').style.display = 'flex';
     
     // Startscreen einblenden (enthält die anderen Elemente)
     document.getElementById('startScreen').style.display = 'flex';
@@ -78,9 +92,6 @@ function stopGame() {
         document.getElementById('win').style.display = 'block';
         document.getElementById('lost').style.display = 'none';
     }
-    
-    // Restart Button einblenden
-    /*document.getElementById('restartButton').style.display = 'block';*/
 }
 
 function restartGame() {
@@ -105,12 +116,14 @@ function restartGame() {
     keyboard = new Keyboard();
     bottleDirection = true;
     
+    // Touch-Buttons neu initialisieren
+    mobileTouchButtons();
+    
     // Audio-Einstellungen beibehalten
     if (gameIsMuted) {
         muteSounds();
     }
 }
-
 
 function cleanupGameInstance() {
     if (world) {
@@ -188,6 +201,55 @@ window.addEventListener("keyup", (e) => {
         keyboard.D_pressed = false; // Setze den Status zurück
     }
 });
+
+function mobileTouchButtons() {
+    // Zuerst mobile Controls anzeigen
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls) {
+        mobileControls.style.display = 'flex'; // oder 'block', je nach gewünschtem Layout
+    }
+
+    // Event Listener mit korrekten IDs
+    document.getElementById('walkLeft').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard.LEFT = true; // Anpassung an deine Keyboard-Klasse
+    });
+
+    document.getElementById('walkLeft').addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard.LEFT = false;
+    });
+
+    document.getElementById('walkRight').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard.RIGHT = true;
+    });
+
+    document.getElementById('walkRight').addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard.RIGHT = false;
+    });
+
+    document.getElementById('jumpIcon').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard.SPACE = true;
+    });
+
+    document.getElementById('jumpIcon').addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard.SPACE = false;
+    });
+
+    document.getElementById('throwBottleIcon').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard.D = true;
+    });
+
+    document.getElementById('throwBottleIcon').addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard.D = false;
+    });
+}
 
 document.addEventListener('keydown', evt => {
     if (evt.key === 'Escape') {
