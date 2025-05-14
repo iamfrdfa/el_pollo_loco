@@ -1,10 +1,34 @@
+/**
+ * Repräsentiert den Endboss im Spiel.
+ * Enthält Animationen, Bewegung, Kollisionslogik und Status-Flags.
+ * Erbt von MovableObject.
+ *
+ * @class
+ * @extends MovableObject
+ */
 class Endboss extends MovableObject {
     /**
-     * Grundlegende Eigenschaften des Endbosses
+     * Höhe des Endbosses in Pixeln.
+     * @type {number}
      */
     height = 400;
+    
+    /**
+     * Breite des Endbosses in Pixeln.
+     * @type {number}
+     */
     width = 300;
+    
+    /**
+     * Y-Position des Endbosses auf dem Spielfeld.
+     * @type {number}
+     */
     y = 55;
+    
+    /**
+     * Offset für die Kollisionslogik.
+     * @type {{top: number, bottom: number, right: number, left: number}}
+     */
     offset = {
         top: 70,
         bottom: 10,
@@ -13,7 +37,8 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Arrays für die verschiedenen Animations-Bilder
+     * Enthält Bildpfade für die Laufanimation.
+     * @type {string[]}
      */
     IMAGES_WALKING = [
         'img/4_enemy_boss_chicken/1_walk/G1.png',
@@ -22,12 +47,20 @@ class Endboss extends MovableObject {
         'img/4_enemy_boss_chicken/1_walk/G4.png'
     ];
     
+    /**
+     * Enthält Bildpfade für die "Hurt"-Animation.
+     * @type {string[]}
+     */
     IMAGES_HURT = [
         'img/4_enemy_boss_chicken/4_hurt/G21.png',
         'img/4_enemy_boss_chicken/4_hurt/G22.png',
         'img/4_enemy_boss_chicken/4_hurt/G23.png'
     ];
     
+    /**
+     * Enthält Bildpfade für die "Alert"-Warnanimation.
+     * @type {string[]}
+     */
     IMAGES_ALERT = [
         'img/4_enemy_boss_chicken/2_alert/G5.png',
         'img/4_enemy_boss_chicken/2_alert/G6.png',
@@ -39,6 +72,10 @@ class Endboss extends MovableObject {
         'img/4_enemy_boss_chicken/2_alert/G12.png'
     ];
     
+    /**
+     * Enthält Bildpfade für die Todesanimation.
+     * @type {string[]}
+     */
     IMAGES_DEATH = [
         'img/4_enemy_boss_chicken/5_dead/G24.png',
         'img/4_enemy_boss_chicken/5_dead/G25.png',
@@ -46,41 +83,117 @@ class Endboss extends MovableObject {
     ];
     
     /**
-     * Eigenschaften für Animation und Bewegung
+     * Referenz auf die Welt-Instanz.
+     * @type {Object}
      */
     world;
-    currentImage = 0;
-    animationInterval;
-    movementInterval;
-    isHurtAnimation = false;
-    isDying = false;
-    isMovingForward = true;
-    stepsForward = 0;
-    stepsBackward = 0;
-    maxStepsForward = 5;
-    maxStepsBackward = 3;
-    speed = 5;
-    endboss_hit = new Audio('audio/endboss-sound-intro.mp3');
-    hasTriggeredAlert = false; // Flag für einmalige Alert-Animation
-    isPlayingAlert = false;    // Flag für laufende Alert-Animation
-    alertAnimationFrame = 0;   // Zähler für Alert-Animation
     
     /**
-     * Initialisiert den Endboss mit Bildern und startet die Animationen
+     * Bildindex der aktuellen Animation.
+     * @type {number}
+     */
+    currentImage = 0;
+    
+    /**
+     * ID des Intervalls für Animationen.
+     * @type {number}
+     */
+    animationInterval;
+    
+    /**
+     * ID des Intervalls für die Bewegungslogik.
+     * @type {number}
+     */
+    movementInterval;
+    
+    /**
+     * Zeigt, ob momentan die Hurt-Animation läuft.
+     * @type {boolean}
+     */
+    isHurtAnimation = false;
+    
+    /**
+     * Zeigt, ob der Endboss stirbt.
+     * @type {boolean}
+     */
+    isDying = false;
+    
+    /**
+     * Bewegungsrichtung: true = vorwärts, false = rückwärts.
+     * @type {boolean}
+     */
+    isMovingForward = true;
+    
+    /**
+     * Anzahl der Schritte nach vorne.
+     * @type {number}
+     */
+    stepsForward = 0;
+    
+    /**
+     * Anzahl der Schritte nach hinten.
+     * @type {number}
+     */
+    stepsBackward = 0;
+    
+    /**
+     * Maximale Schritte vorwärts.
+     * @type {number}
+     */
+    maxStepsForward = 5;
+    
+    /**
+     * Maximale Schritte rückwärts.
+     * @type {number}
+     */
+    maxStepsBackward = 3;
+    
+    /**
+     * Bewegungsgeschwindigkeit.
+     * @type {number}
+     */
+    speed = 5;
+    
+    /**
+     * Audiospur für Treffer-Feedback.
+     * @type {HTMLAudioElement}
+     */
+    endboss_hit = new Audio('audio/endboss-sound-intro.mp3');
+    
+    /**
+     * Flag, ob die Alert-Animation einmalig ausgelöst wurde.
+     * @type {boolean}
+     */
+    hasTriggeredAlert = false;
+    
+    /**
+     * Flag, ob die Alert-Animation aktuell läuft.
+     * @type {boolean}
+     */
+    isPlayingAlert = false;
+    
+    /**
+     * Zähler für aktuelle Alert-Frame.
+     * @type {number}
+     */
+    alertAnimationFrame = 0;
+    
+    /**
+     * Initialisiert den Endboss mit allen Animationen, Bildern und startet Animation und Bewegung.
      */
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEATH);
-        this.loadImages(this.IMAGES_ALERT);  // Alert-Bilder laden
+        this.loadImages(this.IMAGES_ALERT);
         this.x = 2200;
         this.startAnimation();
         this.initMovement();
     }
     
     /**
-     * Startet die Alert-Animation einmalig
+     * Startet die Alert-Animation, wenn der Character in der Nähe ist – nur einmalig.
      */
     playAlertAnimation() {
         if (this.hasTriggeredAlert || this.isPlayingAlert) return;
@@ -97,9 +210,12 @@ class Endboss extends MovableObject {
                 this.hasTriggeredAlert = true;
                 clearInterval(alertInterval);
             }
-        }, 150); // Geschwindigkeit der Alert-Animation
+        }, 150);
     }
     
+    /**
+     * Startet die Hauptanimation des Endbosses (laufen, verletzt, etc.).
+     */
     startAnimation() {
         this.animationInterval = setInterval(() => {
             if (this.endbossEnergy <= 0) {
@@ -108,23 +224,27 @@ class Endboss extends MovableObject {
                 }
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
-            } else if (!this.isPlayingAlert) { // Nur normale Animation wenn keine Alert-Animation läuft
+            } else if (!this.isPlayingAlert) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 150);
     }
     
+    /**
+     * Bewegt den Endboss basierend auf der Distanz zum Character.
+     * Startet auch die Alert-Animation, wenn der Character nahekommt.
+     */
     moveBasedOnDistance() {
         if (!this.world || !this.world.character) return;
         
         const distance = this.x - this.world.character.x;
         
-        // Alert-Animation triggern wenn Character in die Nähe kommt
+        // Alert wenn nah genug
         if (distance <= 400 && !this.hasTriggeredAlert) {
             this.playAlertAnimation();
         }
         
-        // Bestehende Bewegungslogik
+        // Bewegungslogik vor/zurück
         if (distance <= 300) {
             if (this.isMovingForward) {
                 if (this.stepsForward < this.maxStepsForward) {
@@ -147,8 +267,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Initialisiert die Bewegungslogik des Endbosses
-     * Überprüft regelmäßig die Distanz zum Character und bewegt sich entsprechend
+     * Initialisiert das Bewegungsintervall und ruft regelmäßig moveBasedOnDistance auf.
      */
     initMovement() {
         this.movementInterval = setInterval(() => {
@@ -159,8 +278,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Spielt die Todesanimation einmalig ab
-     * Stoppt alle anderen Animationen und zeigt die Todessequenz
+     * Startet die Todesanimation, stoppt andere Intervalle und zeigt Sterbesequenz.
      */
     playDeathAnimation() {
         this.isDying = true;
@@ -180,8 +298,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Wird aufgerufen wenn der Endboss getroffen wird
-     * Reduziert die Energie und setzt den Zeitpunkt des letzten Treffers
+     * Führt einen Treffer auf den Endboss aus, setzt Energie herab und spielt Sound.
      */
     hit() {
         if (!this.isImmune()) {
@@ -190,13 +307,13 @@ class Endboss extends MovableObject {
                 this.endbossEnergy = 0;
             }
             this.lastHit = new Date().getTime();
-            this.endboss_hit.play(); // Spielt den Sound beim Treffer ab
+            this.endboss_hit.play();
         }
     }
     
     /**
-     * Prüft ob der Endboss verletzt ist
-     * @returns {boolean} true wenn der letzte Treffer weniger als 1 Sekunde her ist
+     * Prüft, ob der Endboss in letzter Zeit getroffen wurde (verletzt ist).
+     * @returns {boolean} Gibt true zurück, wenn letzter Treffer < 1 Sekunde her ist.
      */
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
@@ -205,8 +322,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Bewegt den Endboss nach links
-     * Überschreibt die moveLeft Methode von MovableObject
+     * Bewegt den Endboss nach links.
      */
     moveLeft() {
         this.x -= this.speed;
@@ -214,8 +330,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Bewegt den Endboss nach rechts
-     * Überschreibt die moveRight Methode von MovableObject
+     * Bewegt den Endboss nach rechts.
      */
     moveRight() {
         this.x += this.speed;
@@ -223,8 +338,8 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Spielt eine Animation basierend auf einem Bilder-Array ab
-     * @param {Array} images - Array mit Bildpfaden für die Animation
+     * Spielt eine Animation mit einem Array von Bildpfaden ab.
+     * @param {string[]} images - Array der zu verwendenden Bildpfade.
      */
     playAnimation(images) {
         let i = this.currentImage % images.length;

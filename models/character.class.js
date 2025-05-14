@@ -1,26 +1,78 @@
+/**
+ * Die Character-Klasse beschreibt den spielbaren Charakter inklusive Steuerung, Animationen
+ * und Sounds. Sie erbt von MovableObject.
+ *
+ * @class
+ * @extends MovableObject
+ */
 class Character extends MovableObject {
+    /**
+     * Die Höhe des Charakters in Pixel.
+     * @type {number}
+     */
     height = 200;
-    y =  130;
+    /**
+     * Die Y-Position des Charakters im Canvas.
+     * @type {number}
+     */
+    y = 130;
+    /**
+     * Die maximale Geschwindigkeit des Charakters.
+     * @type {number}
+     */
     speed = 20;
+    /**
+     * Referenz auf die Weltinstanz.
+     * @type {?World}
+     */
     world;
+    
+    /** @type {HTMLAudioElement} */
     walking_sound = new Audio('audio/walking.mp3');
+    /** @type {HTMLAudioElement} */
     hurt_sound = new Audio('audio/hurt_sound.mp3');
+    /** @type {HTMLAudioElement} */
     game_over = new Audio('audio/game_over.mp3');
+    /** @type {HTMLAudioElement} */
     coin_sound = new Audio('audio/coin_collect.mp3');
+    /** @type {HTMLAudioElement} */
     bottle_sound = new Audio('audio/glass-bottles.mp3');
+    /** @type {HTMLAudioElement} */
     throwBottle_sound = new Audio('audio/throw_sound.mp3');
+    /** @type {HTMLAudioElement} */
     chickenDeath_sound = new Audio('audio/chicken_death.mp3');
+    /** @type {HTMLAudioElement} */
     weaponFail_sound = new Audio('audio/fail.mp3');
+    /** @type {HTMLAudioElement} */
     snoring_sound = new Audio('audio/snoring.mp3');
+    
+    /**
+     * Kollisions-Offsets für genauere Collision-Checks.
+     * @type {{top: number, bottom: number, left: number, right: number}}
+     */
     offset = {
         top: 80,
         bottom: 10,
         left: 25,
         right: 25
     }
+    
+    /**
+     * Anzahl der eingesammelten Münzen.
+     * @type {number}
+     */
     coinAmount = 0;
+    
+    /**
+     * Anzahl der eingesammelten Flaschen.
+     * @type {number}
+     */
     bottleAmount = 0;
     
+    /**
+     * Bildpfade für bestehende Lauf-Animationen.
+     * @type {string[]}
+     */
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -30,24 +82,36 @@ class Character extends MovableObject {
         'img/2_character_pepe/2_walk/W-26.png'
     ];
     
+    /**
+     * Bildpfade für Sprung-Animationen.
+     * @type {string[]}
+     */
     IMAGES_JUMPING = [
-      'img/2_character_pepe/3_jump/J-31.png',
-      'img/2_character_pepe/3_jump/J-32.png',
-      'img/2_character_pepe/3_jump/J-33.png',
-      'img/2_character_pepe/3_jump/J-34.png',
-      'img/2_character_pepe/3_jump/J-35.png',
-      'img/2_character_pepe/3_jump/J-36.png',
-      'img/2_character_pepe/3_jump/J-37.png',
-      'img/2_character_pepe/3_jump/J-38.png',
-      'img/2_character_pepe/3_jump/J-39.png'
+        'img/2_character_pepe/3_jump/J-31.png',
+        'img/2_character_pepe/3_jump/J-32.png',
+        'img/2_character_pepe/3_jump/J-33.png',
+        'img/2_character_pepe/3_jump/J-34.png',
+        'img/2_character_pepe/3_jump/J-35.png',
+        'img/2_character_pepe/3_jump/J-36.png',
+        'img/2_character_pepe/3_jump/J-37.png',
+        'img/2_character_pepe/3_jump/J-38.png',
+        'img/2_character_pepe/3_jump/J-39.png'
     ];
     
+    /**
+     * Bildpfade für Hurt-Animationen.
+     * @type {string[]}
+     */
     IMAGES_HURT = [
         'img/2_character_pepe/4_hurt/H-41.png',
         'img/2_character_pepe/4_hurt/H-42.png',
         'img/2_character_pepe/4_hurt/H-43.png'
     ];
     
+    /**
+     * Bildpfade für Death-Animationen.
+     * @type {string[]}
+     */
     IMAGES_DEAD = [
         'img/2_character_pepe/5_dead/D-51.png',
         'img/2_character_pepe/5_dead/D-52.png',
@@ -58,6 +122,10 @@ class Character extends MovableObject {
         'img/2_character_pepe/5_dead/D-57.png'
     ];
     
+    /**
+     * Bildpfade für Idle-/Schlafanimationen.
+     * @type {string[]}
+     */
     IMAGES_SLEEPING = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
         'img/2_character_pepe/1_idle/idle/I-2.png',
@@ -78,16 +146,41 @@ class Character extends MovableObject {
         'img/2_character_pepe/1_idle/long_idle/I-18.png',
         'img/2_character_pepe/1_idle/long_idle/I-19.png',
         'img/2_character_pepe/1_idle/long_idle/I-20.png',
-    ]
+    ];
     
+    /**
+     * Letzter Zeitstempel der Aktivität.
+     * @type {number}
+     */
     lastActivity = new Date().getTime();
+    
+    /**
+     * Gibt an, ob der Charakter aktuell schläft (Inaktiv-Animation).
+     * @type {boolean}
+     */
     isSleeping = false;
+    
+    /**
+     * Index des aktuell angezeigten Animationsbilds.
+     * @type {number}
+     */
     currentImage = 0;
+    
+    /**
+     * ID des Intervals für die Animation.
+     * @type {number|undefined}
+     */
     animationInterval;
+    
+    /**
+     * ID des Intervals für Bewegung.
+     * @type {number|undefined}
+     */
     movementInterval;
     
     /**
-     * Initialisiert den Character mit Bildern und startet die Animationen
+     * Initialisiert den Character, lädt Animationen, wendet Schwerkraft an und startet die Animation.
+     * @constructor
      */
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
@@ -101,22 +194,22 @@ class Character extends MovableObject {
     }
     
     /**
-     * Steuert die Bewegungen und Animationen des Characters
+     * Steuert fortlaufend Bewegung und Animation des Charakters.
      */
     animate() {
-        // Bewegungs-Interval
+        // Bewegungssteuerung (z.B. durch Tasteneingaben)
         this.movementInterval = setInterval(() => {
             this.handleMovement();
         }, 1000 / 30);
         
-        // Animations-Interval
+        // Bildwechsel der Animation basierend auf Status
         this.animationInterval = setInterval(() => {
             this.updateAnimation();
         }, 100);
     }
     
     /**
-     * Verarbeitet die Bewegungseingaben und aktualisiert die Position
+     * Verarbeitet Eingaben und steuert Position sowie Sound des Charakters.
      */
     handleMovement() {
         this.walking_sound.pause();
@@ -144,7 +237,7 @@ class Character extends MovableObject {
     }
     
     /**
-     * Aktualisiert die aktuelle Animation basierend auf dem Charakterzustand
+     * Aktualisiert Animation und Sounds anhand des Charakterszustands (tot, verletzt, hüpfend, idle, laufend).
      */
     updateAnimation() {
         if (this.isDead()) {
@@ -173,8 +266,8 @@ class Character extends MovableObject {
     }
     
     /**
-     * Prüft, ob der Character länger als 5 Sekunden inaktiv war
-     * @returns {boolean} - true wenn inaktiv, sonst false
+     * Prüft, ob der Charakter länger als 7 Sekunden inaktiv war.
+     * @returns {boolean} true, wenn der Charakter "idle" ist.
      */
     isIdle() {
         let currentTime = new Date().getTime();
@@ -183,7 +276,7 @@ class Character extends MovableObject {
     }
     
     /**
-     * Setzt den Inaktivitäts-Timer zurück
+     * Setzt den Inaktivitäts-Timer zurück und beendet Schlafgeräusch.
      */
     resetIdleTimer() {
         this.lastActivity = new Date().getTime();
@@ -192,22 +285,24 @@ class Character extends MovableObject {
     }
     
     /**
-     * Heilt den Character wenn 5 Münzen gesammelt wurden
-     * @returns {boolean} true wenn Heilung erfolgt ist
+     * Heilt den Charakter um 20 Punkte, falls mindestens 5 Münzen gesammelt wurden und die Energie unter 100 liegt.
+     * Verringert die Münzanzahl um 5 und aktualisiert die Statusleisten.
+     *
+     * @returns {boolean} true, wenn Heilung durchgeführt wurde, sonst false.
      */
     healWithCoins() {
         if (this.coinAmount >= 5 && this.energy < 100) {
-            this.coinAmount -= 5; // 5 Münzen abziehen
-            this.energy = Math.min(this.energy + 20, 100); // Energie um 20 erhöhen, maximal 100
-            this.world.statusBar.setPercentage(this.energy); // Statusbar aktualisieren
-            this.world.statusBarCoin.setPercentageCoin(this.coinAmount); // Münzen-Statusbar aktualisieren
+            this.coinAmount -= 5;
+            this.energy = Math.min(this.energy + 20, 100);
+            this.world.statusBar.setPercentage(this.energy);
+            this.world.statusBarCoin.setPercentageCoin(this.coinAmount);
             return true;
         }
         return false;
     }
     
     /**
-     * Lässt den Character springen
+     * Lässt den Charakter springen, indem die Y-Geschwindigkeit gesetzt wird.
      */
     jump() {
         this.speedY = 20;

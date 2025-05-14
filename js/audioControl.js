@@ -1,5 +1,15 @@
+/**
+ * Globale Variable, die den Stummschaltungsstatus des Spiels speichert.
+ * @type {boolean}
+ */
 let gameIsMuted = false;
 
+/**
+ * Schaltet das gesamte Spiel stumm.
+ * Setzt das Flag, ruft das Stummschalten aller Sounds auf,
+ * speichert den Status im LocalStorage und aktualisiert die Benutzeroberfläche.
+ * @function
+ */
 function muteGame() {
     gameIsMuted = true;
     muteSounds();
@@ -8,6 +18,12 @@ function muteGame() {
     updateMuteUI();
 }
 
+/**
+ * Hebt die Stummschaltung des Spiels auf.
+ * Setzt das Flag zurück, ruft das Einschalten aller Sounds auf,
+ * speichert den Status im LocalStorage und aktualisiert die Benutzeroberfläche.
+ * @function
+ */
 function unmuteGame() {
     gameIsMuted = false;
     unmuteSounds();
@@ -15,7 +31,11 @@ function unmuteGame() {
     updateMuteUI();
 }
 
-// Beim Laden der Seite den gespeicherten Zustand abrufen
+/**
+ * Initialisiert die Audio-Verwaltung beim Laden der Seite.
+ * Stellt anhand des gespeicherten Stummschaltungsstatus die UI entsprechend ein.
+ * @function
+ */
 function initAudioControl() {
     const savedMuteState = localStorage.getItem('gameIsMuted');
     if (savedMuteState !== null) {
@@ -24,6 +44,10 @@ function initAudioControl() {
     }
 }
 
+/**
+ * Aktualisiert die Mute/Unmute-Benutzeroberfläche anhand des aktuellen Stummschaltungsstatus.
+ * @function
+ */
 function updateMuteUI() {
     const muteButton = document.getElementById('mute');
     const unmuteButton = document.getElementById('unmute');
@@ -37,10 +61,17 @@ function updateMuteUI() {
     }
 }
 
-// Initialisierung beim Laden der Seite
+/**
+ * Event-Listener, der die Audio-Verwaltung nach dem Laden der Seite initialisiert.
+ * @event DOMContentLoaded
+ */
 document.addEventListener('DOMContentLoaded', initAudioControl);
 
-
+/**
+ * Schaltet alle relevanten Sounds des Characters stumm.
+ * Diese Funktion wird intern von {@link muteGame} aufgerufen.
+ * @function
+ */
 function muteSounds() {
     if (typeof world !== 'undefined' && world && world.character) {
         const sounds = [
@@ -62,6 +93,11 @@ function muteSounds() {
     }
 }
 
+/**
+ * Schaltet alle relevanten Sounds des Characters wieder an.
+ * Diese Funktion wird intern von {@link unmuteGame} aufgerufen.
+ * @function
+ */
 function unmuteSounds() {
     if (typeof world !== 'undefined' && world && world.character) {
         const sounds = [
@@ -83,14 +119,29 @@ function unmuteSounds() {
     }
 }
 
-// Diese Funktion sollte bei der Erstellung neuer Audio-Objekte aufgerufen werden
+/**
+ * Sollte bei der Erstellung neuer Audio-Objekte aufgerufen werden,
+ * um zu prüfen, ob das Audio-Objekt bei globaler Stummschaltung auch stumm ist.
+ * @function
+ * @param {HTMLAudioElement} audio - Das zu prüfende Audio-Objekt
+ */
 function checkAudioMute(audio) {
     if (gameIsMuted) {
         audio.muted = true;
     }
 }
 
+/**
+ * Überschreibt die play-Methode des Audio-Prototyps, sodass bei Stummschaltung kein Ton abgespielt wird.
+ * @function
+ */
 const originalPlay = Audio.prototype.play;
+/**
+ * Spielt ein Audioelement nur ab, wenn das Spiel nicht stumm geschaltet ist.
+ * Gibt ansonsten ein Promise ohne Abspielen zurück (entkoppelt für die Play-Promise-API).
+ * @name Audio#play
+ * @function
+ */
 Audio.prototype.play = function() {
     if (!gameIsMuted) {
         return originalPlay.apply(this);

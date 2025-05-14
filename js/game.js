@@ -1,40 +1,61 @@
+/**
+ * Das HTML-Canvas-Element für das Spiel.
+ * @type {HTMLCanvasElement}
+ */
 let canvas;
+
+/**
+ * Instanz der jeweiligen Spielwelt.
+ * @type {World}
+ */
 let world;
+
+/**
+ * Instanz zur Speicherung des aktuellen Tastatur-Status.
+ * @type {Keyboard}
+ */
 let keyboard = new Keyboard();
+
+/**
+ * Richtung des Flaschenwurfs (true = rechts, false = links).
+ * @type {boolean}
+ */
 let bottleDirection = true;
+
+/**
+ * Gibt an, ob das Spiel gestartet wurde.
+ * @type {boolean}
+ */
 let gameStarted = false;
 
+/**
+ * Initialisiert das Spiel, Canvas und UI- & Event-Listener.
+ * Ruft auch Audio-Initialisierung auf.
+ * @function
+ */
 function init() {
     canvas = document.getElementById("canvas");
-    
-    // Orientierung initial prüfen
     checkOrientation();
-    
-    // Event-Listener für Orientierungsänderungen
     window.addEventListener('orientationchange', checkOrientation);
     window.addEventListener('resize', checkOrientation);
-    
-    // Media Query Listener
     const mediaQuery = window.matchMedia("(orientation: landscape)");
     mediaQuery.addListener(checkOrientation);
-    
-    
-    // Start-Button Event Listener hinzufügen
-    document.getElementById('startButton').addEventListener('click', startGame);
-    
-    // Diese Zeile entfernen oder ändern zu:
-    // document.getElementById('reload').addEventListener('click', restartGame);
     
     // Audio-Zustand initialisieren
     initAudioControl();
 }
 
+/**
+ * Startet das Spiel, blendet den Startbildschirm aus und zeigt das Spiel-Cavas an.
+ * Initialisiert einen Level und die Welt, sowie mobile Steuerungen.
+ * Stellt Audioeinstellungen entsprechend des globalen Status wieder her.
+ * @function
+ */
 function startGame() {
-    // Startbildschirm ausblenden
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('canvas').style.display = 'block';
     
-    // Canvas-Steuerung ausblenden auf mobilen Geräten
+    // Canvas-Steuerung auf mobilen Geräten ausblenden
     if (window.matchMedia("(max-width: 1000px)").matches) {
         document.querySelector('.canvas-controls').style.display = 'none';
     }
@@ -45,116 +66,102 @@ function startGame() {
     
     gameStarted = true;
     
-    // Mobile Touch Buttons hier initialisieren
+    // Mobile Touch-Buttons initialisieren
     mobileTouchButtons();
     
-    // Audio-Einstellungen beibehalten
+    // Audioeinstellungen anwenden
     if (gameIsMuted) {
         muteSounds();
     }
 }
 
-
-
+/**
+ * Stoppt das Spiel, zeigt Auswertungsbildschirme (verloren/gewonnen),
+ * setzt Interface-Elemente zurück und hält sämtliche Intervalle und Animationen an.
+ * @function
+ */
 function stopGame() {
-    // Spiel anhalten
     gameStarted = false;
-    
-    // Alle Intervalle stoppen
     for (let i = 1; i < 9999; i++) {
         window.clearInterval(i);
     }
-    
-    // Animation Frame stoppen
     if (world && world.animationFrame) {
         cancelAnimationFrame(world.animationFrame);
     }
     
-    // Mobile Steuerung ausblenden und Canvas-Steuerung einblenden
     document.getElementById('mobileControls').style.display = 'none';
     document.querySelector('.canvas-controls').style.display = 'flex';
-    
-    // Startscreen einblenden (enthält die anderen Elemente)
     document.getElementById('startScreen').style.display = 'flex';
-    
-    // Start-Button ausblenden
     document.getElementById('startButton').style.display = 'none';
-    // Start-Bild ausblenden
     document.getElementById('startImage').style.display = 'none';
     
-    // Game Over Screens verwalten
     if (world.character.isDead()) {
-        // Verloren-Bildschirm anzeigen
         document.getElementById('lost').style.display = 'block';
         document.getElementById('win').style.display = 'none';
     } else {
-        // Gewonnen-Bildschirm anzeigen
         document.getElementById('win').style.display = 'block';
         document.getElementById('lost').style.display = 'none';
     }
 }
 
+/**
+ * Setzt das Spiel komplett zurück, inklusive Canvas, Benutzeroberfläche, Instanzen und Zuständen.
+ * @function
+ */
 function restartGame() {
-    // Canvas ausblenden und alle Game Over Elemente zurücksetzen
     document.getElementById('canvas').style.display = 'none';
     document.getElementById('lost').style.display = 'none';
     document.getElementById('win').style.display = 'none';
     document.getElementById('restartButton').style.display = 'none';
     
-    // Wichtig: startScreen wieder sichtbar machen
     document.getElementById('startScreen').style.display = 'block';
     document.getElementById('startImage').style.display = 'block';
     document.getElementById('startButton').style.display = 'block';
     
-    // Spiel-Instanz aufräumen
     cleanupGameInstance();
     
-    // Spielzustand zurücksetzen
     gameStarted = false;
-    
-    // Tastatur-Events zurücksetzen
     keyboard = new Keyboard();
     bottleDirection = true;
     
-    // Touch-Buttons neu initialisieren
     mobileTouchButtons();
     
-    // Audio-Einstellungen beibehalten
+    // Audioeinstellungen anwenden
     if (gameIsMuted) {
         muteSounds();
     }
 }
 
+/**
+ * Räumt die aktuelle Spielinstanz auf, stoppt Animation, Intervalle und Sounds.
+ * Leert das Canvas.
+ * @function
+ */
 function cleanupGameInstance() {
     if (world) {
-        // Animation Frame stoppen
         if (world.animationFrame) {
             cancelAnimationFrame(world.animationFrame);
         }
-        
-        // Alle Intervalle stoppen
         for (let i = 1; i < 9999; i++) {
             window.clearInterval(i);
         }
-        
-        // Alle Sounds stoppen
         if (world.character) {
             world.stopCharacterSounds();
         }
-        
-        // Canvas leeren
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // World-Referenz löschen
         world = null;
     }
 }
 
-// Die Keyboard-Events nur aktivieren, wenn das Spiel gestartet wurde
+/**
+ * Aktiviert Keyboard-Events nur, wenn das Spiel gestartet ist.
+ * Setzt entsprechende Statusflags im Keyboard-Objekt.
+ * @event keydown
+ * @param {KeyboardEvent} e
+ */
 window.addEventListener("keydown", (e) => {
-    if (!gameStarted) return; // Ignore keyboard input if game hasn't started
-    
+    if (!gameStarted) return;
     if (e.keyCode === 32) {
         keyboard.SPACE = true;
     }
@@ -172,15 +179,19 @@ window.addEventListener("keydown", (e) => {
     if (e.keyCode === 40) {
         keyboard.DOWN = true;
     }
-    if (e.keyCode === 68 && !keyboard.D_pressed) { // D-Taste
+    if (e.keyCode === 68 && !keyboard.D_pressed) {
         keyboard.D = true;
-        keyboard.D_pressed = true; // Markiere die Taste als gedrückt
+        keyboard.D_pressed = true;
     }
 });
 
+/**
+ * Deaktiviert Keyboard-Status bei Loslassen der Taste, nur wenn Spiel läuft.
+ * @event keyup
+ * @param {KeyboardEvent} e
+ */
 window.addEventListener("keyup", (e) => {
-    if (!gameStarted) return; // Ignore keyboard input if game hasn't started
-    
+    if (!gameStarted) return;
     if (e.keyCode === 32) {
         keyboard.SPACE = false;
     }
@@ -196,67 +207,73 @@ window.addEventListener("keyup", (e) => {
     if (e.keyCode === 40) {
         keyboard.DOWN = false;
     }
-    if (e.keyCode === 68) { // D-Taste
+    if (e.keyCode === 68) {
         keyboard.D = false;
-        keyboard.D_pressed = false; // Setze den Status zurück
+        keyboard.D_pressed = false;
     }
 });
 
+/**
+ * Initialisiert Event-Listener für mobile Touch-Buttons und setzt ihr Verhalten.
+ * Blendet mobile Controls sichtbar ein.
+ * @function
+ */
 function mobileTouchButtons() {
-    // Zuerst mobile Controls anzeigen
     const mobileControls = document.getElementById('mobileControls');
     if (mobileControls) {
-        mobileControls.style.display = 'flex'; // oder 'block', je nach gewünschtem Layout
+        mobileControls.style.display = 'flex';
     }
-
-    // Event Listener mit korrekten IDs
+    
     document.getElementById('walkLeft').addEventListener('touchstart', (e) => {
         e.preventDefault();
-        keyboard.LEFT = true; // Anpassung an deine Keyboard-Klasse
+        keyboard.LEFT = true;
     });
-
+    
     document.getElementById('walkLeft').addEventListener('touchend', (e) => {
         e.preventDefault();
         keyboard.LEFT = false;
     });
-
+    
     document.getElementById('walkRight').addEventListener('touchstart', (e) => {
         e.preventDefault();
         keyboard.RIGHT = true;
     });
-
+    
     document.getElementById('walkRight').addEventListener('touchend', (e) => {
         e.preventDefault();
         keyboard.RIGHT = false;
     });
-
+    
     document.getElementById('jumpIcon').addEventListener('touchstart', (e) => {
         e.preventDefault();
         keyboard.SPACE = true;
     });
-
+    
     document.getElementById('jumpIcon').addEventListener('touchend', (e) => {
         e.preventDefault();
         keyboard.SPACE = false;
     });
-
+    
     document.getElementById('throwBottleIcon').addEventListener('touchstart', (e) => {
         e.preventDefault();
         keyboard.D = true;
     });
-
+    
     document.getElementById('throwBottleIcon').addEventListener('touchend', (e) => {
         e.preventDefault();
         keyboard.D = false;
     });
 }
 
+/**
+ * Tastatur Shortcuts zum Fullscreen und Spielstart, unabhängig vom restlichen Spielstatus.
+ * @event keydown
+ * @param {KeyboardEvent} evt
+ */
 document.addEventListener('keydown', evt => {
     if (evt.key === 'Escape') {
         toggleFullscreen();
-    }
-    
-    else if (evt.key === 's') {
+    } else if (evt.key === 's') {
         startGame();
     }
-})
+});

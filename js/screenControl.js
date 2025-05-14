@@ -1,37 +1,53 @@
-const originalWidth = 720;  // Original Canvas-Breite
-const originalHeight = 480; // Original Canvas-Höhe
+/**
+ * Ursprüngliche Breite des Canvas (in Pixel).
+ * @type {number}
+ */
+const originalWidth = 720;
+
+/**
+ * Ursprüngliche Höhe des Canvas (in Pixel).
+ * @type {number}
+ */
+const originalHeight = 480;
+
+/**
+ * Status, ob sich das Spiel aktuell im Fullscreen (Vollbildmodus) befindet.
+ * @type {boolean}
+ */
 let isFullscreen = false;
 
-
+/**
+ * Schaltet zwischen Vollbild- und Standarddarstellung des Canvas und der UI um.
+ * Passt Größen und Styles für das Canvas und Seitencontainer an.
+ * Blendet relevante UI-Elemente ein/aus und deaktiviert bzw. aktiviert das Scrolling.
+ * @function
+ */
 function toggleFullscreen() {
     const canvas = document.getElementById('canvas');
     const canvasContainer = document.querySelector('.canvas-container');
     const pageWrapper = document.getElementById('pageWrapper');
     
     if (!isFullscreen) {
-        // Bildschirmmaße ermitteln
+        // Bildschirmmaße und neues Seitenverhältnis berechnen
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
-        
-        // Seitenverhältnis des Canvas beibehalten
         const aspectRatio = originalWidth / originalHeight;
         let newWidth, newHeight;
         
         if (screenWidth / screenHeight > aspectRatio) {
-            newHeight = screenHeight * 0.9; // 90% der Bildschirmhöhe
+            newHeight = screenHeight * 0.9;
             newWidth = newHeight * aspectRatio;
         } else {
-            newWidth = screenWidth * 0.9; // 90% der Bildschirmbreite
+            newWidth = screenWidth * 0.9;
             newHeight = newWidth / aspectRatio;
         }
         
-        // Styles anwenden
+        // Styles für Vollbild setzen
         canvas.style.width = `${newWidth}px`;
         canvas.style.height = `${newHeight}px`;
         canvasContainer.style.width = `${newWidth}px`;
         canvasContainer.style.height = `${newHeight}px`;
         
-        // Container zentrieren und Vollbild-Styles anwenden
         pageWrapper.style.position = 'fixed';
         pageWrapper.style.top = '0';
         pageWrapper.style.left = '0';
@@ -43,7 +59,7 @@ function toggleFullscreen() {
         pageWrapper.style.alignItems = 'center';
         pageWrapper.style.zIndex = '1000';
         
-        // UI-Elemente anpassen
+        // UI-Elemente für Vollbild anpassen
         document.getElementById('fullscreen').style.display = 'none';
         document.getElementById('minimize').style.display = 'block';
         document.getElementById('headline').style.display = 'none';
@@ -53,13 +69,12 @@ function toggleFullscreen() {
         
         isFullscreen = true;
     } else {
-        // Zurück zur Original-Größe
+        // Zurück zur Originalgröße & Styles
         canvas.style.width = originalWidth + 'px';
         canvas.style.height = originalHeight + 'px';
         canvasContainer.style.width = originalWidth + 'px';
         canvasContainer.style.height = originalHeight + 'px';
         
-        // Container-Styles zurücksetzen
         pageWrapper.style.position = '';
         pageWrapper.style.top = '';
         pageWrapper.style.left = '';
@@ -71,60 +86,71 @@ function toggleFullscreen() {
         pageWrapper.style.alignItems = '';
         pageWrapper.style.zIndex = '';
         
-        // UI-Elemente zurücksetzen
         document.getElementById('fullscreen').style.display = 'block';
         document.getElementById('minimize').style.display = 'none';
         document.getElementById('headline').style.display = 'block';
         document.getElementById('explanationBar').style.display = 'none';
         
-        // Scrolling wieder aktivieren
         document.body.style.overflow = '';
         
         isFullscreen = false;
     }
 }
 
+/**
+ * Überprüft und steuert die Anzeige von Orientierungshinweisen für mobile Geräte.
+ * Zeigt bei Hochformat und auf Mobilgeräten die Info-Leiste an.
+ * Wird beim Laden, bei Änderung der Ausrichtung und beim Ändern der Fenstergröße verwendet.
+ * @function
+ */
 function checkOrientation() {
     const orientationInfo = document.getElementById('orientationInfo');
-    
-    // Prüfen ob das Element existiert
     if (!orientationInfo) return;
     
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (!isMobile) {
-        // Kein mobiles Gerät - Info immer ausblenden
         orientationInfo.style.display = 'none';
         return;
     }
     
-    // Prüfen der Orientation mit matchMedia
     const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-    
     if (isLandscape) {
-        // Querformat - Info ausblenden
         orientationInfo.style.display = 'none';
     } else {
-        // Hochformat - Info anzeigen
         orientationInfo.style.display = 'flex';
     }
 }
 
-
-// Initial beim Laden prüfen
+/**
+ * Initiale Prüfung der Geräteorientierung beim Laden der Seite.
+ * @event DOMContentLoaded
+ */
 checkOrientation();
 
-// Bei Orientierungsänderung prüfen
+/**
+ * Event-Listener für Geräteorientierung, löst Prüf-Funktion bei Orientierungswechsel aus.
+ * @event orientationchange
+ */
 window.addEventListener('orientationchange', checkOrientation);
 
-// Bei Größenänderung prüfen
+/**
+ * Event-Listener bei Fenstergrößenänderung, prüft entsprechend die Orientierung.
+ * @event resize
+ */
 window.addEventListener('resize', checkOrientation);
 
-// Media Query Listener
+/**
+ * MediaQuery Listener für Landscape-Modus, um auf Richtungsänderungen zu reagieren.
+ * @type {MediaQueryList}
+ */
 const mediaQuery = window.matchMedia("(orientation: landscape)");
 mediaQuery.addListener(checkOrientation);
 
-// Event-Listener für Bildschirmänderungen
+/**
+ * Doppelte Umschaltung des Fullscreen-Modus, falls im aktuellen Fullscreen und Fenstergröße geändert wird.
+ * @event resize
+ */
 window.addEventListener('resize', () => {
     if (isFullscreen) {
         toggleFullscreen();
@@ -132,14 +158,21 @@ window.addEventListener('resize', () => {
     }
 });
 
-// Event-Listener für ESC-Taste
+/**
+ * Event-Listener für die ESC-Taste zum Verlassen des Fullscreen-Modus.
+ * @event keydown
+ * @param {KeyboardEvent} e
+ */
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isFullscreen) {
         toggleFullscreen();
     }
 });
 
-// Event-Listener für Escape-Taste
+/**
+ * Setzt den Fullscreen-Modus bei einem Fullscreen-Event zurück, falls dieser verlassen wird.
+ * @event fullscreenchange
+ */
 document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement && isFullscreen) {
         toggleFullscreen();
