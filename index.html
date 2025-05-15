@@ -4,7 +4,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="assets/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/responsive.css">
     <link rel="icon" type="image/png" href="./img/3_enemies_chicken/chicken_normal/1_walk/1_w.png">
     
     
@@ -51,7 +52,7 @@
             
             <canvas width="720" height="480" id="canvas"></canvas>
             
-            <div class="canvas-controls">
+            <div id="canvas-controls" class="canvas-controls">
                 <div class="canvas-icons">
                     <img src="img/10_icons/icon-reload50.png" alt="Arrow Left" id="reload" onclick="restartGame()">
                 </div>
@@ -59,13 +60,13 @@
                     <img src="img/10_icons/mute.png" alt="Mute Button" id="mute" onclick="muteGame()">
                     <img src="img/10_icons/unmute.png" alt="Mute Button" id="unmute" style="display: none;" onclick="unmuteGame()">
                 </div>
-                <div class="canvas-icons">
+                <!--div class="canvas-icons">
                     <img src="img/10_icons/fullscreen.png" alt="Fullscreen" id="fullscreen" onclick="toggleFullscreen()">
                     <img src="img/10_icons/minimize.png" alt="Fullscreen" id="minimize" style="display: none;" onclick="toggleFullscreen()">
-                </div>
+                </div-->
             </div>
             
-            <div id="mobileControls" class="mobile-controls">
+            <div id="mobileControls" class="mobile-controls hidden">
                 <div class="move-button mobile-icons">
                     <img src="img/10_icons/mobile/icon-left-48.png" alt="Arrow Left" id="walkLeft">
                     <img src="img/10_icons/mobile/icon-right-48.png" alt="Arrow Right" id="walkRight">
@@ -139,7 +140,7 @@
             <a href="imprint.html" target="_blank">Impressum</a>
         </div>
         
-        <div id="infoOverlay" class="d-none" onclick="gameInfo()">
+        <div id="infoOverlay" class="hidden" onclick="gameInfo()">
             <div id="innerOverlay">
                 <div id="infoText">
                     <p>

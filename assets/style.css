@@ -4,12 +4,12 @@ html {
 
 @font-face {
     font-family: 'zabars';
-    src: url('fonts/zabars.ttf');
+    src: url('../fonts/zabars.ttf');
 }
 
 body {
     margin: 0;
-    background-image: url('img/0_background/desert.png');
+    background-image: url('../img/0_background/desert.png');
     font-family: 'zabars', Arial, Helvetica, sans-serif;
 }
 
@@ -126,12 +126,16 @@ canvas {
     opacity: 1;
 }
 
+#mobileControls {
+    display: none !important;
+}
+
 .mobile-controls {
     position: absolute;
     bottom: 20px;
     left: 0;
     right: 0;
-    display: none;
+    display: none !important;
     justify-content: space-between;
     padding: 0 20px;
     z-index: 1000;
@@ -165,17 +169,6 @@ canvas {
     width: 30% !important;
 }
 
-/* Restart Button */
-#restartButton {
-    position: absolute;
-    bottom: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
 /* Erklärungsleiste unter dem Canvas */
 .explanationBar {
     width: 720px;
@@ -197,11 +190,6 @@ canvas {
 
 .explanationIcon p {
     margin-left: 8px;
-}
-
-.explanationIcon {
-    display: flex;
-    align-items: center;
 }
 
 p {
@@ -255,23 +243,18 @@ p {
     flex-direction: column;
 }
 
-/* Anpassungen für die Game Over/Win Screens */
-#lost, #win {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 3;
-}
-
+/* Restart Button */
 #restartButton {
     position: absolute;
     bottom: 20%;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 3;
+    z-index: 9999;
     padding: 10px 20px;
     cursor: pointer;
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: orange;
 }
 
 #infoOverlay {
@@ -329,118 +312,6 @@ p {
     padding: 20px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    #startImage,
-    #lost,
-    #win {
-        width: 100%;
-        height: 100%;
-    }
-
-    #startButton {
-        width: 15%; /* Prozentuale Größe für responsive Darstellung */
-        min-width: 50px; /* Minimale Größe */
-        max-width: 100px; /* Maximale Größe */
-    }
-}
-
-/* Optional: Füge eine maximale Breite für sehr große Bildschirme hinzu */
-@media (min-width: 1200px) {
-    .canvas-container {
-        max-width: 720px;
-        max-height: 480px;
-    }
-}
-
-/* Zeige orientationInfo nur wenn BEIDE Bedingungen erfüllt sind:
-   1. Bildschirmbreite unter 1000px
-   2. Portrait-Orientierung */
-@media screen and (max-width: 1000px) and (orientation: portrait) {
-    #orientationInfo {
-        display: flex !important;
-    }
-}
-
-/* Mobile Geräte im Hochformat */
-@media screen and (orientation: portrait) and (max-width: 768px) {
-    #explanationBar {
-        display: none;
-    }
-}
-
-@media screen and (orientation: landscape) and (max-width: 750px) {
-    .canvas-icons {
-        height: 30px;
-        width: 40px;
-    }
-}
-
-/* Tablets und kleine Bildschirme */
-@media screen and (max-width: 1024px) {
-    .canvas-container {
-        width: 100%;
-        max-width: 720px;
-        margin: 0 auto;
-    }
-
-    .explanationBar {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .explanationIcon {
-        margin: 10px;
-    }
-}
-
-/* Sehr kleine Bildschirme */
-@media screen and (max-width: 480px) {
-    h1#headline {
-        font-size: 24px;
-    }
-
-    .explanationIcon {
-        width: calc(50% - 20px);
-    }
-}
-
-/* Landscape-Modus auf Mobilgeräten */
-@media screen and (orientation: landscape) and (max-height: 500px) {
-    h1#headline {
-        display: none;
-    }
-
-    .canvas-container {
-        margin: 5px auto;
-    }
-
-    .explanationBar,
-    .imprint,
-    .canvas-controls {
-        display: none;
-    }
-
-    #mobile-controls {
-        display: flex;
-        justify-content: space-between;
-    }
-}
-
-@media screen and (orientation: landscape) and (max-height: 650px) {
-    h1#headline,
-    #explanationBar,
-    .imprint {
-        display: none;
-    }
-
-    #pageWrapper {
-        width: 100vw;
-        height: 100vh;
-        padding: 0;
-    }
-}
-
-.d-none {
+.hidden {
     display: none !important;
 }

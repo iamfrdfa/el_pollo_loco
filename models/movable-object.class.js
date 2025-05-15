@@ -1,74 +1,74 @@
 /**
- * Diese Klasse repräsentiert ein bewegliches Objekt im Spiel.
- * Sie enthält Methoden für Bewegung, Kollision, Animation, Gravitation und Zustände wie Leben, Immunität, usw.
- * Erbt von {@link DrawableObject}.
+ * This class represents a movable object in the game.
+ * It includes methods for movement, collision, animation, gravity, and states like health, immunity, etc.
+ * Inherits from {@link DrawableObject}.
  *
  * @class
  * @extends DrawableObject
  */
 class MovableObject extends DrawableObject {
     /**
-     * Horizontale Bewegungs­geschwindigkeit.
+     * Horizontal movement speed.
      * @type {number}
      */
     speed = 0.15;
     
     /**
-     * Gibt an, ob die andere Richtung angenommen wird.
+     * Indicates whether the object is facing the opposite direction.
      * @type {boolean}
      */
     otherDirection = false;
     
     /**
-     * Vertikale Geschwindigkeit (z.B. fürs Springen).
+     * Vertical speed (e.g., for jumping).
      * @type {number}
      */
     speedY = 0;
     
     /**
-     * Beschleunigung in Y-Richtung (z.B. Schwerkraft).
+     * Acceleration in the Y direction (e.g., gravity).
      * @type {number}
      */
     acceleration = 1;
     
     /**
-     * Energie des Objekts (Lebenspunkte).
+     * Energy level (hit points).
      * @type {number}
      */
     energy = 100;
     
     /**
-     * Zeitpunkt des letzten Treffers (Zeitstempel in ms).
+     * Timestamp of the last hit (in ms).
      * @type {number}
      */
     lastHit = 0;
     
     /**
-     * Maximale Anzahl an sammelbaren Münzen.
+     * Maximum number of collectible coins.
      * @type {number}
      */
     maxCoinAmount = 5;
     
     /**
-     * Maximale Anzahl an sammelbaren Flaschen.
+     * Maximum number of collectible bottles.
      * @type {number}
      */
     maxBottleAmount = 5;
     
     /**
-     * Energie des Endbosses (falls zutreffend).
+     * Energy level of the endboss (if applicable).
      * @type {number}
      */
     endbossEnergy = 100;
     
     /**
-     * Immunitätsdauer nach Treffer in Sekunden.
+     * Immunity duration after being hit (in seconds).
      * @type {number}
      */
     immunityTime = 1;
     
     /**
-     * Wendet Schwerkraft auf das Objekt an und aktualisiert speedY (wird periodisch aufgerufen).
+     * Applies gravity to the object and updates speedY (called periodically).
      */
     applyGravity() {
         setInterval(() => {
@@ -80,10 +80,10 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Überprüft, ob sich das Objekt über dem Boden befindet.
-     * Bei ThrowableObject immer true, sonst y < 230.
+     * Checks whether the object is above the ground.
+     * Always true for ThrowableObject, otherwise y < 230.
      *
-     * @returns {boolean} true, wenn das Objekt über dem Boden ist
+     * @returns {boolean} true if above ground
      */
     isAboveGround() {
         if (this instanceof ThrowableObject) {
@@ -94,13 +94,13 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Prüft, ob dieses Objekt mit einem anderen kollidiert.
+     * Checks whether this object is colliding with another object.
      *
-     * @param {MovableObject} mo - Das andere Spielobjekt
-     * @returns {boolean} true, wenn eine Kollision vorliegt
+     * @param {MovableObject} mo - The other game object
+     * @returns {boolean} true if a collision is detected
      */
     isColliding(mo) {
-        // Offset ist in drawableObject.js definiert
+        // Offset is defined in drawableObject.js
         return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
             this.y + this.height - this.offset.bottom >= mo.y + mo.offset.top &&
             this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
@@ -108,8 +108,8 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Wird aufgerufen, wenn das Objekt (z.B. Character) getroffen wird.
-     * Reduziert Energie nur, wenn keine Immunität besteht.
+     * Called when the object (e.g., Character) is hit.
+     * Reduces energy only if not immune.
      */
     hit() {
         if (!this.isImmune()) {
@@ -120,13 +120,14 @@ class MovableObject extends DrawableObject {
             this.lastHit = new Date().getTime();
             if (this instanceof Character) {
                 this.world.statusBar.setPercentage(this.energy);
+                this.checkAndHealAfterHit(); // new line
             }
         }
     }
     
     /**
-     * Prüft, ob das Objekt kürzlich Schaden genommen hat (für Animation).
-     * @returns {boolean} true, wenn der letzte Treffer < 0,5 s zurückliegt
+     * Checks if the object was recently hurt (used for animation).
+     * @returns {boolean} true if the last hit was less than 0.5s ago
      */
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
@@ -135,8 +136,8 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Prüft, ob das Objekt aktuell immun gegen Schaden ist.
-     * @returns {boolean} true, wenn Immunitätszeit noch nicht abgelaufen
+     * Checks if the object is currently immune to damage.
+     * @returns {boolean} true if immunity is still active
      */
     isImmune() {
         if (this.lastHit === 0) return false;
@@ -146,8 +147,23 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Prüft, ob das Objekt (oder Endboss) tot ist.
-     * @returns {boolean} true, wenn Energie <= 0
+     * Checks if the character can be healed after taking damage,
+     * using collected coins. Resets coins if healed.
+     */
+    checkAndHealAfterHit() {
+        if (this.coinAmount >= this.maxCoinAmount && this.energy < 100) {
+            this.energy = Math.min(this.energy + 20, 100);
+            this.coinAmount = 0;
+            if (this instanceof Character) {
+                this.world.statusBar.setPercentage(this.energy);
+                this.world.statusBarCoin.setPercentageCoin(0);
+            }
+        }
+    }
+    
+    /**
+     * Checks whether the object (or endboss) is dead.
+     * @returns {boolean} true if energy <= 0
      */
     isDead() {
         if (this instanceof Endboss) {
@@ -157,8 +173,8 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Spielt eine Animation mit einem Array von Bildpfaden ab.
-     * @param {string[]} images - Bildpfade für die Animation
+     * Plays an animation using an array of image paths.
+     * @param {string[]} images - Array of image paths
      */
     playAnimation(images) {
         let i = this.currentImage % images.length;
@@ -168,21 +184,21 @@ class MovableObject extends DrawableObject {
     }
     
     /**
-     * Bewegt das Objekt nach rechts.
+     * Moves the object to the right.
      */
     moveRight() {
         this.x += this.speed;
     }
     
     /**
-     * Bewegt das Objekt nach links.
+     * Moves the object to the left.
      */
     moveLeft() {
         this.x -= this.speed;
     }
     
     /**
-     * Lässt das Objekt springen, setzt vertikale Geschwindigkeit.
+     * Makes the object jump by setting vertical speed.
      */
     jump() {
         this.speedY = 30;

@@ -1,3 +1,3 @@
 function gameInfo() {
-    document.getElementById('infoOverlay').classList.toggle('d-none');
+    document.getElementById('infoOverlay').classList.toggle('hidden');
 }

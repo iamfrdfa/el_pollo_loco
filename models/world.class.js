@@ -1,136 +1,27 @@
-/**
- * Die zentrale Klasse für die Spiellogik und Verwaltung der Spielwelt.
- * Sie ist für das Rendering, die Spielfiguren, Gegner und Events zuständig und steuert
- * das gesamte Geschehen im Hauptspielablauf.
- */
 class World {
-    /**
-     * Die Spielfigur.
-     * @type {Character}
-     */
     character = new Character();
-    
-    /**
-     * Das aktuelle Level.
-     * @type {Object}
-     */
     level = level1;
-    
-    /**
-     * Das Canvas-Element zur Darstellung des Spiels.
-     * @type {HTMLCanvasElement}
-     */
     canvas;
-    
-    /**
-     * Canvas-Kontext (2D) für Zeichnungen.
-     * @type {CanvasRenderingContext2D}
-     */
     ctx;
-    
-    /**
-     * Referenz auf das Tastatur-Objekt für Input-Handling.
-     * @type {Keyboard}
-     */
     keyboard;
-    
-    /**
-     * Horizontale Kamera-Position.
-     * @type {number}
-     */
     camera_x = 0;
-    
-    /**
-     * Statusleiste für Lebensenergie.
-     * @type {StatusBarHealth}
-     */
     statusBar = new StatusBarHealth();
-    
-    /**
-     * Statusleiste für Flaschen.
-     * @type {statusBarBottle}
-     */
     statusBarBottle = new statusBarBottle();
-    
-    /**
-     * Statusleiste für Münzen.
-     * @type {statusBarCoin}
-     */
     statusBarCoin = new statusBarCoin();
-    
-    /**
-     * Statusleiste für den Endboss.
-     * @type {statusBarEndboss}
-     */
     statusBarEndboss = new statusBarEndboss();
-    
-    /**
-     * Enthält geworfene Flaschen-Objekte.
-     * @type {ThrowableObject[]}
-     */
     throwableObjects = [];
-    
-    /**
-     * Startanzahl Flaschen-Treffer.
-     * @type {number}
-     */
     bottleHit = 20;
     
-    /**
-     * Flag, ob ein Gegner getroffen wurde.
-     * @type {boolean}
-     */
+    //Flags
     enemyIsHitted = false;
-    
-    /**
-     * Flag, ob gerade eine Flasche geworfen wurde.
-     * @type {boolean}
-     */
     bottleThrow = false;
+    initialSpawnDistance = 300; // Initialer Mindestabstand
+    normalSpawnDistance = 150;   // Normaler Mindestabstand
+    fastSpawnInterval = 500;    // 0,5 Sekunden für schnelles Spawnen
+    normalSpawnInterval = 2000; // 2 Sekunden für normales Spawnen
+    spawnIntervalId = null;     // Speichert die Interval ID
+    isGameStart = true;        // Flag für Spielstart
     
-    /**
-     * Mindestabstand zwischen Hühner-Spawns zu Beginn.
-     * @type {number}
-     */
-    initialSpawnDistance = 300;
-    
-    /**
-     * Mindestabstand zwischen Hühnern regulär.
-     * @type {number}
-     */
-    normalSpawnDistance = 150;
-    
-    /**
-     * Schnelles Spawning-Intervall in ms.
-     * @type {number}
-     */
-    fastSpawnInterval = 500;
-    
-    /**
-     * Normales Spawning-Intervall in ms.
-     * @type {number}
-     */
-    normalSpawnInterval = 2000;
-    
-    /**
-     * Interval-ID des Spawn-Timers.
-     * @type {?number}
-     */
-    spawnIntervalId = null;
-    
-    /**
-     * Flag, ob das Spiel gerade erst gestartet wurde.
-     * @type {boolean}
-     */
-    isGameStart = true;
-    
-    /**
-     * Konstruktor für die World.
-     * Initialisiert Canvas, Tastatur und startet das Spiel.
-     *
-     * @param {HTMLCanvasElement} canvas - Das Spielfeld.
-     * @param {Keyboard} keyboard - Die Inputsteuerung.
-     */
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
@@ -139,15 +30,12 @@ class World {
         this.setWorld();
         this.run();
         
-        // Nach 5 Sekunden auf normales Spawnen umschalten
+        // Nach 10 Sekunden auf normalen Spawn-Abstand umschalten
         setTimeout(() => {
             this.isGameStart = false;
         }, 5000);
     }
     
-    /**
-     * Verknüpft die Welt mit Charakter und Gegnern.
-     */
     setWorld() {
         this.character.world = this;
         // Setze die World-Referenz für alle Gegner
@@ -156,9 +44,6 @@ class World {
         });
     }
     
-    /**
-     * Startet die Überprüfungsspiele (Kollisionen, Spielende, Flaschenwurf).
-     */
     run() {
         setInterval(() => {
             this.checkCollisions();
@@ -173,22 +58,22 @@ class World {
         }, 1000 / 60);
     }
     
-    /**
-     * Prüft das Spielende: Entweder Character tot oder Endboss besiegt.
-     */
+    
     checkGameEnd() {
+        // Prüfen ob der Character tot ist oder der Endboss besiegt wurde
         if (this.character.isDead() || (this.level.enemies.find(e => e instanceof Endboss)?.isDead())) {
+            // Alle beweglichen Objekte entfernen
             this.clearGameObjects();
+            
+            // Kurze Verzögerung vor dem Spielende
             setTimeout(() => {
                 stopGame();
             }, 1000); // 1 Sekunde Verzögerung
+            
             return;
         }
     }
     
-    /**
-     * Entfernt alle aktiven Objekte (Figur, Gegner, Flaschen, Münzen).
-     */
     clearGameObjects() {
         // Character ausblenden und Sounds stoppen
         this.character.width = 0;
@@ -231,10 +116,8 @@ class World {
         }, 50);
     }
     
-    /**
-     * Stoppt alle Character-bezogenen Audioquellen.
-     */
     stopCharacterSounds() {
+        // Alle Character-Sounds stoppen
         if (this.character.walking_sound) this.character.walking_sound.pause();
         if (this.character.jumping_sound) this.character.jumping_sound.pause();
         if (this.character.hurt_sound) this.character.hurt_sound.pause();
@@ -247,19 +130,12 @@ class World {
         if (this.character.chickenDeath_sound) this.character.chickenDeath_sound.pause();
     }
     
-    /**
-     * Stoppt Sounds des Endbosses.
-     * @param {Object} endboss - Das Endboss-Objekt.
-     */
     stopEndbossSounds(endboss) {
+        // Alle Endboss-Sounds stoppen, falls vorhanden
         if (endboss.hurt_sound) endboss.hurt_sound.pause();
         if (endboss.endboss_hit) endboss.endboss_hit.pause();
     }
     
-    /**
-     * Prüft das Werfen eines Objekts durch die Spielfigur.
-     * Reduziert Flaschenanzahl oder spielt gescheiterten Wurf ab.
-     */
     checkThrowObjects() {
         if (this.character.bottleAmount > 0) {
             let bottle = new ThrowableObject(
@@ -272,6 +148,7 @@ class World {
             this.statusBarBottle.setPercentageBottle(this.character.bottleAmount * 20);
             this.character.throwBottle_sound.play();
             
+            // Füge eine kurze Verzögerung hinzu, bevor die nächste Flasche geworfen werden kann
             this.bottleThrow = true;
             setTimeout(() => {
                 this.bottleThrow = false;
@@ -282,29 +159,29 @@ class World {
     }
     
     /**
-     * Startet das Spawning-System für Hühner (Gegner).
+     * Startet das Chicken-Spawning System
      */
     startChickenSpawning() {
         this.spawnEnabled = true;
         this.isGameStart = true;
         
-        // Schnelles Spawnen
+        // Schnelles Spawnen für die ersten 5 Sekunden
         this.spawnIntervalId = setInterval(() => {
             this.spawnChicken();
         }, this.fastSpawnInterval);
         
+        // Nach 5 Sekunden auf normales Spawning umschalten
         setTimeout(() => {
             this.isGameStart = false;
+            // Altes Spawn-Intervall stoppen
             clearInterval(this.spawnIntervalId);
+            // Neues, langsameres Intervall starten
             this.spawnIntervalId = setInterval(() => {
                 this.spawnChicken();
             }, this.normalSpawnInterval);
         }, 5000);
     }
     
-    /**
-     * Fügt ein Chicken oder TinyChicken dem Level hinzu, falls möglich.
-     */
     spawnChicken() {
         if (!this.spawnEnabled) return;
         
@@ -322,14 +199,14 @@ class World {
             }
         }
         
-        // Entfernt Hühner, die zu weit links sind
+        // Entferne Hühner, die zu weit links sind
         this.level.enemies = this.level.enemies.filter(enemy => {
             return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
         });
     }
     
     /**
-     * Initialisiert das (langsamere) wiederholte Spawnen von Hühnern.
+     * Initialisiert das zufällige Spawnen von Hühnern
      */
     initChickenSpawning() {
         if (!this.spawnEnabled) return;
@@ -351,18 +228,14 @@ class World {
                 }
             }
             
-            // Entfernt Hühner, die zu weit links sind
+            // Entferne Hühner, die zu weit links sind
             this.level.enemies = this.level.enemies.filter(enemy => {
                 return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
             });
         }, 2000);
     }
     
-    /**
-     * Prüft, ob eine gegebene Spawn-Position ausreichend Abstand zum Character hat.
-     * @param {number} position - Die zu prüfende X-Position.
-     * @returns {boolean} Ob die Position geeignet ist.
-     */
+    
     isValidSpawnPosition(position) {
         const minDistance = this.isGameStart ? this.initialSpawnDistance : this.normalSpawnDistance;
         const distanceToCharacter = Math.abs(position - this.character.x);
@@ -370,9 +243,9 @@ class World {
     }
     
     /**
-     * Prüft, ob der Character von oben auf den Gegner springt.
-     * @param {MovableObject} enemy - Der Gegner.
-     * @returns {boolean} True, wenn von oben auf Gegner gesprungen wird.
+     * Prüft ob der Character von oben auf einen Gegner springt
+     * @param {MovableObject} enemy - Der Gegner
+     * @returns {boolean} true wenn der Character von oben auf den Gegner springt
      */
     isJumpingOnEnemy(enemy) {
         return this.character.isAboveGround() &&
@@ -383,10 +256,147 @@ class World {
     }
     
     /**
-     * Prüft und verarbeitet Kollisionen zwischen Spielfigur, Gegnern und Flaschen.
-     * Auch genaue Logik für Sprung auf Gegner und deren Tod.
+     * Function which is checking collision between character and enemies or bottle with enemies
      */
     checkCollisions() {
-        // ... Implementierung siehe Datei ...
+        // Kollision mit Gegnern prüfen
+        this.level.enemies.forEach((enemy) => {
+            if (this.character.isColliding(enemy)) {
+                if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
+                    if (this.isJumpingOnEnemy(enemy)) {
+                        // Character springt auf das Chicken
+                        enemy.playDeathAnimation();
+                        this.character.speedY = 15; // Kleiner Aufsprung
+                        this.character.chickenDeath_sound.play();
+                    } else if (!enemy.isDying) {
+                        // Normale Kollision nur wenn das Chicken noch nicht stirbt
+                        this.character.hit();
+                    }
+                } else {
+                    // Kollision mit anderen Gegnern (z.B. Endboss)
+                    this.character.hit();
+                }
+            }
+        });
+        
+        // Kollision zwischen Gegner und Flasche überprüfen
+        this.throwableObjects.forEach((thrownBottle) => {
+            this.level.enemies.forEach(enemy => {
+                if (thrownBottle.isColliding(enemy) && !thrownBottle.hasHitObstacle) {
+                    thrownBottle.hasHitObstacle = true;
+                    
+                    if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
+                        // Normale und kleine Hühner sterben sofort
+                        enemy.playDeathAnimation();
+                        this.character.chickenDeath_sound.play();
+                    } else if (enemy instanceof Endboss) {
+                        // Endboss nimmt Schaden
+                        enemy.hit(); // Der Sound wird jetzt in der hit() Methode des Endbosses abgespielt
+                        this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy);
+                    }
+                    
+                    thrownBottle.playSplashAnimation();
+                }
+            });
+            
+            if (thrownBottle.y > 450) {
+                this.throwableObjects.splice(thrownBottle);
+            }
+        });
+        
+        // Kollision mit Münzen überprüfen
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                if (this.character.coinAmount < this.character.maxCoinAmount) {
+                    this.character.coin_sound.play();
+                    this.character.coinAmount++;
+                    // Berechne den Prozentwert basierend auf 5 maximalen Münzen
+                    let percentage = (this.character.coinAmount / this.character.maxCoinAmount) * 100;
+                    this.statusBarCoin.setPercentageCoin(percentage);
+                    this.level.coins.splice(index, 1);
+                    
+                    // Prüfen ob Heilung möglich ist
+                    this.character.healWithCoins();
+                }
+            }
+        });
+        
+        // Kollision mit Flaschen überprüfen
+        this.level.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                if (this.character.bottleAmount < this.character.maxBottleAmount) {
+                    this.character.bottle_sound.play();
+                    this.character.bottleAmount++;
+                    // Berechne den Prozentwert basierend auf 5 maximalen Flaschen
+                    let percentage = (this.character.bottleAmount / this.character.maxBottleAmount) * 100;
+                    this.statusBarBottle.setPercentageBottle(percentage);
+                    this.level.bottles.splice(index, 1);
+                }
+            }
+        });
+        
+    }
+    
+    draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        
+        this.ctx.translate(-this.camera_x, 0);
+        // ------ Space for absolute fixed objects (e.g. health-bar) ------//
+        this.addToMap(this.statusBar);
+        this.addToMap(this.statusBarBottle);
+        this.addToMap(this.statusBarCoin);
+        this.addToMap(this.statusBarEndboss);
+        this.ctx.translate(this.camera_x, 0);
+        
+        // ------ Space for fixed objects in Canvas ------//
+        this.addObjectsToMap(this.level.bottles); // Flaschen zuerst zeichnen
+        this.addToMap(this.character);
+        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.throwableObjects);
+        this.addObjectsToMap(this.level.coins);
+        
+        this.ctx.translate(-this.camera_x, 0);
+        
+        // Draw wird immer wieder aufgerufen
+        let self = this;
+        this.animationFrame = requestAnimationFrame(function () {
+            self.draw();
+        });
+        
+    }
+    
+    addObjectsToMap(objects) {
+        objects.forEach(o => {
+            this.addToMap(o)
+        })
+    }
+    
+    addToMap(mo) {
+        if (mo.otherDirection) {
+            this.flipImage(mo);
+        }
+        mo.draw(this.ctx);
+        // mo.drawFrame(this.ctx);
+        // mo.drawBlueFrame(this.ctx);
+        
+        if (mo.otherDirection) {
+            this.flipImageBack(mo);
+        }
+    }
+    
+    flipImage(mo) {
+        this.ctx.save();
+        this.ctx.translate(mo.width, 0);
+        this.ctx.scale(-1, 1);
+        mo.x = mo.x * -1;
+    }
+    
+    flipImageBack(mo) {
+        mo.x = mo.x * -1;
+        this.ctx.restore();
     }
 }

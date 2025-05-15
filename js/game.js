@@ -55,8 +55,8 @@ function startGame() {
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('canvas').style.display = 'block';
     
-    // Canvas-Steuerung auf mobilen Geräten ausblenden
-    if (window.matchMedia("(max-width: 1000px)").matches) {
+    // Prüfe Bildschirmorientierung und Höhe für Canvas-Controls
+    if (window.matchMedia("(orientation: landscape)").matches && window.innerHeight <= 650) {
         document.querySelector('.canvas-controls').style.display = 'none';
     }
     
@@ -69,11 +69,20 @@ function startGame() {
     // Mobile Touch-Buttons initialisieren
     mobileTouchButtons();
     
+    // Erst nach Spielstart die Controls anzeigen
+    document.getElementById('mobileControls').classList.remove('hidden');
+    showMobileControls();
+    
     // Audioeinstellungen anwenden
     if (gameIsMuted) {
         muteSounds();
     }
+    
+    document.getElementById('mobileControls').classList.remove('hidden');
+    
+    showMobileControls();
 }
+
 
 /**
  * Stoppt das Spiel, zeigt Auswertungsbildschirme (verloren/gewonnen),
@@ -95,6 +104,7 @@ function stopGame() {
     document.getElementById('startButton').style.display = 'none';
     document.getElementById('startImage').style.display = 'none';
     
+    // Game Over oder Win Screen anzeigen
     if (world.character.isDead()) {
         document.getElementById('lost').style.display = 'block';
         document.getElementById('win').style.display = 'none';
@@ -102,7 +112,27 @@ function stopGame() {
         document.getElementById('win').style.display = 'block';
         document.getElementById('lost').style.display = 'none';
     }
+    
+    // Restart Button einblenden
+    document.getElementById('restartButton').style.display = 'block';
+    
+    document.getElementById('mobileControls').classList.add('hidden');
 }
+
+
+function showMobileControls() {
+    const mobileControls = document.getElementById('mobileControls');
+    if (window.innerHeight <= 650 && window.matchMedia('(orientation: landscape)').matches && gameStarted) {
+        mobileControls.classList.remove('hidden');
+        mobileControls.style.display = 'flex';
+    }
+}
+
+function hideMobileControls() {
+    const mobileControls = document.getElementById('mobileControls');
+    mobileControls.style.display = 'none';
+}
+
 
 /**
  * Setzt das Spiel komplett zurück, inklusive Canvas, Benutzeroberfläche, Instanzen und Zuständen.
@@ -219,11 +249,6 @@ window.addEventListener("keyup", (e) => {
  * @function
  */
 function mobileTouchButtons() {
-    const mobileControls = document.getElementById('mobileControls');
-    if (mobileControls) {
-        mobileControls.style.display = 'flex';
-    }
-    
     document.getElementById('walkLeft').addEventListener('touchstart', (e) => {
         e.preventDefault();
         keyboard.LEFT = true;
