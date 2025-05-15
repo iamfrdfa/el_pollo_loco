@@ -83,9 +83,9 @@ class Chicken extends MovableObject {
      * @returns {number} X-position for the chicken
      */
     getRandomPosition() {
-        const endBossPosition = 2200;        // End boss position
-        const safetyDistanceBoss = 350;      // Minimum distance to end boss
-        const maxAttempts = 10;              // Maximum attempts to find a position
+        const endBossPosition = 2200;
+        const safetyDistanceBoss = 350;
+        const maxAttempts = 10;
         let attempts = 0;
         let position;
         
@@ -93,8 +93,6 @@ class Chicken extends MovableObject {
             position = Math.random() * (endBossPosition - safetyDistanceBoss);
             attempts++;
             
-            // If no valid position is found after maxAttempts,
-            // place far to the right of the character
             if (attempts >= maxAttempts) {
                 position = this.world?.character?.x + 500 || 500;
                 break;
@@ -103,7 +101,7 @@ class Chicken extends MovableObject {
             this.world &&
             this.world.character &&
             !this.world.isValidSpawnPosition(position)
-            );
+        );
         
         return position;
     }
@@ -114,11 +112,11 @@ class Chicken extends MovableObject {
      * Prevents multiple executions.
      */
     playDeathAnimation() {
-        if (this.isDying) return; // Prevent multiple triggers
+        if (this.isDying) return;
         
         this.isDying = true;
         this.speed = 0; // Stop movement
-        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Show death image
+        this.img = this.imageCache[this.IMAGES_DEAD[0]];
         
         setTimeout(() => {
             // Direct removal from the enemies array
