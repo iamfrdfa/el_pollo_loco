@@ -10,17 +10,19 @@ class World {
     statusBarCoin = new statusBarCoin();
     statusBarEndboss = new statusBarEndboss();
     throwableObjects = [];
-    bottleHit = 20;
     
-    //Flags
+    // Flags
     enemyIsHitted = false;
     bottleThrow = false;
-    initialSpawnDistance = 300; // Initialer Mindestabstand
-    normalSpawnDistance = 150;   // Normaler Mindestabstand
-    fastSpawnInterval = 500;    // 0,5 Sekunden für schnelles Spawnen
-    normalSpawnInterval = 2000; // 2 Sekunden für normales Spawnen
-    spawnIntervalId = null;     // Speichert die Interval ID
-    isGameStart = true;        // Flag für Spielstart
+    initialSpawnDistance = 300;
+    normalSpawnDistance = 150;
+    fastSpawnInterval = 500;
+    normalSpawnInterval = 2000;
+    spawnIntervalId = null;
+    isGameStart = true;
+    
+    /** @type {HTMLAudioElement} */
+    game_sound = new Audio('audio/background_music.mp3');
     
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
@@ -29,8 +31,14 @@ class World {
         this.draw();
         this.setWorld();
         this.run();
+        this.game_sound.play();
+        this.game_sound.volume = 0.1;
         
-        // Nach 10 Sekunden auf normalen Spawn-Abstand umschalten
+        this.startChickenSpawning();
+        this.spawnEnabled = true; // Aktiviere das Spawning
+        this.initChickenSpawning(); // Starte das Chicken-Spawning
+        
+        
         setTimeout(() => {
             this.isGameStart = false;
         }, 5000);
@@ -38,7 +46,7 @@ class World {
     
     setWorld() {
         this.character.world = this;
-        // Setze die World-Referenz für alle Gegner
+        // Set the world reference for all enemies
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
         });
@@ -58,29 +66,28 @@ class World {
         }, 1000 / 60);
     }
     
-    
     checkGameEnd() {
-        // Prüfen ob der Character tot ist oder der Endboss besiegt wurde
         if (this.character.isDead() || (this.level.enemies.find(e => e instanceof Endboss)?.isDead())) {
-            // Alle beweglichen Objekte entfernen
+            if (this.character.isDead()) {
+                this.character.game_over.play();
+            }
             this.clearGameObjects();
             
-            // Kurze Verzögerung vor dem Spielende
             setTimeout(() => {
                 stopGame();
-            }, 1000); // 1 Sekunde Verzögerung
+            }, 1000);
             
             return;
         }
     }
     
     clearGameObjects() {
-        // Character ausblenden und Sounds stoppen
+        // Hide character and stop sounds
         this.character.width = 0;
         this.character.height = 0;
         this.stopCharacterSounds();
         
-        // Alle Gegner ausblenden und Sounds stoppen
+        // Hide all enemies and stop their sounds
         this.level.enemies.forEach(enemy => {
             enemy.width = 0;
             enemy.height = 0;
@@ -89,25 +96,25 @@ class World {
             }
         });
         
-        // Alle Flaschen ausblenden
+        // Hide all bottles
         this.level.bottles.forEach(bottle => {
             bottle.width = 0;
             bottle.height = 0;
         });
         
-        // Alle Münzen ausblenden
+        // Hide all coins
         this.level.coins.forEach(coin => {
             coin.width = 0;
             coin.height = 0;
         });
         
-        // Geworfene Flaschen ausblenden
+        // Hide all thrown bottles
         this.throwableObjects.forEach(obj => {
             obj.width = 0;
             obj.height = 0;
         });
         
-        // Arrays leeren
+        // Clear arrays
         setTimeout(() => {
             this.level.enemies = [];
             this.level.bottles = [];
@@ -117,21 +124,19 @@ class World {
     }
     
     stopCharacterSounds() {
-        // Alle Character-Sounds stoppen
         if (this.character.walking_sound) this.character.walking_sound.pause();
-        if (this.character.jumping_sound) this.character.jumping_sound.pause();
         if (this.character.hurt_sound) this.character.hurt_sound.pause();
-        if (this.character.dead_sound) this.character.dead_sound.pause();
         if (this.character.snoring_sound) this.character.snoring_sound.pause();
         if (this.character.bottle_sound) this.character.bottle_sound.pause();
         if (this.character.coin_sound) this.character.coin_sound.pause();
         if (this.character.weaponFail_sound) this.character.weaponFail_sound.pause();
         if (this.character.throwBottle_sound) this.character.throwBottle_sound.pause();
         if (this.character.chickenDeath_sound) this.character.chickenDeath_sound.pause();
+        if (this.game_sound) this.game_sound.pause();
     }
     
     stopEndbossSounds(endboss) {
-        // Alle Endboss-Sounds stoppen, falls vorhanden
+        // Stop all endboss sounds, if present
         if (endboss.hurt_sound) endboss.hurt_sound.pause();
         if (endboss.endboss_hit) endboss.endboss_hit.pause();
     }
@@ -148,7 +153,7 @@ class World {
             this.statusBarBottle.setPercentageBottle(this.character.bottleAmount * 20);
             this.character.throwBottle_sound.play();
             
-            // Füge eine kurze Verzögerung hinzu, bevor die nächste Flasche geworfen werden kann
+            // Add a short delay before the next bottle can be thrown
             this.bottleThrow = true;
             setTimeout(() => {
                 this.bottleThrow = false;
@@ -159,23 +164,21 @@ class World {
     }
     
     /**
-     * Startet das Chicken-Spawning System
+     * Starts the chicken spawning system
      */
     startChickenSpawning() {
         this.spawnEnabled = true;
         this.isGameStart = true;
         
-        // Schnelles Spawnen für die ersten 5 Sekunden
+        // Fast spawning for the first 5 seconds
         this.spawnIntervalId = setInterval(() => {
             this.spawnChicken();
         }, this.fastSpawnInterval);
         
-        // Nach 5 Sekunden auf normales Spawning umschalten
+        // Switch to normal spawning after 5 seconds
         setTimeout(() => {
             this.isGameStart = false;
-            // Altes Spawn-Intervall stoppen
             clearInterval(this.spawnIntervalId);
-            // Neues, langsameres Intervall starten
             this.spawnIntervalId = setInterval(() => {
                 this.spawnChicken();
             }, this.normalSpawnInterval);
@@ -185,7 +188,7 @@ class World {
     spawnChicken() {
         if (!this.spawnEnabled) return;
         
-        if (this.level.enemies.length < 10) {
+        if (this.level.enemies.length < 15) {
             let newChicken;
             if (Math.random() < 0.5) {
                 newChicken = new Chicken();
@@ -199,14 +202,14 @@ class World {
             }
         }
         
-        // Entferne Hühner, die zu weit links sind
+        // Remove chickens that are too far left
         this.level.enemies = this.level.enemies.filter(enemy => {
             return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
         });
     }
     
     /**
-     * Initialisiert das zufällige Spawnen von Hühnern
+     * Initializes random chicken spawning
      */
     initChickenSpawning() {
         if (!this.spawnEnabled) return;
@@ -228,13 +231,12 @@ class World {
                 }
             }
             
-            // Entferne Hühner, die zu weit links sind
+            // Remove chickens that are too far left
             this.level.enemies = this.level.enemies.filter(enemy => {
                 return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
             });
         }, 2000);
     }
-    
     
     isValidSpawnPosition(position) {
         const minDistance = this.isGameStart ? this.initialSpawnDistance : this.normalSpawnDistance;
@@ -243,55 +245,57 @@ class World {
     }
     
     /**
-     * Prüft ob der Character von oben auf einen Gegner springt
-     * @param {MovableObject} enemy - Der Gegner
-     * @returns {boolean} true wenn der Character von oben auf den Gegner springt
+     * Checks if the character jumps on an enemy from above
+     * @param {MovableObject} enemy - The enemy
+     * @returns {boolean} true if the character jumps on the enemy from above
      */
     isJumpingOnEnemy(enemy) {
-        return this.character.isAboveGround() &&
+        const isJumping = this.character.isAboveGround() &&
             this.character.speedY < 0 &&
             this.character.y + this.character.height > enemy.y &&
             this.character.x + this.character.width > enemy.x &&
             this.character.x < enemy.x + enemy.width;
+        
+        if (isJumping) {
+            this.character.y = enemy.y - this.character.height + 20;
+            this.character.speedY = 15;
+        }
+        
+        return isJumping;
     }
     
     /**
      * Function which is checking collision between character and enemies or bottle with enemies
      */
     checkCollisions() {
-        // Kollision mit Gegnern prüfen
+        // Check collision with enemies
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
                 if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
                     if (this.isJumpingOnEnemy(enemy)) {
-                        // Character springt auf das Chicken
                         enemy.playDeathAnimation();
-                        this.character.speedY = 15; // Kleiner Aufsprung
+                        this.character.speedY = 15;
                         this.character.chickenDeath_sound.play();
                     } else if (!enemy.isDying) {
-                        // Normale Kollision nur wenn das Chicken noch nicht stirbt
                         this.character.hit();
                     }
                 } else {
-                    // Kollision mit anderen Gegnern (z.B. Endboss)
                     this.character.hit();
                 }
             }
         });
         
-        // Kollision zwischen Gegner und Flasche überprüfen
+        // Check collision between enemies and bottle
         this.throwableObjects.forEach((thrownBottle) => {
             this.level.enemies.forEach(enemy => {
                 if (thrownBottle.isColliding(enemy) && !thrownBottle.hasHitObstacle) {
                     thrownBottle.hasHitObstacle = true;
                     
                     if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
-                        // Normale und kleine Hühner sterben sofort
                         enemy.playDeathAnimation();
                         this.character.chickenDeath_sound.play();
                     } else if (enemy instanceof Endboss) {
-                        // Endboss nimmt Schaden
-                        enemy.hit(); // Der Sound wird jetzt in der hit() Methode des Endbosses abgespielt
+                        enemy.hit(); // Sound is now played inside hit() method of the endboss
                         this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy);
                     }
                     
@@ -304,55 +308,49 @@ class World {
             }
         });
         
-        // Kollision mit Münzen überprüfen
+        // Check collision with coins
         this.level.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
                 if (this.character.coinAmount < this.character.maxCoinAmount) {
                     this.character.coin_sound.play();
                     this.character.coinAmount++;
-                    // Berechne den Prozentwert basierend auf 5 maximalen Münzen
                     let percentage = (this.character.coinAmount / this.character.maxCoinAmount) * 100;
                     this.statusBarCoin.setPercentageCoin(percentage);
                     this.level.coins.splice(index, 1);
-                    
-                    // Prüfen ob Heilung möglich ist
                     this.character.healWithCoins();
                 }
             }
         });
         
-        // Kollision mit Flaschen überprüfen
+        // Check collision with bottles
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
                 if (this.character.bottleAmount < this.character.maxBottleAmount) {
                     this.character.bottle_sound.play();
                     this.character.bottleAmount++;
-                    // Berechne den Prozentwert basierend auf 5 maximalen Flaschen
                     let percentage = (this.character.bottleAmount / this.character.maxBottleAmount) * 100;
                     this.statusBarBottle.setPercentageBottle(percentage);
                     this.level.bottles.splice(index, 1);
                 }
             }
         });
-        
     }
     
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
-        
         this.ctx.translate(-this.camera_x, 0);
-        // ------ Space for absolute fixed objects (e.g. health-bar) ------//
+        
+        // ------ Space for absolute fixed objects (e.g. health bar) ------//
         this.addToMap(this.statusBar);
         this.addToMap(this.statusBarBottle);
         this.addToMap(this.statusBarCoin);
         this.addToMap(this.statusBarEndboss);
         this.ctx.translate(this.camera_x, 0);
         
-        // ------ Space for fixed objects in Canvas ------//
-        this.addObjectsToMap(this.level.bottles); // Flaschen zuerst zeichnen
+        // ------ Space for fixed objects in canvas ------//
+        this.addObjectsToMap(this.level.bottles); // Draw bottles first
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
@@ -361,18 +359,16 @@ class World {
         
         this.ctx.translate(-this.camera_x, 0);
         
-        // Draw wird immer wieder aufgerufen
         let self = this;
         this.animationFrame = requestAnimationFrame(function () {
             self.draw();
         });
-        
     }
     
     addObjectsToMap(objects) {
         objects.forEach(o => {
-            this.addToMap(o)
-        })
+            this.addToMap(o);
+        });
     }
     
     addToMap(mo) {
@@ -380,9 +376,6 @@ class World {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        // mo.drawFrame(this.ctx);
-        // mo.drawBlueFrame(this.ctx);
-        
         if (mo.otherDirection) {
             this.flipImageBack(mo);
         }

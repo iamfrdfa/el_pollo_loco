@@ -1,32 +1,31 @@
 /**
- * Repräsentiert ein kleines Huhn als Gegnerobjekt im Spiel.
- * Erbt von MovableObject.
- *
+ * Represents a tiny chicken as an enemy object in the game.
+ * Inherits from MovableObject.
  * @class
  * @extends MovableObject
  */
 class TinyChicken extends MovableObject {
     /**
-     * Referenz auf die aktuelle Spielwelt.
+     * Reference to the current game world.
      * @type {?World}
      */
     world;
     
     /**
-     * Vertikale Position des kleinen Huhns.
+     * Vertical position of the tiny chicken.
      * @type {number}
      */
     y = 385;
     
     /**
-     * Höhe und Breite des kleinen Huhns (in Pixel).
+     * Height and width of the tiny chicken (in pixels).
      * @type {number}
      */
     height = 40;
     width = 50;
     
     /**
-     * Offset für Kollisionserkennung.
+     * Offset for collision detection.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
@@ -37,7 +36,7 @@ class TinyChicken extends MovableObject {
     }
     
     /**
-     * Bildpfade für die Laufanimation des kleinen Huhns.
+     * Image paths for the tiny chicken's walking animation.
      * @type {string[]}
      */
     IMAGES_WALKING = [
@@ -47,7 +46,7 @@ class TinyChicken extends MovableObject {
     ];
     
     /**
-     * Bildpfad für das tote kleine Huhn.
+     * Image path for the dead tiny chicken.
      * @type {string[]}
      */
     IMAGES_DEAD = [
@@ -55,21 +54,21 @@ class TinyChicken extends MovableObject {
     ]
     
     /**
-     * Gibt an, ob das kleine Huhn gerade stirbt.
+     * Indicates whether the tiny chicken is currently dying.
      * @type {boolean}
      */
     isDying = false;
     
     /**
-     * Erstellt eine neue Instanz TinyChicken und initialisiert sie.
-     * Lädt Bilder und startet die Animation.
+     * Creates a new instance of TinyChicken and initializes it.
+     * Loads images and starts the animation.
      *
      * @constructor
      */
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
-        super.loadImages(this.IMAGES_DEAD);  // Todesbild laden
+        super.loadImages(this.IMAGES_DEAD);  // Load death image
         
         this.x = this.getRandomPosition();
         this.speed = 0.2 + Math.random() * 0.6;
@@ -77,16 +76,15 @@ class TinyChicken extends MovableObject {
     }
     
     /**
-     * Generiert eine zufällige Position für das kleine Huhn.
-     * Platziert das Huhn im Spielfeld unter Berücksichtigung des Endbosses und Mindestabstands.
-     * Fällt zurück auf eine sichere Position, wenn keine valide Position gefunden wird.
-     *
-     * @returns {number} X-Position für das kleine Huhn
+     * Generates a random position for the tiny chicken.
+     * Places the chicken on the field considering the end boss and minimum distance.
+     * Falls back to a safe position if no valid position is found.
+     * @returns {number} X-position for the tiny chicken
      */
     getRandomPosition() {
-        const endBossPosition = 2200;        // Position des Endbosses
-        const safetyDistanceBoss = 350;      // Mindestabstand zum Endboss
-        const maxAttempts = 10;              // Maximale Versuche eine Position zu finden
+        const endBossPosition = 2200;        // End boss position
+        const safetyDistanceBoss = 350;      // Minimum distance to end boss
+        const maxAttempts = 10;              // Maximum attempts to find a position
         let attempts = 0;
         let position;
         
@@ -94,8 +92,8 @@ class TinyChicken extends MovableObject {
             position = Math.random() * (endBossPosition - safetyDistanceBoss);
             attempts++;
             
-            // Wenn nach maxAttempts keine valide Position gefunden wurde,
-            // position weit rechts vom Character platzieren
+            // If no valid position is found after maxAttempts,
+            // place far to the right of the character
             if (attempts >= maxAttempts) {
                 position = this.world?.character?.x + 500 || 500;
                 break;
@@ -110,18 +108,19 @@ class TinyChicken extends MovableObject {
     }
     
     /**
-     * Spielt die Todesanimation ab, zeigt das Todesbild und entfernt das kleine Huhn nach 1 Sekunde aus dem Spiel.
-     * Schützt vor Mehrfachausführung.
+     * Plays the death animation, shows the death image and removes the tiny chicken
+     * from the game after 1 second.
+     * Prevents multiple executions.
      */
     playDeathAnimation() {
-        if (this.isDying) return; // Verhindert mehrfaches Auslösen
+        if (this.isDying) return; // Prevent multiple triggers
         
         this.isDying = true;
-        this.speed = 0; // Bewegung stoppen
-        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Todesbild anzeigen
+        this.speed = 0; // Stop movement
+        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Show death image
         
         setTimeout(() => {
-            // Direkte Entfernung aus dem enemies Array
+            // Direct removal from the enemies array
             const index = this.world?.level?.enemies?.indexOf(this);
             if (this.world && index > -1) {
                 this.world.level.enemies.splice(index, 1);
@@ -130,8 +129,8 @@ class TinyChicken extends MovableObject {
     }
     
     /**
-     * Startet die Bewegungs- und Animationszyklen für das kleine Huhn.
-     * Bewegt das kleine Huhn nach links und spielt die Laufanimation ab, sofern es nicht stirbt.
+     * Starts the movement and animation cycles for the tiny chicken.
+     * Moves the tiny chicken to the left and plays the walking animation if not dying.
      */
     animate() {
         setInterval(() => {

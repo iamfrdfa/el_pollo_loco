@@ -1,54 +1,53 @@
 /**
- * Basisklasse für alle zeichnbaren Objekte im Spiel.
- * Stellt Position, Größe, Bildverarbeitung und Zeichenfunktionen bereit.
- *
+ * Base class for all drawable objects in the game.
+ * Provides position, size, image handling, and drawing functions.
  * @class
  */
 class DrawableObject {
     /**
-     * X-Position des Objektes auf dem Canvas.
+     * X-coordinate of the object on the canvas.
      * @type {number}
      */
     x = 120;
     
     /**
-     * Y-Position des Objektes auf dem Canvas.
+     * Y-coordinate of the object on the canvas.
      * @type {number}
      */
     y = 280;
     
     /**
-     * Höhe des Objektes in Pixel.
+     * Height of the object in pixels.
      * @type {number}
      */
     height = 150;
     
     /**
-     * Breite des Objektes in Pixel.
+     * Width of the object in pixels.
      * @type {number}
      */
     width = 100;
     
     /**
-     * Aktuell geladenes Bildobjekt.
+     * Currently loaded image object.
      * @type {HTMLImageElement|undefined}
      */
     img;
     
     /**
-     * Zwischenspeicher für alle geladene Bilder zum Objekt.
+     * Cache for all loaded images for the object.
      * @type {Object.<string,HTMLImageElement>}
      */
     imageCache = {};
     
     /**
-     * Index für das aktuell angezeigte Bild, z.B. für Animationen.
+     * Index for the currently displayed image, e.g., for animations.
      * @type {number}
      */
     currentImage = 0;
     
     /**
-     * Offset für den Kollisionsrahmen.
+     * Offset for the collision box.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
@@ -59,9 +58,8 @@ class DrawableObject {
     }
     
     /**
-     * Lädt ein einzelnes Bild für das Objekt.
-     *
-     * @param {string} path - Der Pfad zur Bilddatei.
+     * Loads a single image for the object.
+     * @param {string} path - The path to the image file.
      */
     loadImage(path) {
         this.img = new Image();
@@ -69,10 +67,9 @@ class DrawableObject {
     }
     
     /**
-     * Zeichnet das Objekt auf dem Canvas-Kontext.
-     * Zeigt eine Warnung, falls ein Bild nicht geladen werden kann.
-     *
-     * @param {CanvasRenderingContext2D} ctx - Zeichenkontext des Canvas.
+     * Draws the object on the canvas context.
+     * Displays a warning if an image cannot be loaded.
+     * @param {CanvasRenderingContext2D} ctx - The 2D rendering context of the canvas.
      */
     draw(ctx) {
         try {
@@ -84,10 +81,10 @@ class DrawableObject {
     }
     
     /**
-     * Zeichnet einen roten Rahmen um das Objekt (Hitbox).
-     * Nur für bestimmte Typen (z.B. Spielfiguren oder Gegner).
+     * Draws a red frame around the object (hitbox).
+     * Only for specific types (e.g., characters or enemies).
      *
-     * @param {CanvasRenderingContext2D} ctx - Zeichenkontext des Canvas.
+     * @param {CanvasRenderingContext2D} ctx - The 2D rendering context of the canvas.
      */
     drawFrame(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof TinyChicken || this instanceof Bottle || this instanceof Coins || this instanceof Endboss) {
@@ -105,10 +102,9 @@ class DrawableObject {
     }
     
     /**
-     * Zeichnet einen blauen Rahmen basierend auf dem Offset (Kollisionsrahmen).
-     * Nur für bestimmte Typen.
-     *
-     * @param {CanvasRenderingContext2D} ctx - Zeichenkontext des Canvas.
+     * Draws a blue frame based on the offset (collision box).
+     * Only for specific types.
+     * @param {CanvasRenderingContext2D} ctx - The 2D rendering context of the canvas.
      */
     drawBlueFrame(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof TinyChicken || this instanceof Bottle || this instanceof Coins || this instanceof Endboss) {
@@ -126,9 +122,8 @@ class DrawableObject {
     }
     
     /**
-     * Lädt mehrere Bilder, die für dieses Objekt benutzt werden (z.B. für Animationen).
-     *
-     * @param {string[]} arr - Array mit Pfaden zu den Bilddateien.
+     * Loads multiple images that are used for this object (e.g., for animations).
+     * @param {string[]} arr - Array with paths to the image files.
      */
     loadImages(arr) {
         arr.forEach((path) =>{

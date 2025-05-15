@@ -1,28 +1,28 @@
 /**
- * Stellt eine Flasche im Spiel dar, die gesammelt oder geworfen werden kann.
- * Diese Klasse erweitert MovableObject.
+ * Represents a bottle in the game that can be collected or thrown.
+ * This class extends MovableObject.
  */
 class Bottle extends MovableObject {
     /**
-     * Die Y-Position der Flasche.
+     * The Y position of the bottle.
      * @type {number}
      */
     y = 380;
     
     /**
-     * Die Höhe der Flasche.
+     * The height of the bottle.
      * @type {number}
      */
     height = 400 / 8;
     
     /**
-     * Die Breite der Flasche.
+     * The width of the bottle.
      * @type {number}
      */
     width = 400 / 8;
     
     /**
-     * Offset zur Kollisionsabfrage.
+     * Offset for collision detection.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
@@ -33,7 +33,7 @@ class Bottle extends MovableObject {
     }
     
     /**
-     * Array mit Bildpfaden für die Flasche auf dem Boden.
+     * Array with image paths for the bottle on the ground.
      * @type {string[]}
      */
     BOTTLE_ON_GROUND = [
@@ -41,13 +41,13 @@ class Bottle extends MovableObject {
     ];
     
     /**
-     * Erstellt eine neue Flasche.
+     * Creates a new bottle.
      */
     constructor() {
         super().loadImage('img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
         this.loadImages(this.BOTTLE_ON_GROUND);
         /**
-         * Die X-Position wird zufällig innerhalb des Bereichs gesetzt.
+         * The X position is randomly set within the range.
          * @type {number}
          */
         this.x = 100 + Math.random() * 2000;

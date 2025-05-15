@@ -1,15 +1,15 @@
 /**
- * Statusbalken für Münzen.
- * Diese Klasse zeigt grafisch an, wie viele Münzen eingesammelt wurden,
- * und aktualisiert das Statusbild je nach Prozentwert.
- * Erbt von {@link DrawableObject}.
+ * Status bar for coins.
+ * This class displays how many coins have been collected and
+ * updates the status image according to the percentage value.
+ * Inherits from {@link DrawableObject}.
  *
  * @class
  * @extends DrawableObject
  */
 class statusBarCoin extends DrawableObject {
     /**
-     * Array mit Bildpfaden für die unterschiedlichen Zustände des Münz-Statusbalkens.
+     * Array with image paths for the different states of the coin status bar.
      * @type {string[]}
      */
     COIN_STATUSBAR = [
@@ -22,32 +22,32 @@ class statusBarCoin extends DrawableObject {
     ];
     
     /**
-     * Prozentwert der eingesammelten Münzen (0–100).
+     * Percentage value of the collected coins (0–100).
      * @type {number}
      */
     percentage = 0;
     
     /**
-     * Legt eine neue Instanz der Münz-Statusbar an.
-     * Initialisiert Anzeige, Position und lädt alle Statusbilder.
+     * Creates a new instance of the coin status bar.
+     * Initializes display, position, and loads all status images.
      */
     constructor() {
         super();
         this.loadImages(this.COIN_STATUSBAR);
-        /** @type {number} X-Position im Canvas */
+        /** @type {number} X-position in the canvas */
         this.x = 20;
-        /** @type {number} Y-Position im Canvas */
+        /** @type {number} Y-position in the canvas */
         this.y = 85;
-        /** @type {number} Breite des Statusbalkens */
+        /** @type {number} Width of the status bar */
         this.width = 200;
-        /** @type {number} Höhe des Statusbalkens */
+        /** @type {number} Height of the status bar */
         this.height = 40;
         this.setPercentageCoin(0);
     }
     
     /**
-     * Setzt den Prozentwert und aktualisiert das angezeigte Statusbild.
-     * @param {number} percentage - Neuer Wert im Bereich 0–100
+     * Sets the percentage value and updates the displayed status image.
+     * @param {number} percentage - New value in the range 0–100
      */
     setPercentageCoin(percentage) {
         this.percentage = percentage;
@@ -56,8 +56,8 @@ class statusBarCoin extends DrawableObject {
     }
     
     /**
-     * Gibt den Index des Statusbildes für den aktuellen Prozentwert zurück.
-     * @returns {number} Index im COIN_STATUSBAR-Array
+     * Returns the index of the status image for the current percentage value.
+     * @returns {number} Index in the COIN_STATUSBAR array
      */
     resolveImageIndex() {
         if (this.percentage >= 100) {

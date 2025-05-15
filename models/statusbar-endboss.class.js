@@ -1,15 +1,15 @@
 /**
- * Statusbalken für den Endboss.
- * Diese Klasse zeigt an, wie viel Energie der Endboss aktuell noch hat
- * und aktualisiert die Statusanzeige anhand des aktuellen Prozentwerts.
- * Erbt von {@link DrawableObject}.
+ * Status bar for the end boss.
+ * This class displays how much energy the end boss currently has
+ * and updates the status display based on the current percentage.
+ * Inherits from {@link DrawableObject}.
  *
  * @class
  * @extends DrawableObject
  */
 class statusBarEndboss extends DrawableObject {
     /**
-     * Array mit Bildpfaden für die verschiedenen Zustände des Endboss-Statusbalkens.
+     * Array with image paths for the different states of the end boss status bar.
      * @type {string[]}
      */
     ENDBOSS_STATUSBAR = [
@@ -22,32 +22,32 @@ class statusBarEndboss extends DrawableObject {
     ];
     
     /**
-     * Prozentwert des Endboss-Lebens (0–100).
+     * Percentage value of the end boss's health (0–100).
      * @type {number}
      */
     percentage = 0;
     
     /**
-     * Erstellt eine neue Instanz des Endboss-Statusbalkens.
-     * Legt Position, Größe und Initialbild fest und lädt alle Statusbilder.
+     * Creates a new instance of the end boss status bar.
+     * Sets position, size, and initial image, and loads all status images.
      */
     constructor() {
         super();
         this.loadImages(this.ENDBOSS_STATUSBAR);
-        /** @type {number} X-Position im Canvas */
+        /** @type {number} X-position in the canvas */
         this.x = 500;
-        /** @type {number} Y-Position im Canvas */
+        /** @type {number} Y-position in the canvas */
         this.y = 13;
-        /** @type {number} Breite des Statusbalkens */
+        /** @type {number} Width of the status bar */
         this.width = 200;
-        /** @type {number} Höhe des Statusbalkens */
+        /** @type {number} Height of the status bar */
         this.height = 40;
         this.setPercentageEndboss(100);
     }
     
     /**
-     * Setzt den aktuellen Prozentwert und aktualisiert das Statusbild.
-     * @param {number} percentage - Neuer Prozentwert (0–100)
+     * Sets the current percentage value and updates the status image.
+     * @param {number} percentage - New percentage value (0–100)
      */
     setPercentageEndboss(percentage) {
         this.percentage = percentage;
@@ -56,8 +56,8 @@ class statusBarEndboss extends DrawableObject {
     }
     
     /**
-     * Ermittelt für den aktuellen Prozentwert den passenden Bildindex.
-     * @returns {number} Index im ENDBOSS_STATUSBAR-Array
+     * Determines the appropriate image index for the current percentage value.
+     * @returns {number} Index in the ENDBOSS_STATUSBAR array
      */
     resolveImageIndex() {
         if (this.percentage === 100) {

@@ -1,36 +1,36 @@
 /**
- * Das HTML-Canvas-Element für das Spiel.
+ * The HTML canvas element for the game.
  * @type {HTMLCanvasElement}
  */
 let canvas;
 
 /**
- * Instanz der jeweiligen Spielwelt.
+ * Instance of the current game world.
  * @type {World}
  */
 let world;
 
 /**
- * Instanz zur Speicherung des aktuellen Tastatur-Status.
+ * Instance for storing the current keyboard status.
  * @type {Keyboard}
  */
 let keyboard = new Keyboard();
 
 /**
- * Richtung des Flaschenwurfs (true = rechts, false = links).
+ * Direction of the bottle throw (true = right, false = left).
  * @type {boolean}
  */
 let bottleDirection = true;
 
 /**
- * Gibt an, ob das Spiel gestartet wurde.
+ * Indicates whether the game has started.
  * @type {boolean}
  */
 let gameStarted = false;
 
 /**
- * Initialisiert das Spiel, Canvas und UI- & Event-Listener.
- * Ruft auch Audio-Initialisierung auf.
+ * Initializes the game, canvas, UI & event listeners.
+ * Also calls audio initialization.
  * @function
  */
 function init() {
@@ -41,39 +41,42 @@ function init() {
     const mediaQuery = window.matchMedia("(orientation: landscape)");
     mediaQuery.addListener(checkOrientation);
     
-    // Audio-Zustand initialisieren
+    // Initialize audio state
     initAudioControl();
 }
 
 /**
- * Startet das Spiel, blendet den Startbildschirm aus und zeigt das Spiel-Cavas an.
- * Initialisiert einen Level und die Welt, sowie mobile Steuerungen.
- * Stellt Audioeinstellungen entsprechend des globalen Status wieder her.
+ * Starts the game, hides the start screen, and shows the game canvas.
+ * Initializes a level and the world, as well as mobile controls.
+ * Restores audio settings based on global status.
  * @function
  */
 function startGame() {
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('canvas').style.display = 'block';
     
-    // Prüfe Bildschirmorientierung und Höhe für Canvas-Controls
+    if (world) {
+        world.game_sound.play();
+    }
+    
+    // Check screen orientation and height for canvas controls
     if (window.matchMedia("(orientation: landscape)").matches && window.innerHeight <= 650) {
         document.querySelector('.canvas-controls').style.display = 'none';
     }
     
-    // Neues Level und Welt erstellen
     level1 = initLevel1();
     world = new World(canvas, keyboard);
     
     gameStarted = true;
     
-    // Mobile Touch-Buttons initialisieren
+    // Initialize mobile touch buttons
     mobileTouchButtons();
     
-    // Erst nach Spielstart die Controls anzeigen
+    // Show controls only after game start
     document.getElementById('mobileControls').classList.remove('hidden');
     showMobileControls();
     
-    // Audioeinstellungen anwenden
+    // Apply audio settings
     if (gameIsMuted) {
         muteSounds();
     }
@@ -85,8 +88,8 @@ function startGame() {
 
 
 /**
- * Stoppt das Spiel, zeigt Auswertungsbildschirme (verloren/gewonnen),
- * setzt Interface-Elemente zurück und hält sämtliche Intervalle und Animationen an.
+ * Stops the game, shows end screens (lost/won),
+ * resets UI elements, and halts all intervals and animations.
  * @function
  */
 function stopGame() {
@@ -104,7 +107,7 @@ function stopGame() {
     document.getElementById('startButton').style.display = 'none';
     document.getElementById('startImage').style.display = 'none';
     
-    // Game Over oder Win Screen anzeigen
+    // Show Game Over or Win Screen
     if (world.character.isDead()) {
         document.getElementById('lost').style.display = 'block';
         document.getElementById('win').style.display = 'none';
@@ -113,7 +116,7 @@ function stopGame() {
         document.getElementById('lost').style.display = 'none';
     }
     
-    // Restart Button einblenden
+    // Show Restart button
     document.getElementById('restartButton').style.display = 'block';
     
     document.getElementById('mobileControls').classList.add('hidden');
@@ -135,7 +138,7 @@ function hideMobileControls() {
 
 
 /**
- * Setzt das Spiel komplett zurück, inklusive Canvas, Benutzeroberfläche, Instanzen und Zuständen.
+ * Fully resets the game, including canvas, UI, instances, and states.
  * @function
  */
 function restartGame() {
@@ -156,15 +159,15 @@ function restartGame() {
     
     mobileTouchButtons();
     
-    // Audioeinstellungen anwenden
+    // Apply audio settings
     if (gameIsMuted) {
         muteSounds();
     }
 }
 
 /**
- * Räumt die aktuelle Spielinstanz auf, stoppt Animation, Intervalle und Sounds.
- * Leert das Canvas.
+ * Cleans up the current game instance, stops animation, intervals, and sounds.
+ * Clears the canvas.
  * @function
  */
 function cleanupGameInstance() {
@@ -185,8 +188,8 @@ function cleanupGameInstance() {
 }
 
 /**
- * Aktiviert Keyboard-Events nur, wenn das Spiel gestartet ist.
- * Setzt entsprechende Statusflags im Keyboard-Objekt.
+ * Enables keyboard events only when the game is started.
+ * Sets the corresponding status flags in the keyboard object.
  * @event keydown
  * @param {KeyboardEvent} e
  */
@@ -216,7 +219,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 /**
- * Deaktiviert Keyboard-Status bei Loslassen der Taste, nur wenn Spiel läuft.
+ * Disables keyboard status when keys are released, only if game is running.
  * @event keyup
  * @param {KeyboardEvent} e
  */
@@ -244,8 +247,8 @@ window.addEventListener("keyup", (e) => {
 });
 
 /**
- * Initialisiert Event-Listener für mobile Touch-Buttons und setzt ihr Verhalten.
- * Blendet mobile Controls sichtbar ein.
+ * Initializes event listeners for mobile touch buttons and sets their behavior.
+ * Shows mobile controls.
  * @function
  */
 function mobileTouchButtons() {
@@ -291,7 +294,7 @@ function mobileTouchButtons() {
 }
 
 /**
- * Tastatur Shortcuts zum Fullscreen und Spielstart, unabhängig vom restlichen Spielstatus.
+ * Keyboard shortcuts for fullscreen and starting the game, regardless of game state.
  * @event keydown
  * @param {KeyboardEvent} evt
  */

@@ -1,28 +1,30 @@
 /**
- * Die Character-Klasse beschreibt den spielbaren Charakter inklusive Steuerung, Animationen
- * und Sounds. Sie erbt von MovableObject.
- *
+ * The Character class defines the playable character, including controls, animations,
+ * and sounds. Inherits from MovableObject.
  * @class
  * @extends MovableObject
  */
 class Character extends MovableObject {
     /**
-     * Die Höhe des Charakters in Pixel.
+     * Height of the character in pixels.
      * @type {number}
      */
     height = 200;
+    
     /**
-     * Die Y-Position des Charakters im Canvas.
+     * Y-position of the character on the canvas.
      * @type {number}
      */
     y = 130;
+    
     /**
-     * Die maximale Geschwindigkeit des Charakters.
+     * Maximum speed of the character.
      * @type {number}
      */
     speed = 20;
+    
     /**
-     * Referenz auf die Weltinstanz.
+     * Reference to the world instance.
      * @type {?World}
      */
     world;
@@ -47,7 +49,7 @@ class Character extends MovableObject {
     snoring_sound = new Audio('audio/snoring.mp3');
     
     /**
-     * Kollisions-Offsets für genauere Collision-Checks.
+     * Collision offset values for accurate hit detection.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
@@ -58,19 +60,35 @@ class Character extends MovableObject {
     }
     
     /**
-     * Anzahl der eingesammelten Münzen.
+     * Number of collected coins.
      * @type {number}
      */
     coinAmount = 0;
     
     /**
-     * Anzahl der eingesammelten Flaschen.
+     * Number of collected bottles.
      * @type {number}
      */
     bottleAmount = 0;
     
     /**
-     * Bildpfade für bestehende Lauf-Animationen.
+     * Image paths for Idle animation.
+     * @type {string[]}
+     */
+    IMAGES_IDLE = [
+        'img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/2_character_pepe/1_idle/idle/I-9.png'
+    ];
+    
+    /**
+     * Image paths for walking animation.
      * @type {string[]}
      */
     IMAGES_WALKING = [
@@ -83,7 +101,7 @@ class Character extends MovableObject {
     ];
     
     /**
-     * Bildpfade für Sprung-Animationen.
+     * Image paths for jumping animation.
      * @type {string[]}
      */
     IMAGES_JUMPING = [
@@ -99,7 +117,7 @@ class Character extends MovableObject {
     ];
     
     /**
-     * Bildpfade für Hurt-Animationen.
+     * Image paths for hurt animation.
      * @type {string[]}
      */
     IMAGES_HURT = [
@@ -109,7 +127,7 @@ class Character extends MovableObject {
     ];
     
     /**
-     * Bildpfade für Death-Animationen.
+     * Image paths for death animation.
      * @type {string[]}
      */
     IMAGES_DEAD = [
@@ -123,19 +141,10 @@ class Character extends MovableObject {
     ];
     
     /**
-     * Bildpfade für Idle-/Schlafanimationen.
+     * Image paths for idle/sleeping animation.
      * @type {string[]}
      */
     IMAGES_SLEEPING = [
-        'img/2_character_pepe/1_idle/idle/I-1.png',
-        'img/2_character_pepe/1_idle/idle/I-2.png',
-        'img/2_character_pepe/1_idle/idle/I-3.png',
-        'img/2_character_pepe/1_idle/idle/I-4.png',
-        'img/2_character_pepe/1_idle/idle/I-5.png',
-        'img/2_character_pepe/1_idle/idle/I-6.png',
-        'img/2_character_pepe/1_idle/idle/I-7.png',
-        'img/2_character_pepe/1_idle/idle/I-8.png',
-        'img/2_character_pepe/1_idle/idle/I-9.png',
         'img/2_character_pepe/1_idle/long_idle/I-11.png',
         'img/2_character_pepe/1_idle/long_idle/I-12.png',
         'img/2_character_pepe/1_idle/long_idle/I-13.png',
@@ -149,67 +158,67 @@ class Character extends MovableObject {
     ];
     
     /**
-     * Letzter Zeitstempel der Aktivität.
+     * Timestamp of the last activity.
      * @type {number}
      */
     lastActivity = new Date().getTime();
     
     /**
-     * Gibt an, ob der Charakter aktuell schläft (Inaktiv-Animation).
+     * Indicates whether the character is currently sleeping (idle animation).
      * @type {boolean}
      */
     isSleeping = false;
     
     /**
-     * Index des aktuell angezeigten Animationsbilds.
+     * Index of the currently displayed animation image.
      * @type {number}
      */
     currentImage = 0;
     
     /**
-     * ID des Intervals für die Animation.
+     * Interval ID for animation.
      * @type {number|undefined}
      */
     animationInterval;
     
     /**
-     * ID des Intervals für Bewegung.
+     * Interval ID for movement.
      * @type {number|undefined}
      */
     movementInterval;
     
     /**
-     * Initialisiert den Character, lädt Animationen, wendet Schwerkraft an und startet die Animation.
+     * Initializes the character, loads animations, applies gravity, and starts animation.
      * @constructor
      */
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
+        super.loadImages(this.IMAGES_IDLE);
         super.loadImages(this.IMAGES_WALKING);
         super.loadImages(this.IMAGES_JUMPING);
         super.loadImages(this.IMAGES_HURT);
         super.loadImages(this.IMAGES_DEAD);
         super.loadImages(this.IMAGES_SLEEPING);
+        this.chickenDeath_sound.volume = 0.1;
         this.applyGravity();
         this.animate();
     }
     
     /**
-     * Steuert fortlaufend Bewegung und Animation des Charakters.
+     * Continuously handles movement and animation of the character.
      */
     animate() {
-        // Bewegungssteuerung (z.B. durch Tasteneingaben)
         this.movementInterval = setInterval(() => {
             this.handleMovement();
         }, 1000 / 30);
         
-        // Bildwechsel der Animation basierend auf Status
         this.animationInterval = setInterval(() => {
             this.updateAnimation();
         }, 100);
     }
     
     /**
-     * Verarbeitet Eingaben und steuert Position sowie Sound des Charakters.
+     * Handles user input to control movement and sound effects.
      */
     handleMovement() {
         this.walking_sound.pause();
@@ -237,37 +246,34 @@ class Character extends MovableObject {
     }
     
     /**
-     * Aktualisiert Animation und Sounds anhand des Charakterszustands (tot, verletzt, hüpfend, idle, laufend).
+     * Updates the animation and plays sounds based on character state.
      */
     updateAnimation() {
         if (this.isDead()) {
             this.playAnimation(this.IMAGES_DEAD);
-            this.game_over.play();
             clearInterval(this.movementInterval);
             clearInterval(this.animationInterval);
-        }
-        else if (this.isHurt()) {
+        } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
             this.hurt_sound.play();
             this.resetIdleTimer();
-        }
-        else if (this.isAboveGround()) {
+        } else if (this.isAboveGround()) {
             this.playAnimation(this.IMAGES_JUMPING);
             this.resetIdleTimer();
-        }
-        else if (this.isIdle()) {
+        } else if (this.isIdle()) {
             this.playAnimation(this.IMAGES_SLEEPING);
             this.isSleeping = true;
             this.snoring_sound.play();
-        }
-        else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMAGES_WALKING);
+        } else if (!this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_IDLE);
         }
     }
     
     /**
-     * Prüft, ob der Charakter länger als 7 Sekunden inaktiv war.
-     * @returns {boolean} true, wenn der Charakter "idle" ist.
+     * Checks whether the character has been idle for more than 7 seconds.
+     * @returns {boolean} true if character is idle.
      */
     isIdle() {
         let currentTime = new Date().getTime();
@@ -276,7 +282,7 @@ class Character extends MovableObject {
     }
     
     /**
-     * Setzt den Inaktivitäts-Timer zurück und beendet Schlafgeräusch.
+     * Resets idle timer and stops snoring sound.
      */
     resetIdleTimer() {
         this.lastActivity = new Date().getTime();
@@ -285,10 +291,9 @@ class Character extends MovableObject {
     }
     
     /**
-     * Heilt den Charakter um 20 Punkte, falls mindestens 5 Münzen gesammelt wurden und die Energie unter 100 liegt.
-     * Verringert die Münzanzahl um 5 und aktualisiert die Statusleisten.
-     *
-     * @returns {boolean} true, wenn Heilung durchgeführt wurde, sonst false.
+     * Heals the character by 20 points if at least 5 coins are collected and energy is below 100.
+     * Reduces coin count by 5 and updates status bars.
+     * @returns {boolean} true if healing was performed, otherwise false.
      */
     healWithCoins() {
         if (this.coinAmount >= 5 && this.energy < 100) {
@@ -302,7 +307,7 @@ class Character extends MovableObject {
     }
     
     /**
-     * Lässt den Charakter springen, indem die Y-Geschwindigkeit gesetzt wird.
+     * Makes the character jump by setting the vertical speed.
      */
     jump() {
         this.speedY = 20;

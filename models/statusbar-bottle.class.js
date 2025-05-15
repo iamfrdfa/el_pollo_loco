@@ -1,15 +1,15 @@
 /**
- * Statusbalken für Flaschen.
- * Diese Klasse zeigt den aktuellen Füllstand der gesammelten Flaschen an und
- * aktualisiert grafisch die Anzeige je nach Prozentwert.
- * Erbt von {@link DrawableObject}.
+ * Status bar for bottles.
+ * This class displays the current level of collected bottles and
+ * updates the display graphically according to the percentage value.
+ * Inherits from {@link DrawableObject}.
  *
  * @class
  * @extends DrawableObject
  */
 class statusBarBottle extends DrawableObject {
     /**
-     * Array mit den Bildpfaden für die unterschiedlichen Statusanzeigen der Flaschen.
+     * Array with the image paths for the different status displays of the bottles.
      * @type {string[]}
      */
     BOTTLE_STATUSBAR = [
@@ -22,37 +22,37 @@ class statusBarBottle extends DrawableObject {
     ];
     
     /**
-     * Prozentwert der gesammelten Flaschen.
+     * Percentage value of the collected bottles.
      * @type {number}
      */
     percentage = 0;
     
     /**
-     * Erstellt eine neue Instanz des Flaschen-Statusbalkens und initialisiert das Bild sowie Position und Größe.
+     * Creates a new instance of the bottle status bar and initializes the image, position, and size.
      */
     constructor() {
         super();
-        // Standardbild initial laden
+        // Load default image initially
         this.loadImage(this.BOTTLE_STATUSBAR[0]);
-        // Alle Bilder für die verschiedenen Statusstände laden
+        // Load all images for the different status levels
         this.loadImages(this.BOTTLE_STATUSBAR);
         /**
-         * X-Position im Canvas.
+         * X-position in the canvas.
          * @type {number}
          */
         this.x = 20;
         /**
-         * Y-Position im Canvas.
+         * Y-position in the canvas.
          * @type {number}
          */
         this.y = 45;
         /**
-         * Breite des Statusbalkens.
+         * Width of the status bar.
          * @type {number}
          */
         this.width = 200;
         /**
-         * Höhe des Statusbalkens.
+         * Height of the status bar.
          * @type {number}
          */
         this.height = 40;
@@ -60,8 +60,8 @@ class statusBarBottle extends DrawableObject {
     }
     
     /**
-     * Setzt den Prozentwert der Statusbar und aktualisiert das aktuelle Bild.
-     * @param {number} percentage - Der neue Prozentwert (0-100)
+     * Sets the percentage value of the status bar and updates the current image.
+     * @param {number} percentage - The new percentage value (0-100)
      */
     setPercentageBottle(percentage) {
         this.percentage = percentage;
@@ -70,8 +70,8 @@ class statusBarBottle extends DrawableObject {
     }
     
     /**
-     * Berechnet anhand des Prozentwertes das Bildindex für den Statusbalken.
-     * @returns {number} Index im BOTTLE_STATUSBAR-Array für das anzuzeigende Bild
+     * Calculates the image index for the status bar based on the percentage value.
+     * @returns {number} Index in the BOTTLE_STATUSBAR array for the image to be displayed
      */
     resolveImageIndex() {
         if (this.percentage >= 100) {

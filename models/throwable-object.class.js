@@ -1,15 +1,15 @@
 /**
- * Klasse für Objekte, die geworfen werden können (z. B. Flaschen).
- * Dieses Objekt besitzt Animationen für den Flug und für das Zerspringen,
- * sowie eine eigene Kollisions- und Bewegungslogik.
- * Erbt von {@link MovableObject}.
+ * Class for objects that can be thrown (e.g., bottles).
+ * This object has animations for flying and shattering,
+ * as well as its own collision and movement logic.
+ * Inherits from {@link MovableObject}.
  *
  * @class
  * @extends MovableObject
  */
 class ThrowableObject extends MovableObject {
     /**
-     * Bildpfade für die Rotationsanimation der Flasche im Wurf.
+     * Image paths for the rotation animation of the bottle during the throw.
      * @type {string[]}
      */
     BOTTLE_ROTATION = [
@@ -20,7 +20,7 @@ class ThrowableObject extends MovableObject {
     ];
     
     /**
-     * Bildpfade für die Splash-/Zerbrechanimation.
+     * Image paths for the splash/shatter animation.
      * @type {string[]}
      */
     BOTTLE_SPLASH = [
@@ -33,25 +33,25 @@ class ThrowableObject extends MovableObject {
     ];
     
     /**
-     * Flag, ob das Objekt (z. B. Flasche) bereits ein Hindernis getroffen hat.
+     * Flag indicating whether the object (e.g., bottle) has already hit an obstacle.
      * @type {boolean}
      */
     hasHitObstacle = false;
     
     /**
-     * Flag, ob sich das Objekt aktuell in der Splash-/Zerbrechanimation befindet.
+     * Flag indicating whether the object is currently in the splash/shatter animation.
      * @type {boolean}
      */
     isSplashing = false;
     
     /**
-     * Enthält das Intervall-Handle der Splash-Animation.
+     * Contains the interval handle of the splash animation.
      * @type {number|undefined}
      */
     splashAnimation;
     
     /**
-     * Offset-Werte zur Kollisionsprüfung.
+     * Offset values for collision detection.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
@@ -62,17 +62,17 @@ class ThrowableObject extends MovableObject {
     };
     
     /**
-     * Abspielbares Audioelement für den Splash-Sound.
+     * Playable audio element for the splash sound.
      * @type {HTMLAudioElement}
      */
     splashing_bottle = new Audio('audio/breaking-bottle.mp3');
     
     /**
-     * Erzeugt ein neues {@link ThrowableObject}-Objekt an gegebener Position mit Wurfrichtung.
-     * @param {number} x - Startposition X
-     * @param {number} y - Startposition Y
-     * @param {boolean} direction - Richtung (true/false)
-     * @param {boolean} otherDirection - Richtung entsprechend Character-Ausrichtung
+     * Creates a new {@link ThrowableObject} object at a given position with a throwing direction.
+     * @param {number} x - Start position X
+     * @param {number} y - Start position Y
+     * @param {boolean} direction - Direction (true/false)
+     * @param {boolean} otherDirection - Direction according to character alignment
      */
     constructor(x, y, direction, otherDirection) {
         super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
@@ -80,41 +80,41 @@ class ThrowableObject extends MovableObject {
         super.loadImages(this.BOTTLE_SPLASH);
         
         /**
-         * X-Koordinate des Objekts.
+         * X-coordinate of the object.
          * @type {number}
          */
         this.x = x;
         /**
-         * Y-Koordinate des Objekts.
+         * Y-coordinate of the object.
          * @type {number}
          */
         this.y = y;
         /**
-         * Höhe des Objekts.
+         * Height of the object.
          * @type {number}
          */
         this.height = 60;
         /**
-         * Breite des Objekts.
+         * Width of the object.
          * @type {number}
          */
         this.width = 50;
         
         /**
-         * Bestimmt die Bewegungsrichtung des Objekts.
+         * Determines the direction of the object's movement.
          * @type {boolean}
          */
-        this.otherDirection = otherDirection; // Die Richtung vom Character übernehmen
+        this.otherDirection = otherDirection;  // Take the direction from the character
         
         this.animate();
         this.throw();
     }
     
     /**
-     * Startet den Wurf des Objekts, sorgt für Bewegung und Splash, wenn der Boden erreicht wird.
+     * Starts the throw of the object, ensures movement and splash when the ground is reached.
      */
     throw() {
-        this.speedY = 10; // Erhöhen für höheren Wurf
+        this.speedY = 10;  // Increase for higher throw
         this.applyGravity();
         
         setInterval(() => {
@@ -125,7 +125,7 @@ class ThrowableObject extends MovableObject {
                     this.x += 15;
                 }
                 
-                // Prüfen, ob die Flasche den Boden berührt (y + height = Unterkante)
+                // Check if the bottle touches the ground (y + height = bottom edge)
                 if (this.y + this.height > 430 && !this.hasHitObstacle) {
                     this.playSplashAnimation();
                     this.hasHitObstacle = true;
@@ -135,16 +135,16 @@ class ThrowableObject extends MovableObject {
     }
     
     /**
-     * Prüft, ob sich das Objekt noch oberhalb des Bodens befindet.
-     * @returns {boolean} true, solange das Objekt noch nicht den Boden berührt hat
+     * Checks if the object is still above the ground.
+     * @returns {boolean} true as long as the object has not touched the ground
      */
     isAboveGround() {
-        // Diese Methode lässt die Flasche immer fallen, bis sie den Boden berührt
+        // This method makes the bottle fall until it hits the ground
         return this.y + this.height < 430;
     }
     
     /**
-     * Startet die Animationsschleife für die Flug-Rotation, solange das Objekt nicht splasht.
+     * Starts the animation loop for the flight rotation, as long as the object is not splashing.
      */
     animate() {
         setInterval(() => {
@@ -155,14 +155,14 @@ class ThrowableObject extends MovableObject {
     }
     
     /**
-     * Spielt die Splash-Animation ab, wenn das Objekt zerbricht.
-     * Spielt dabei einen Sound ab und blendet schließlich das Objekt aus.
+     * Plays the splash animation when the object breaks.
+     * Plays a sound and then fades out the object.
      */
     playSplashAnimation() {
         this.isSplashing = true;
         let splashIndex = 0;
         
-        // Sound beim Start der Splash-Animation abspielen
+        // Play sound when the splash animation starts
         this.splashing_bottle.play();
         
         this.splashAnimation = setInterval(() => {
@@ -171,11 +171,10 @@ class ThrowableObject extends MovableObject {
                 splashIndex++;
             } else {
                 clearInterval(this.splashAnimation);
-                // Flasche aus dem Array entfernen
+                // Remove bottle from the array
                 this.width = 0;
                 this.height = 0;
             }
         }, 100);
     }
-    
 }

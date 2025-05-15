@@ -1,32 +1,32 @@
 /**
- * Repräsentiert den Endboss im Spiel.
- * Enthält Animationen, Bewegung, Kollisionslogik und Status-Flags.
- * Erbt von MovableObject.
+ * Represents the final boss in the game.
+ * Contains animations, movement, collision logic and status flags.
+ * Inherits from MovableObject.
  *
  * @class
  * @extends MovableObject
  */
 class Endboss extends MovableObject {
     /**
-     * Höhe des Endbosses in Pixeln.
+     * Height of the end boss in pixels.
      * @type {number}
      */
     height = 400;
     
     /**
-     * Breite des Endbosses in Pixeln.
+     * Width of the end boss in pixels.
      * @type {number}
      */
     width = 300;
     
     /**
-     * Y-Position des Endbosses auf dem Spielfeld.
+     * Y-position of the end boss on the game field.
      * @type {number}
      */
     y = 55;
     
     /**
-     * Offset für die Kollisionslogik.
+     * Offset for the collision logic.
      * @type {{top: number, bottom: number, right: number, left: number}}
      */
     offset = {
@@ -37,7 +37,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Enthält Bildpfade für die Laufanimation.
+     * Contains image paths for the walking animation.
      * @type {string[]}
      */
     IMAGES_WALKING = [
@@ -48,7 +48,7 @@ class Endboss extends MovableObject {
     ];
     
     /**
-     * Enthält Bildpfade für die "Hurt"-Animation.
+     * Contains image paths for the "Hurt" animation.
      * @type {string[]}
      */
     IMAGES_HURT = [
@@ -58,7 +58,7 @@ class Endboss extends MovableObject {
     ];
     
     /**
-     * Enthält Bildpfade für die "Alert"-Warnanimation.
+     * Contains image paths for the "Alert" warning animation.
      * @type {string[]}
      */
     IMAGES_ALERT = [
@@ -73,7 +73,7 @@ class Endboss extends MovableObject {
     ];
     
     /**
-     * Enthält Bildpfade für die Todesanimation.
+     * Contains image paths for the death animation.
      * @type {string[]}
      */
     IMAGES_DEATH = [
@@ -83,103 +83,102 @@ class Endboss extends MovableObject {
     ];
     
     /**
-     * Referenz auf die Welt-Instanz.
+     * Reference to the world instance.
      * @type {Object}
      */
     world;
     
     /**
-     * Bildindex der aktuellen Animation.
+     * Image index of the current animation.
      * @type {number}
      */
     currentImage = 0;
     
     /**
-     * ID des Intervalls für Animationen.
+     * ID of the interval for animations.
      * @type {number}
      */
     animationInterval;
     
     /**
-     * ID des Intervalls für die Bewegungslogik.
+     * ID of the interval for the movement logic.
      * @type {number}
      */
     movementInterval;
     
     /**
-     * Zeigt, ob momentan die Hurt-Animation läuft.
+     * Indicates whether the Hurt animation is currently playing.
      * @type {boolean}
      */
     isHurtAnimation = false;
     
     /**
-     * Zeigt, ob der Endboss stirbt.
+     * Indicates whether the end boss is dying.
      * @type {boolean}
      */
     isDying = false;
     
     /**
-     * Bewegungsrichtung: true = vorwärts, false = rückwärts.
+     * Movement direction: true = forward, false = backward.
      * @type {boolean}
      */
     isMovingForward = true;
     
     /**
-     * Anzahl der Schritte nach vorne.
+     * Number of steps forward.
      * @type {number}
      */
     stepsForward = 0;
     
     /**
-     * Anzahl der Schritte nach hinten.
+     * Number of steps backward.
      * @type {number}
      */
     stepsBackward = 0;
     
     /**
-     * Maximale Schritte vorwärts.
+     * Maximum steps forward.
      * @type {number}
      */
     maxStepsForward = 5;
     
     /**
-     * Maximale Schritte rückwärts.
+     * Maximum steps backward.
      * @type {number}
      */
     maxStepsBackward = 3;
     
     /**
-     * Bewegungsgeschwindigkeit.
+     * Movement speed.
      * @type {number}
      */
     speed = 5;
     
     /**
-     * Audiospur für Treffer-Feedback.
+     * Audio track for hit feedback.
      * @type {HTMLAudioElement}
      */
-    endboss_hit = new Audio('audio/endboss-sound-intro.mp3');
+    endboss_hit = new Audio('audio/endboss-hit.mp3');
     
     /**
-     * Flag, ob die Alert-Animation einmalig ausgelöst wurde.
+     * Flag, if the alert animation was triggered once.
      * @type {boolean}
      */
     hasTriggeredAlert = false;
-    
     /**
-     * Flag, ob die Alert-Animation aktuell läuft.
+     * Flag, if the alert animation is currently playing.
      * @type {boolean}
      */
     isPlayingAlert = false;
     
     /**
-     * Zähler für aktuelle Alert-Frame.
+     * Counter for current alert frame.
      * @type {number}
      */
     alertAnimationFrame = 0;
     
     /**
-     * Initialisiert den Endboss mit allen Animationen, Bildern und startet Animation und Bewegung.
+     * Initializes the end boss with all animations, images, and starts animation and movement.
      */
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
@@ -190,10 +189,11 @@ class Endboss extends MovableObject {
         this.x = 2200;
         this.startAnimation();
         this.initMovement();
+        this.endboss_hit.volume = 0.2;
     }
     
     /**
-     * Startet die Alert-Animation, wenn der Character in der Nähe ist – nur einmalig.
+     * Starts the alert animation, when the character is nearby - only once.
      */
     playAlertAnimation() {
         if (this.hasTriggeredAlert || this.isPlayingAlert) return;
@@ -214,7 +214,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Startet die Hauptanimation des Endbosses (laufen, verletzt, etc.).
+     * Starts the main animation of the end boss (walking, hurt, etc.).
      */
     startAnimation() {
         this.animationInterval = setInterval(() => {
@@ -231,20 +231,20 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Bewegt den Endboss basierend auf der Distanz zum Character.
-     * Startet auch die Alert-Animation, wenn der Character nahekommt.
+     * Moves the end boss based on the distance to the character.
+     * Also starts the alert animation, when the character approaches.
      */
     moveBasedOnDistance() {
         if (!this.world || !this.world.character) return;
         
         const distance = this.x - this.world.character.x;
         
-        // Alert wenn nah genug
+        // Alert when close enough
         if (distance <= 400 && !this.hasTriggeredAlert) {
             this.playAlertAnimation();
         }
         
-        // Bewegungslogik vor/zurück
+        // Movement logic forward/backward
         if (distance <= 300) {
             if (this.isMovingForward) {
                 if (this.stepsForward < this.maxStepsForward) {
@@ -267,7 +267,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Initialisiert das Bewegungsintervall und ruft regelmäßig moveBasedOnDistance auf.
+     * Initializes the movement interval and calls moveBasedOnDistance regularly.
      */
     initMovement() {
         this.movementInterval = setInterval(() => {
@@ -278,27 +278,29 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Startet die Todesanimation, stoppt andere Intervalle und zeigt Sterbesequenz.
+     * Starts the death animation, stops other intervals and shows death sequence.
      */
     playDeathAnimation() {
-        this.isDying = true;
-        clearInterval(this.animationInterval);
-        clearInterval(this.movementInterval);
-        
-        let deathImage = 0;
-        const deathInterval = setInterval(() => {
-            if (deathImage < this.IMAGES_DEATH.length) {
-                this.img = this.imageCache[this.IMAGES_DEATH[deathImage]];
-                deathImage++;
-            } else {
-                clearInterval(deathInterval);
+        if (!this.isDying) {
+            this.isDying = true;
+            clearInterval(this.animationInterval);
+            clearInterval(this.movementInterval);
+            
+            // Animation in einer Schleife abspielen
+            this.animationInterval = setInterval(() => {
+                this.playAnimation(this.IMAGES_DEATH);
+            }, 200);
+            
+            // Optional: Nach einer Verzögerung die Animation stoppen und das letzte Bild zeigen
+            setTimeout(() => {
+                clearInterval(this.animationInterval);
                 this.img = this.imageCache[this.IMAGES_DEATH[this.IMAGES_DEATH.length - 1]];
-            }
-        }, 200);
+            }, 1000); // Anpassbar je nach gewünschter Animationsdauer
+        }
     }
     
     /**
-     * Führt einen Treffer auf den Endboss aus, setzt Energie herab und spielt Sound.
+     * Executes a hit on the end boss, reduces energy and plays sound.
      */
     hit() {
         if (!this.isImmune()) {
@@ -312,8 +314,8 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Prüft, ob der Endboss in letzter Zeit getroffen wurde (verletzt ist).
-     * @returns {boolean} Gibt true zurück, wenn letzter Treffer < 1 Sekunde her ist.
+     * Checks, if the end boss was hit recently (is hurt).
+     * @returns {boolean} Returns true, if last hit was < 1 second ago.
      */
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
@@ -322,7 +324,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Bewegt den Endboss nach links.
+     * Moves the end boss to the left.
      */
     moveLeft() {
         this.x -= this.speed;
@@ -330,7 +332,7 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Bewegt den Endboss nach rechts.
+     * Moves the end boss to the right.
      */
     moveRight() {
         this.x += this.speed;
@@ -338,8 +340,8 @@ class Endboss extends MovableObject {
     }
     
     /**
-     * Spielt eine Animation mit einem Array von Bildpfaden ab.
-     * @param {string[]} images - Array der zu verwendenden Bildpfade.
+     * Plays an animation with an array of image paths.
+     * @param {string[]} images - Array of the image paths to use.
      */
     playAnimation(images) {
         let i = this.currentImage % images.length;

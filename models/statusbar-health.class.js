@@ -1,15 +1,15 @@
 /**
- * Statusbalken für die Lebensanzeige.
- * Diese Klasse zeigt den aktuellen Lebensstatus des Spielers als Balken an
- * und aktualisiert die Anzeige je nach Prozentwert grafisch.
- * Erbt von {@link DrawableObject}.
+ * Status bar for the health display.
+ * This class displays the player's current health status as a bar
+ * and updates the display graphically according to the percentage value.
+ * Inherits from {@link DrawableObject}.
  *
  * @class
  * @extends DrawableObject
  */
 class StatusBarHealth extends DrawableObject {
     /**
-     * Array mit Bildpfaden für die verschiedenen Lebens-Anzeigen (0% bis 100%).
+     * Array with image paths for the different health displays (0% to 100%).
      * @type {string[]}
      */
     IMAGES_HEALTH = [
@@ -22,32 +22,32 @@ class StatusBarHealth extends DrawableObject {
     ];
     
     /**
-     * Prozentuale Lebensanzeige (0–100).
+     * Health percentage display (0–100).
      * @type {number}
      */
     percentage = 100;
     
     /**
-     * Erstellt eine neue Lebensanzeige-Statusbar und lädt alle Statusbilder.
-     * Setzt Position, Größe und initialen Wert.
+     * Creates a new health display status bar and loads all status images.
+     * Sets position, size, and initial value.
      */
     constructor() {
         super();
         this.loadImages(this.IMAGES_HEALTH);
-        /** @type {number} X-Position im Canvas */
+        /** @type {number} X-position in the canvas */
         this.x = 20;
-        /** @type {number} Y-Position im Canvas */
+        /** @type {number} Y-position in the canvas */
         this.y = 10;
-        /** @type {number} Breite des Statusbalkens */
+        /** @type {number} Width of the status bar */
         this.width = 200;
-        /** @type {number} Höhe des Statusbalkens */
+        /** @type {number} Height of the status bar */
         this.height = 40;
         this.setPercentage(100);
     }
     
     /**
-     * Setzt den Lebens-Prozentwert und aktualisiert das Statusbild.
-     * @param {number} percentage - Neuer Prozentwert der Lebensanzeige (0–100)
+     * Sets the health percentage value and updates the status image.
+     * @param {number} percentage - New percentage value of the health display (0–100)
      */
     setPercentage(percentage) {
         this.percentage = percentage;
@@ -56,8 +56,8 @@ class StatusBarHealth extends DrawableObject {
     }
     
     /**
-     * Liefert je nach Prozentwert das entsprechende Bildindex für die Lebensanzeige.
-     * @returns {number} Index im IMAGES_HEALTH-Array
+     * Returns the corresponding image index for the health display, depending on the percentage value.
+     * @returns {number} Index in the IMAGES_HEALTH array
      */
     resolveImageIndex() {
         if (this.percentage === 100) {

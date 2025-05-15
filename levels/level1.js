@@ -1,25 +1,24 @@
 /**
- * Erstellt ein neues Level-Objekt für Level 1 mit vorkonfigurierten Endgegnern, Wolken, Flaschen, Münzen und Hintergrundobjekten.
- *
+ * Creates a new Level object for Level 1 with preconfigured end bosses, clouds, bottles, coins, and background objects.
  * @type {Level}
  */
 let level1 = new Level(
     /**
-     * Array mit Endgegnern für das Level.
+     * Array with end bosses for the level.
      * @type {Endboss[]}
      */
     [
         new Endboss()
     ],
     /**
-     * Array mit Wolken-Objekten.
+     * Array with cloud objects.
      * @type {Cloud[]}
      */
     [
         new Cloud()
     ],
     /**
-     * Array mit Flaschen (Sammelobjekte).
+     * Array with bottles (collectible objects).
      * @type {Bottle[]}
      */
     [
@@ -35,7 +34,7 @@ let level1 = new Level(
         new Bottle(),
     ],
     /**
-     * Array mit Münzen (Sammelobjekte).
+     * Array with coins (collectible objects).
      * @type {Coins[]}
      */
     [
@@ -51,7 +50,7 @@ let level1 = new Level(
         new Coins(),
     ],
     /**
-     * Array mit Hintergrundobjekten, die als Parallax-Ebenen dienen.
+     * Array with background objects that serve as parallax layers.
      * @type {BackgroundObject[]}
      */
     [
@@ -83,15 +82,15 @@ let level1 = new Level(
 );
 
 /**
- * Initialisiert das Level 1 mit einer spezifischen Zusammenstellung von Gegnern, Sammelobjekten und Hintergrundobjekten.
+ * Initializes Level 1 with a specific composition of enemies, collectibles, and background objects.
  *
  * @function
- * @returns {Level} Gibt ein neues, vollständig initialisiertes Level-Objekt für Level 1 zurück.
+ * @returns {Level} Returns a new, fully initialized Level object for Level 1.
  */
 function initLevel1() {
     return new Level(
         /**
-         * Array mit Gegnern (Hühner und Endgegner) für das Level.
+         * Array of enemies (chickens and end bosses) for the level.
          * @type {Array<Chicken|TinyChicken|Endboss>}
          */
         [
@@ -104,14 +103,14 @@ function initLevel1() {
             new Endboss()
         ],
         /**
-         * Array mit Wolken-Objekten.
+         * Array with cloud objects.
          * @type {Cloud[]}
          */
         [
             new Cloud()
         ],
         /**
-         * Array mit Flaschen (Sammelobjekte).
+         * Array with bottles (collectible objects).
          * @type {Bottle[]}
          */
         [
@@ -127,7 +126,7 @@ function initLevel1() {
             new Bottle(),
         ],
         /**
-         * Array mit Münzen (Sammelobjekte).
+         * Array with coins (collectible objects).
          * @type {Coins[]}
          */
         [
@@ -143,7 +142,7 @@ function initLevel1() {
             new Coins(),
         ],
         /**
-         * Array mit Hintergrundobjekten, die als Parallax-Ebenen dienen.
+         * Array with background objects that serve as parallax layers.
          * @type {BackgroundObject[]}
          */
         [
@@ -175,5 +174,5 @@ function initLevel1() {
     );
 }
 
-// Ruft die initiale Level-Initialisierung direkt nach dem Laden auf.
+// Calls the initial level initialization directly after loading.
 initLevel1();

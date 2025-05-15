@@ -1,32 +1,32 @@
 /**
- * Repräsentiert ein Huhn als Gegnerobjekt im Spiel.
- * Erbt von MovableObject.
+ * Represents a chicken as an enemy object in the game.
+ * Inherits from MovableObject.
  *
  * @class
  * @extends MovableObject
  */
 class Chicken extends MovableObject {
     /**
-     * Referenz auf die aktuelle Spielwelt.
+     * Reference to the current game world.
      * @type {?World}
      */
     world;
     
     /**
-     * Vertikale Position des Huhns.
+     * Vertical position of the chicken.
      * @type {number}
      */
     y = 360;
     
     /**
-     * Höhe und Breite des Huhns (in Pixel).
+     * Height and width of the chicken (in pixels).
      * @type {number}
      */
     height = 70;
     width = 50;
     
     /**
-     * Offset für Kollisionserkennung.
+     * Offset for collision detection.
      * @type {{top: number, bottom: number, left: number, right: number}}
      */
     offset = {
@@ -37,7 +37,7 @@ class Chicken extends MovableObject {
     }
     
     /**
-     * Bildpfade für die Laufanimation.
+     * Image paths for the walking animation.
      * @type {string[]}
      */
     IMAGES_WALKING = [
@@ -47,7 +47,7 @@ class Chicken extends MovableObject {
     ];
     
     /**
-     * Bildpfad für das tote Huhn.
+     * Image path for the dead chicken.
      * @type {string[]}
      */
     IMAGES_DEAD = [
@@ -55,21 +55,21 @@ class Chicken extends MovableObject {
     ]
     
     /**
-     * Gibt an, ob das Huhn gerade stirbt.
+     * Indicates whether the chicken is currently dying.
      * @type {boolean}
      */
     isDying = false;
     
     /**
-     * Erstellt eine neue Instanz Chicken und initialisiert sie.
-     * Lädt Bilder und startet die Animation.
+     * Creates a new Chicken instance and initializes it.
+     * Loads images and starts the animation.
      *
      * @constructor
      */
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
-        super.loadImages(this.IMAGES_DEAD);  // Todesbild laden
+        super.loadImages(this.IMAGES_DEAD);  // Load death image
         
         this.x = this.getRandomPosition();
         this.speed = 0.15 + Math.random() * 0.5;
@@ -77,16 +77,15 @@ class Chicken extends MovableObject {
     }
     
     /**
-     * Generiert eine zufällige Position für das Huhn.
-     * Platziert das Huhn im Spielfeld unter Berücksichtigung des Endbosses und Mindestabstands.
-     * Fällt zurück auf eine sichere Position, wenn keine valide Position gefunden wird.
-     *
-     * @returns {number} X-Position für das Huhn
+     * Generates a random position for the chicken.
+     * Places the chicken on the field while considering the end boss and a minimum distance.
+     * Falls back to a safe position if no valid position is found.
+     * @returns {number} X-position for the chicken
      */
     getRandomPosition() {
-        const endBossPosition = 2200;        // Position des Endbosses
-        const safetyDistanceBoss = 350;      // Mindestabstand zum Endboss
-        const maxAttempts = 10;              // Maximale Versuche eine Position zu finden
+        const endBossPosition = 2200;        // End boss position
+        const safetyDistanceBoss = 350;      // Minimum distance to end boss
+        const maxAttempts = 10;              // Maximum attempts to find a position
         let attempts = 0;
         let position;
         
@@ -94,8 +93,8 @@ class Chicken extends MovableObject {
             position = Math.random() * (endBossPosition - safetyDistanceBoss);
             attempts++;
             
-            // Wenn nach maxAttempts keine valide Position gefunden wurde,
-            // position weit rechts vom Character platzieren
+            // If no valid position is found after maxAttempts,
+            // place far to the right of the character
             if (attempts >= maxAttempts) {
                 position = this.world?.character?.x + 500 || 500;
                 break;
@@ -110,18 +109,19 @@ class Chicken extends MovableObject {
     }
     
     /**
-     * Spielt die Todesanimation ab, zeigt das Todesbild und entfernt das Chicken nach 1 Sekunde aus dem Spiel.
-     * Schützt vor Mehrfachausführung.
+     * Plays the death animation, shows the dead image and removes the chicken
+     * from the game after 1 second.
+     * Prevents multiple executions.
      */
     playDeathAnimation() {
-        if (this.isDying) return; // Verhindert mehrfaches Auslösen
+        if (this.isDying) return; // Prevent multiple triggers
         
         this.isDying = true;
-        this.speed = 0; // Bewegung stoppen
-        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Todesbild anzeigen
+        this.speed = 0; // Stop movement
+        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Show death image
         
         setTimeout(() => {
-            // Direkte Entfernung aus dem enemies Array
+            // Direct removal from the enemies array
             const index = this.world?.level?.enemies?.indexOf(this);
             if (this.world && index > -1) {
                 this.world.level.enemies.splice(index, 1);
@@ -130,8 +130,8 @@ class Chicken extends MovableObject {
     }
     
     /**
-     * Startet die Bewegungs- und Animationszyklen für das Huhn.
-     * Bewegt das Huhn nach links und spielt die Laufanimation ab, sofern es nicht stirbt.
+     * Starts the movement and animation cycles for the chicken.
+     * Moves the chicken to the left and plays the walking animation if not dying.
      */
     animate() {
         setInterval(() => {

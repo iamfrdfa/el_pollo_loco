@@ -1,33 +1,28 @@
 /**
- * Stellt eine Wolke im Spiel dar.
- * Diese Klasse erweitert MovableObject und sorgt für animierte Bewegungen der Wolken.
+ * Represents a cloud in the game.
+ * This class extends MovableObject and handles animated cloud movement.
  */
 class Cloud extends MovableObject {
     /**
-     * Die Y-Position der Wolke.
+     * The Y-position of the cloud.
      * @type {number}
      */
     y = 20;
     
     /**
-     * Die Höhe der Wolke.
+     * The height and width of the cloud.
      * @type {number}
      */
     height = 250;
-    
-    /**
-     * Die Breite der Wolke.
-     * @type {number}
-     */
     width = 500;
     
     /**
-     * Erstellt eine neue Wolke und startet die Animation.
+     * Creates a new cloud and starts the animation.
      */
     constructor() {
         super().loadImage('img/5_background/layers/4_clouds/1.png');
         /**
-         * Die X-Position wird zufällig gewählt.
+         * The X-position is chosen randomly.
          * @type {number}
          */
         this.x = Math.random() * 500;
@@ -35,7 +30,7 @@ class Cloud extends MovableObject {
     }
     
     /**
-     * Startet die Bewegung der Wolke nach links.
+     * Starts the movement of the cloud to the left.
      */
     animate() {
         this.moveLeft();
