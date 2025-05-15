@@ -68,7 +68,7 @@ class TinyChicken extends MovableObject {
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
-        super.loadImages(this.IMAGES_DEAD);  // Load death image
+        super.loadImages(this.IMAGES_DEAD);
         
         this.x = this.getRandomPosition();
         this.speed = 0.2 + Math.random() * 0.6;
@@ -82,9 +82,9 @@ class TinyChicken extends MovableObject {
      * @returns {number} X-position for the tiny chicken
      */
     getRandomPosition() {
-        const endBossPosition = 2200;        // End boss position
-        const safetyDistanceBoss = 350;      // Minimum distance to end boss
-        const maxAttempts = 10;              // Maximum attempts to find a position
+        const endBossPosition = 2200;
+        const safetyDistanceBoss = 350;
+        const maxAttempts = 10;
         let attempts = 0;
         let position;
         
@@ -92,8 +92,6 @@ class TinyChicken extends MovableObject {
             position = Math.random() * (endBossPosition - safetyDistanceBoss);
             attempts++;
             
-            // If no valid position is found after maxAttempts,
-            // place far to the right of the character
             if (attempts >= maxAttempts) {
                 position = this.world?.character?.x + 500 || 500;
                 break;
@@ -113,14 +111,13 @@ class TinyChicken extends MovableObject {
      * Prevents multiple executions.
      */
     playDeathAnimation() {
-        if (this.isDying) return; // Prevent multiple triggers
+        if (this.isDying) return;
         
         this.isDying = true;
-        this.speed = 0; // Stop movement
-        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Show death image
+        this.speed = 0;
+        this.img = this.imageCache[this.IMAGES_DEAD[0]];
         
         setTimeout(() => {
-            // Direct removal from the enemies array
             const index = this.world?.level?.enemies?.indexOf(this);
             if (this.world && index > -1) {
                 this.world.level.enemies.splice(index, 1);

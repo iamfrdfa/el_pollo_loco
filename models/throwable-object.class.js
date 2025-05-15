@@ -104,7 +104,7 @@ class ThrowableObject extends MovableObject {
          * Determines the direction of the object's movement.
          * @type {boolean}
          */
-        this.otherDirection = otherDirection;  // Take the direction from the character
+        this.otherDirection = otherDirection;
         
         this.animate();
         this.throw();
@@ -124,8 +124,6 @@ class ThrowableObject extends MovableObject {
                 } else {
                     this.x += 15;
                 }
-                
-                // Check if the bottle touches the ground (y + height = bottom edge)
                 if (this.y + this.height > 430 && !this.hasHitObstacle) {
                     this.playSplashAnimation();
                     this.hasHitObstacle = true;
@@ -139,7 +137,6 @@ class ThrowableObject extends MovableObject {
      * @returns {boolean} true as long as the object has not touched the ground
      */
     isAboveGround() {
-        // This method makes the bottle fall until it hits the ground
         return this.y + this.height < 430;
     }
     
@@ -161,17 +158,13 @@ class ThrowableObject extends MovableObject {
     playSplashAnimation() {
         this.isSplashing = true;
         let splashIndex = 0;
-        
-        // Play sound when the splash animation starts
         this.splashing_bottle.play();
-        
         this.splashAnimation = setInterval(() => {
             if (splashIndex < this.BOTTLE_SPLASH.length) {
                 this.img = this.imageCache[this.BOTTLE_SPLASH[splashIndex]];
                 splashIndex++;
             } else {
                 clearInterval(this.splashAnimation);
-                // Remove bottle from the array
                 this.width = 0;
                 this.height = 0;
             }

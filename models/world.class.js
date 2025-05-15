@@ -1,4 +1,32 @@
+/**
+ * Represents the main game world, managing the state, entities, rendering context, and game logic.
+ * Holds references to the player's character, level, canvas, status bars, and input controls.
+ * Manages enemy spawning, throwable objects, and various game state flags.
+ */
+
 class World {
+    /**
+     * @property {Character} character - The main player character in the world.
+     * @property {Object} level - The current game level.
+     * @property {HTMLCanvasElement} canvas - The canvas element for rendering.
+     * @property {CanvasRenderingContext2D} ctx - The drawing context for the canvas.
+     * @property {Object} keyboard - The keyboard input manager.
+     * @property {number} camera_x - The current horizontal camera offset.
+     * @property {StatusBarHealth} statusBar - The health status bar instance.
+     * @property {statusBarBottle} statusBarBottle - The bottle status bar instance.
+     * @property {statusBarCoin} statusBarCoin - The coin status bar instance.
+     * @property {statusBarEndboss} statusBarEndboss - The end boss status bar instance.
+     * @property {Array} throwableObjects - List of throwable objects currently active in the world.
+     * @property {boolean} enemyIsHitted - Indicates if an enemy was hit recently.
+     * @property {boolean} bottleThrow - Flag to indicate if a bottle is currently being thrown.
+     * @property {number} initialSpawnDistance - Distance for the first enemy/chicken spawn.
+     * @property {number} normalSpawnDistance - Standard distance between enemy/chicken spawns.
+     * @property {number} fastSpawnInterval - Fast interval (in ms) for spawning.
+     * @property {number} normalSpawnInterval - Normal interval (in ms) for spawning.
+     * @property {number|null} spawnIntervalId - The interval ID for enemy/chicken spawning timer.
+     * @property {boolean} isGameStart - Indicates if the game is in the start phase.
+     */
+    
     character = new Character();
     level = level1;
     canvas;
@@ -11,7 +39,6 @@ class World {
     statusBarEndboss = new statusBarEndboss();
     throwableObjects = [];
     
-    // Flags
     enemyIsHitted = false;
     bottleThrow = false;
     initialSpawnDistance = 300;
@@ -24,6 +51,16 @@ class World {
     /** @type {HTMLAudioElement} */
     game_sound = new Audio('audio/background_music.mp3');
     
+    /**
+     * Initializes a new game world instance.
+     * Sets up the canvas context, keyboard controls, and starts the main game loop.
+     * Begins background sound playback with adjusted volume, initializes and enables chicken spawning,
+     * and sets a timer for the game start phase.
+     *
+     * @constructor
+     * @param {HTMLCanvasElement} canvas - The canvas element to render the game onto.
+     * @param {Object} keyboard - The keyboard controller or input handler for player controls.
+     */
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
@@ -35,23 +72,33 @@ class World {
         this.game_sound.volume = 0.1;
         
         this.startChickenSpawning();
-        this.spawnEnabled = true; // Aktiviere das Spawning
-        this.initChickenSpawning(); // Starte das Chicken-Spawning
-        
+        this.spawnEnabled = true;
+        this.initChickenSpawning();
         
         setTimeout(() => {
             this.isGameStart = false;
         }, 5000);
     }
     
+    /**
+     * Sets the world reference for all game objects.
+     *
+     * @method
+     * @private
+     */
     setWorld() {
         this.character.world = this;
-        // Set the world reference for all enemies
+        
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
         });
     }
     
+    /**
+     * Main game loop.
+     * Checks for collisions, game end, and bottle throw.
+     *
+     */
     run() {
         setInterval(() => {
             this.checkCollisions();
@@ -66,6 +113,12 @@ class World {
         }, 1000 / 60);
     }
     
+    /**
+     * Checks if the game should end and clears all game objects if so.
+     *
+     * @method
+     * @private
+     */
     checkGameEnd() {
         if (this.character.isDead() || (this.level.enemies.find(e => e instanceof Endboss)?.isDead())) {
             if (this.character.isDead()) {
@@ -81,40 +134,22 @@ class World {
         }
     }
     
+    /**
+     * Clears all game objects from the world.
+     *
+     * @method
+     * @private
+     */
     clearGameObjects() {
-        // Hide character and stop sounds
         this.character.width = 0;
         this.character.height = 0;
         this.stopCharacterSounds();
         
-        // Hide all enemies and stop their sounds
-        this.level.enemies.forEach(enemy => {
-            enemy.width = 0;
-            enemy.height = 0;
-            if (enemy instanceof Endboss) {
-                this.stopEndbossSounds(enemy);
-            }
-        });
+        this.clearEnemyObjects();
+        this.clearBottleObjects();
+        this.clearCoinObjects();
+        this.clearThrowableObjects();
         
-        // Hide all bottles
-        this.level.bottles.forEach(bottle => {
-            bottle.width = 0;
-            bottle.height = 0;
-        });
-        
-        // Hide all coins
-        this.level.coins.forEach(coin => {
-            coin.width = 0;
-            coin.height = 0;
-        });
-        
-        // Hide all thrown bottles
-        this.throwableObjects.forEach(obj => {
-            obj.width = 0;
-            obj.height = 0;
-        });
-        
-        // Clear arrays
         setTimeout(() => {
             this.level.enemies = [];
             this.level.bottles = [];
@@ -123,6 +158,63 @@ class World {
         }, 50);
     }
     
+    /**
+     * Clears all Enemy objects from the world.
+     *
+     * @method
+     */
+    clearEnemyObjects() {
+        this.level.enemies.forEach(enemy => {
+            enemy.width = 0;
+            enemy.height = 0;
+            if (enemy instanceof Endboss) {
+                this.stopEndbossSounds(enemy);
+            }
+        });
+    }
+    
+    /**
+     * Clears all Bottle objects from the world.
+     *
+     * @method
+     */
+    clearBottleObjects() {
+        this.level.bottles.forEach(bottle => {
+            bottle.width = 0;
+            bottle.height = 0;
+        });
+    }
+    
+    /**
+     * Clears all coin objects from the world.
+     *
+     * @method
+     */
+    clearCoinObjects() {
+        this.level.coins.forEach(coin => {
+            coin.width = 0;
+            coin.height = 0;
+        });
+    }
+    
+    /**
+     * Clears all throwable objects (bottles) from the world.
+     *
+     * @method
+     */
+    clearThrowableObjects() {
+        this.throwableObjects.forEach(obj => {
+            obj.width = 0;
+            obj.height = 0;
+        });
+    }
+    
+    /**
+     * Stops all sounds for the character
+     *
+     * @method
+     * @private
+     */
     stopCharacterSounds() {
         if (this.character.walking_sound) this.character.walking_sound.pause();
         if (this.character.hurt_sound) this.character.hurt_sound.pause();
@@ -135,12 +227,25 @@ class World {
         if (this.game_sound) this.game_sound.pause();
     }
     
+    /**
+     * Stops all sounds for the endboss
+     *
+     * @param endboss
+     */
     stopEndbossSounds(endboss) {
-        // Stop all endboss sounds, if present
         if (endboss.hurt_sound) endboss.hurt_sound.pause();
         if (endboss.endboss_hit) endboss.endboss_hit.pause();
     }
     
+    /**
+     * Checks if the character can throw a bottle and, if so, creates a new throwable object at the appropriate position.
+     * Updates the character's bottle amount, status bar, and plays the corresponding sound effects.
+     * Temporarily sets the bottle throw state to true.
+     * If the throw key is pressed but there are no bottles left, plays a failure sound.
+     *
+     * @method
+     * @private
+     */
     checkThrowObjects() {
         if (this.character.bottleAmount > 0) {
             let bottle = new ThrowableObject(
@@ -153,7 +258,6 @@ class World {
             this.statusBarBottle.setPercentageBottle(this.character.bottleAmount * 20);
             this.character.throwBottle_sound.play();
             
-            // Add a short delay before the next bottle can be thrown
             this.bottleThrow = true;
             setTimeout(() => {
                 this.bottleThrow = false;
@@ -170,12 +274,10 @@ class World {
         this.spawnEnabled = true;
         this.isGameStart = true;
         
-        // Fast spawning for the first 5 seconds
         this.spawnIntervalId = setInterval(() => {
             this.spawnChicken();
         }, this.fastSpawnInterval);
         
-        // Switch to normal spawning after 5 seconds
         setTimeout(() => {
             this.isGameStart = false;
             clearInterval(this.spawnIntervalId);
@@ -185,6 +287,14 @@ class World {
         }, 5000);
     }
     
+    /**
+     * Spawns a new Chicken or TinyChicken enemy if spawning is enabled and the enemy limit has not been reached.
+     * The newly created chicken is assigned to the current world and only added if its spawn position is valid.
+     * Also removes any Chicken or TinyChicken objects from the enemy list if they have moved out of the visible area (x <= -100).
+     *
+     * @method
+     * @private
+     */
     spawnChicken() {
         if (!this.spawnEnabled) return;
         
@@ -202,7 +312,6 @@ class World {
             }
         }
         
-        // Remove chickens that are too far left
         this.level.enemies = this.level.enemies.filter(enemy => {
             return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
         });
@@ -231,13 +340,17 @@ class World {
                 }
             }
             
-            // Remove chickens that are too far left
             this.level.enemies = this.level.enemies.filter(enemy => {
                 return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
             });
         }, 2000);
     }
     
+    /**
+     * Validates the spawn position of a chicken
+     * @param position
+     * @returns {boolean}
+     */
     isValidSpawnPosition(position) {
         const minDistance = this.isGameStart ? this.initialSpawnDistance : this.normalSpawnDistance;
         const distanceToCharacter = Math.abs(position - this.character.x);
@@ -265,10 +378,24 @@ class World {
     }
     
     /**
-     * Function which is checking collision between character and enemies or bottle with enemies
+     * Main collision detection method that handles all types of collisions in the game.
+     * This includes character-enemy collisions, bottle throws, and collectible pickups.
+     * @method
      */
     checkCollisions() {
-        // Check collision with enemies
+        this.checkCollisionWithEnemies();
+        this.checkCollisionBottleEnemy()
+        this.checkCollisionWithBottle();
+        this.checkCollisionWithCoins();
+    }
+    
+    /**
+     * Handles collisions between character and enemies.
+     * Manages hit for the character and the chickens
+     * @method
+     * @private
+     */
+    checkCollisionWithEnemies() {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
                 if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
@@ -284,8 +411,16 @@ class World {
                 }
             }
         });
-        
-        // Check collision between enemies and bottle
+    }
+    
+    /**
+     * Handles collisions between thrown bottles and enemies.
+     * Manages death animations for chickens and damage to the endboss when hit by bottles.
+     * Also handles bottle splash animations and cleanup.
+     * @method
+     * @private
+     */
+    checkCollisionBottleEnemy() {
         this.throwableObjects.forEach((thrownBottle) => {
             this.level.enemies.forEach(enemy => {
                 if (thrownBottle.isColliding(enemy) && !thrownBottle.hasHitObstacle) {
@@ -307,22 +442,15 @@ class World {
                 this.throwableObjects.splice(thrownBottle);
             }
         });
-        
-        // Check collision with coins
-        this.level.coins.forEach((coin, index) => {
-            if (this.character.isColliding(coin)) {
-                if (this.character.coinAmount < this.character.maxCoinAmount) {
-                    this.character.coin_sound.play();
-                    this.character.coinAmount++;
-                    let percentage = (this.character.coinAmount / this.character.maxCoinAmount) * 100;
-                    this.statusBarCoin.setPercentageCoin(percentage);
-                    this.level.coins.splice(index, 1);
-                    this.character.healWithCoins();
-                }
-            }
-        });
-        
-        // Check collision with bottles
+    }
+    
+    /**
+     * Handles collision detection between the character and collectible bottles.
+     * Updates bottle count, plays sound effects, and updates the UI when bottles are collected.
+     * @method
+     * @private
+     */
+    checkCollisionWithBottle() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
                 if (this.character.bottleAmount < this.character.maxBottleAmount) {
@@ -336,26 +464,41 @@ class World {
         });
     }
     
+    /**
+     * Handles collision detection between the character and collectible coins.
+     * Updates coin count, plays sound effects, and triggers healing when coins are collected.
+     * @method
+     * @private
+     */
+    checkCollisionWithCoins() {
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                if (this.character.coinAmount < this.character.maxCoinAmount) {
+                    this.character.coin_sound.play();
+                    this.character.coinAmount++;
+                    let percentage = (this.character.coinAmount / this.character.maxCoinAmount) * 100;
+                    this.statusBarCoin.setPercentageCoin(percentage);
+                    this.level.coins.splice(index, 1);
+                    this.character.healWithCoins();
+                }
+            }
+        });
+    }
+    
+    /**
+     * Renders the game world and all its objects on the canvas.
+     * Handles camera movement, fixed UI elements, and dynamic game objects.
+     * Uses requestAnimationFrame for smooth animation.
+     * @method
+     */
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
         this.ctx.translate(-this.camera_x, 0);
         
-        // ------ Space for absolute fixed objects (e.g. health bar) ------//
-        this.addToMap(this.statusBar);
-        this.addToMap(this.statusBarBottle);
-        this.addToMap(this.statusBarCoin);
-        this.addToMap(this.statusBarEndboss);
-        this.ctx.translate(this.camera_x, 0);
-        
-        // ------ Space for fixed objects in canvas ------//
-        this.addObjectsToMap(this.level.bottles); // Draw bottles first
-        this.addToMap(this.character);
-        this.addObjectsToMap(this.level.clouds);
-        this.addObjectsToMap(this.level.enemies);
-        this.addObjectsToMap(this.throwableObjects);
-        this.addObjectsToMap(this.level.coins);
+        this.spaceForAbsoluteFixedObjectsToDraw();
+        this.spaceForFixedObjectsInCanvasToDraw();
         
         this.ctx.translate(-this.camera_x, 0);
         
@@ -365,12 +508,53 @@ class World {
         });
     }
     
+    /**
+     * Renders all fixed UI elements that should stay in absolute position on screen.
+     * This includes all status bars (health, bottles, coins, endboss).
+     * Applies camera translation after rendering to maintain proper world coordinates.
+     * @method
+     * @private
+     */
+    spaceForAbsoluteFixedObjectsToDraw() {
+        this.addToMap(this.statusBar);
+        this.addToMap(this.statusBarBottle);
+        this.addToMap(this.statusBarCoin);
+        this.addToMap(this.statusBarEndboss);
+        this.ctx.translate(this.camera_x, 0);
+    }
+    
+    /**
+     * Renders all game objects that move with the game world.
+     * Objects are drawn in specific order to maintain proper layering:
+     * bottles (background), character, clouds, enemies, throwable objects, and coins.
+     * @method
+     * @private
+     */
+    spaceForFixedObjectsInCanvasToDraw() {
+        this.addObjectsToMap(this.level.bottles); // Draw bottles first
+        this.addToMap(this.character);
+        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.throwableObjects);
+        this.addObjectsToMap(this.level.coins);
+    }
+    
+    /**
+     * Helper method to add multiple objects to the game map.
+     * @method
+     * @param {Array<Object>} objects - Array of game objects to be rendered
+     */
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o);
         });
     }
     
+    /**
+     * Adds a single object to the game map, handling direction-based rendering.
+     * @method
+     * @param {Object} mo - The movable object to be added to the map
+     */
     addToMap(mo) {
         if (mo.otherDirection) {
             this.flipImage(mo);
@@ -381,6 +565,12 @@ class World {
         }
     }
     
+    /**
+     * Flips an image horizontally for objects facing the opposite direction.
+     * Saves the canvas state and applies appropriate transformations.
+     * @method
+     * @param {Object} mo - The movable object whose image needs to be flipped
+     */
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
@@ -388,6 +578,12 @@ class World {
         mo.x = mo.x * -1;
     }
     
+    /**
+     * Restores the original state of a flipped image.
+     * Reverts the x-coordinate and restores the canvas state.
+     * @method
+     * @param {Object} mo - The movable object whose image needs to be restored
+     */
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();

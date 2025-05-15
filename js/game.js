@@ -41,7 +41,6 @@ function init() {
     const mediaQuery = window.matchMedia("(orientation: landscape)");
     mediaQuery.addListener(checkOrientation);
     
-    // Initialize audio state
     initAudioControl();
 }
 
@@ -59,7 +58,6 @@ function startGame() {
         world.game_sound.play();
     }
     
-    // Check screen orientation and height for canvas controls
     if (window.matchMedia("(orientation: landscape)").matches && window.innerHeight <= 650) {
         document.querySelector('.canvas-controls').style.display = 'none';
     }
@@ -69,14 +67,12 @@ function startGame() {
     
     gameStarted = true;
     
-    // Initialize mobile touch buttons
-    mobileTouchButtons();
+    mobileTouchButtonsStart();
+    mobileTouchButtonsEnd();
     
-    // Show controls only after game start
     document.getElementById('mobileControls').classList.remove('hidden');
     showMobileControls();
     
-    // Apply audio settings
     if (gameIsMuted) {
         muteSounds();
     }
@@ -85,7 +81,6 @@ function startGame() {
     
     showMobileControls();
 }
-
 
 /**
  * Stops the game, shows end screens (lost/won),
@@ -101,13 +96,22 @@ function stopGame() {
         cancelAnimationFrame(world.animationFrame);
     }
     
+    showScreens();
+    
+    document.getElementById('restartButton').style.display = 'block';
+    document.getElementById('mobileControls').classList.add('hidden');
+}
+
+/**
+ * Shows the start screen and the end screens (lost/won).
+ */
+function showScreens() {
     document.getElementById('mobileControls').style.display = 'none';
     document.querySelector('.canvas-controls').style.display = 'flex';
     document.getElementById('startScreen').style.display = 'flex';
     document.getElementById('startButton').style.display = 'none';
     document.getElementById('startImage').style.display = 'none';
     
-    // Show Game Over or Win Screen
     if (world.character.isDead()) {
         document.getElementById('lost').style.display = 'block';
         document.getElementById('win').style.display = 'none';
@@ -115,11 +119,6 @@ function stopGame() {
         document.getElementById('win').style.display = 'block';
         document.getElementById('lost').style.display = 'none';
     }
-    
-    // Show Restart button
-    document.getElementById('restartButton').style.display = 'block';
-    
-    document.getElementById('mobileControls').classList.add('hidden');
 }
 
 
@@ -131,17 +130,30 @@ function showMobileControls() {
     }
 }
 
-function hideMobileControls() {
-    const mobileControls = document.getElementById('mobileControls');
-    mobileControls.style.display = 'none';
-}
-
-
 /**
- * Fully resets the game, including canvas, UI, instances, and states.
+ * Fully resets the game
  * @function
  */
 function restartGame() {
+    canvasElementsForReset();
+    cleanupGameInstance();
+    
+    gameStarted = false;
+    keyboard = new Keyboard();
+    bottleDirection = true;
+    
+    mobileTouchButtonsStart();
+    mobileTouchButtonsEnd();
+    if (gameIsMuted) {
+        muteSounds();
+    }
+}
+
+/**
+ * Hides all UI elements except the start screen and gives it to
+ * @function restartGame
+ */
+function canvasElementsForReset() {
     document.getElementById('canvas').style.display = 'none';
     document.getElementById('lost').style.display = 'none';
     document.getElementById('win').style.display = 'none';
@@ -150,19 +162,6 @@ function restartGame() {
     document.getElementById('startScreen').style.display = 'block';
     document.getElementById('startImage').style.display = 'block';
     document.getElementById('startButton').style.display = 'block';
-    
-    cleanupGameInstance();
-    
-    gameStarted = false;
-    keyboard = new Keyboard();
-    bottleDirection = true;
-    
-    mobileTouchButtons();
-    
-    // Apply audio settings
-    if (gameIsMuted) {
-        muteSounds();
-    }
 }
 
 /**
@@ -251,45 +250,38 @@ window.addEventListener("keyup", (e) => {
  * Shows mobile controls.
  * @function
  */
-function mobileTouchButtons() {
+function mobileTouchButtonsStart() {
     document.getElementById('walkLeft').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keyboard.LEFT = true;
+        e.preventDefault(); keyboard.LEFT = true;
     });
-    
-    document.getElementById('walkLeft').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keyboard.LEFT = false;
-    });
-    
     document.getElementById('walkRight').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keyboard.RIGHT = true;
+        e.preventDefault(); keyboard.RIGHT = true;
     });
-    
-    document.getElementById('walkRight').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keyboard.RIGHT = false;
-    });
-    
     document.getElementById('jumpIcon').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keyboard.SPACE = true;
+        e.preventDefault(); keyboard.SPACE = true;
     });
-    
-    document.getElementById('jumpIcon').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keyboard.SPACE = false;
-    });
-    
     document.getElementById('throwBottleIcon').addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        keyboard.D = true;
+        e.preventDefault(); keyboard.D = true;
     });
-    
+}
+
+/**
+ * Initializes event listeners for mobile touch buttons and sets their behavior.
+ * Shows mobile controls.
+ * @function
+ */
+function mobileTouchButtonsEnd() {
+    document.getElementById('walkLeft').addEventListener('touchend', (e) => {
+        e.preventDefault(); keyboard.LEFT = false;
+    });
+    document.getElementById('walkRight').addEventListener('touchend', (e) => {
+        e.preventDefault(); keyboard.RIGHT = false;
+    });
+    document.getElementById('jumpIcon').addEventListener('touchend', (e) => {
+        e.preventDefault(); keyboard.SPACE = false;
+    });
     document.getElementById('throwBottleIcon').addEventListener('touchend', (e) => {
-        e.preventDefault();
-        keyboard.D = false;
+        e.preventDefault(); keyboard.D = false;
     });
 }
 

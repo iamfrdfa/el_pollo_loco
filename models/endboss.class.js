@@ -286,12 +286,10 @@ class Endboss extends MovableObject {
             clearInterval(this.animationInterval);
             clearInterval(this.movementInterval);
             
-            // Animation in einer Schleife abspielen
             this.animationInterval = setInterval(() => {
                 this.playAnimation(this.IMAGES_DEATH);
             }, 200);
             
-            // Optional: Nach einer Verzögerung die Animation stoppen und das letzte Bild zeigen
             setTimeout(() => {
                 clearInterval(this.animationInterval);
                 this.img = this.imageCache[this.IMAGES_DEATH[this.IMAGES_DEATH.length - 1]];

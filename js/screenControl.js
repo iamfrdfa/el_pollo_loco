@@ -28,7 +28,6 @@ function toggleFullscreen() {
     const pageWrapper = document.getElementById('pageWrapper');
     
     if (!isFullscreen) {
-        // Calculate screen dimensions and new aspect ratio
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         const aspectRatio = originalWidth / originalHeight;
@@ -42,7 +41,6 @@ function toggleFullscreen() {
             newHeight = newWidth / aspectRatio;
         }
         
-        // Set styles for fullscreen
         canvas.style.width = `${newWidth}px`;
         canvas.style.height = `${newHeight}px`;
         canvasContainer.style.width = `${newWidth}px`;
@@ -59,17 +57,14 @@ function toggleFullscreen() {
         pageWrapper.style.alignItems = 'center';
         pageWrapper.style.zIndex = '1000';
         
-        // Adjust UI elements for fullscreen
         document.getElementById('fullscreen').style.display = 'none';
         document.getElementById('minimize').style.display = 'block';
         document.getElementById('headline').style.display = 'none';
         
-        // Disable scrolling
         document.body.style.overflow = 'hidden';
         
         isFullscreen = true;
     } else {
-        // Back to original size & styles
         canvas.style.width = originalWidth + 'px';
         canvas.style.height = originalHeight + 'px';
         canvasContainer.style.width = originalWidth + 'px';

@@ -69,7 +69,7 @@ class Chicken extends MovableObject {
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         super.loadImages(this.IMAGES_WALKING);
-        super.loadImages(this.IMAGES_DEAD);  // Load death image
+        super.loadImages(this.IMAGES_DEAD);
         
         this.x = this.getRandomPosition();
         this.speed = 0.15 + Math.random() * 0.5;
@@ -115,11 +115,10 @@ class Chicken extends MovableObject {
         if (this.isDying) return;
         
         this.isDying = true;
-        this.speed = 0; // Stop movement
+        this.speed = 0;
         this.img = this.imageCache[this.IMAGES_DEAD[0]];
         
         setTimeout(() => {
-            // Direct removal from the enemies array
             const index = this.world?.level?.enemies?.indexOf(this);
             if (this.world && index > -1) {
                 this.world.level.enemies.splice(index, 1);
