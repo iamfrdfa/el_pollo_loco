@@ -45,41 +45,72 @@ function init() {
 }
 
 /**
+ * Hides the start screen and shows the game canvas.
+ */
+function showGameScreen() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('canvas').style.display = 'block';
+}
+
+/**
+ * Plays game sound if the world exists
+ */
+function playGameSoundIfWorldExists() {
+    if (world) {
+        world.game_sound.play();
+    }
+}
+
+/**
+ * Hides canvas controls for small landscape screens.
+ */
+function hideCanvasControlsForSmallLandscape() {
+    if (window.matchMedia("(orientation: landscape)").matches && window.innerHeight <= 650) {
+        document.querySelector('.canvas-controls').style.display = 'none';
+    }
+}
+
+/**
+ * Initializes the Level-instance and the world.
+ */
+function initLevelAndWorld() {
+    level1 = initLevel1();
+    world = new World(canvas, keyboard);
+}
+
+/**
+ * Initializes the mobile Touch-Buttons and shows them
+ */
+function setupMobileControls() {
+    mobileTouchButtonsStart();
+    mobileTouchButtonsEnd();
+    document.getElementById('mobileControls').classList.remove('hidden');
+    showMobileControls();
+}
+
+/**
+ * Setting the audio configurations
+ */
+function restoreAudioSettings() {
+    if (gameIsMuted) {
+        muteSounds();
+    }
+}
+
+/**
  * Starts the game, hides the start screen, and shows the game canvas.
  * Initializes a level and the world, as well as mobile controls.
  * Restores audio settings based on global status.
  * @function
  */
 function startGame() {
-    document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('canvas').style.display = 'block';
-    
-    if (world) {
-        world.game_sound.play();
-    }
-    
-    if (window.matchMedia("(orientation: landscape)").matches && window.innerHeight <= 650) {
-        document.querySelector('.canvas-controls').style.display = 'none';
-    }
-    
-    level1 = initLevel1();
-    world = new World(canvas, keyboard);
-    
+    showGameScreen();
+    playGameSoundIfWorldExists();
+    hideCanvasControlsForSmallLandscape();
+    initLevelAndWorld();
     gameStarted = true;
-    
-    mobileTouchButtonsStart();
-    mobileTouchButtonsEnd();
-    
-    document.getElementById('mobileControls').classList.remove('hidden');
-    showMobileControls();
-    
-    if (gameIsMuted) {
-        muteSounds();
-    }
-    
-    document.getElementById('mobileControls').classList.remove('hidden');
-    
-    showMobileControls();
+    setupMobileControls();
+    restoreAudioSettings();
 }
 
 /**
