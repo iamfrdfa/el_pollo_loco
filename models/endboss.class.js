@@ -239,13 +239,11 @@ class Endboss extends MovableObject {
         
         const distance = this.x - this.world.character.x;
         
-        // Alert when close enough
         if (distance <= 500 && !this.hasTriggeredAlert) {
             this.playAlertAnimation();
             this.endboss_hit.play();
         }
         
-        // Movement logic forward/backward
         if (distance <= 500) {
             if (this.isMovingForward) {
                 if (this.stepsForward < this.maxStepsForward) {

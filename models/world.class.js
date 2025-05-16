@@ -326,7 +326,7 @@ class World {
      * @private
      */
     spaceForFixedObjectsInCanvasToDraw() {
-        this.addObjectsToMap(this.level.bottles); // Draw bottles first
+        this.addObjectsToMap(this.level.bottles);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);

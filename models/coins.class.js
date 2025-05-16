@@ -59,7 +59,6 @@ class Coins extends MovableObject {
          */
         this.x = 250 + Math.random() * 1500;
         
-        // Internal Y-position within a range for all coins
         let tmp_Y = 320;
         for (let i = 0; i <= this.coinAmount; i++) {
             for (let i = 0; i < tmp_Y; i++) {

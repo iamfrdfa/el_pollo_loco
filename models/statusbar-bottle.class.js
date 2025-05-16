@@ -32,9 +32,7 @@ class statusBarBottle extends DrawableObject {
      */
     constructor() {
         super();
-        // Load default image initially
         this.loadImage(this.BOTTLE_STATUSBAR[0]);
-        // Load all images for the different status levels
         this.loadImages(this.BOTTLE_STATUSBAR);
         /**
          * X-position in the canvas.

@@ -174,5 +174,4 @@ function initLevel1() {
     );
 }
 
-// Calls the initial level initialization directly after loading.
 initLevel1();

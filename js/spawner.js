@@ -27,25 +27,18 @@ function startChickenSpawning() {
  * @private
  */
 function spawnChicken() {
-    if (!this.spawnEnabled) return;
+    if (!this.spawnEnabled || this.level.enemies.length >= 15) return;
     
-    if (this.level.enemies.length < 15) {
-        let newChicken;
-        if (Math.random() < 0.5) {
-            newChicken = new Chicken();
-        } else {
-            newChicken = new TinyChicken();
-        }
-        newChicken.world = this;
-        
-        if (this.isValidSpawnPosition(newChicken.x)) {
-            this.level.enemies.push(newChicken);
-        }
+    let newChicken = Math.random() < 0.5 ? new Chicken() : new TinyChicken();
+    newChicken.world = this;
+    
+    if (this.isValidSpawnPosition(newChicken.x)) {
+        this.level.enemies.push(newChicken);
     }
     
-    this.level.enemies = this.level.enemies.filter(enemy => {
-        return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
-    });
+    this.level.enemies = this.level.enemies.filter(enemy =>
+        !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100
+    );
 }
 
 /**
@@ -55,25 +48,18 @@ function initChickenSpawning() {
     if (!this.spawnEnabled) return;
     
     setInterval(() => {
-        if (!this.spawnEnabled) return;
+        if (!this.spawnEnabled || this.level.enemies.length >= 15) return;
         
-        if (this.level.enemies.length < 15) {
-            let newChicken;
-            if (Math.random() < 0.5) {
-                newChicken = new Chicken();
-            } else {
-                newChicken = new TinyChicken();
-            }
-            newChicken.world = this;
-            
-            if (this.isValidSpawnPosition(newChicken.x)) {
-                this.level.enemies.push(newChicken);
-            }
+        let newChicken = Math.random() < 0.5 ? new Chicken() : new TinyChicken();
+        newChicken.world = this;
+        
+        if (this.isValidSpawnPosition(newChicken.x)) {
+            this.level.enemies.push(newChicken);
         }
         
-        this.level.enemies = this.level.enemies.filter(enemy => {
-            return !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100;
-        });
+        this.level.enemies = this.level.enemies.filter(enemy =>
+            !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100
+        );
     }, 2000);
 }
 

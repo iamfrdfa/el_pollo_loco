@@ -71,10 +71,9 @@ class ThrowableObject extends MovableObject {
      * Creates a new {@link ThrowableObject} object at a given position with a throwing direction.
      * @param {number} x - Start position X
      * @param {number} y - Start position Y
-     * @param {boolean} direction - Direction (true/false)
      * @param {boolean} otherDirection - Direction according to character alignment
      */
-    constructor(x, y, direction, otherDirection) {
+    constructor(x, y, otherDirection) {
         super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
         super.loadImages(this.BOTTLE_ROTATION);
         super.loadImages(this.BOTTLE_SPLASH);
