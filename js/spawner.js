@@ -46,17 +46,14 @@ function spawnChicken() {
  */
 function initChickenSpawning() {
     if (!this.spawnEnabled) return;
-    
     setInterval(() => {
         if (!this.spawnEnabled || this.level.enemies.length >= 15) return;
-        
         let newChicken = Math.random() < 0.5 ? new Chicken() : new TinyChicken();
         newChicken.world = this;
         
         if (this.isValidSpawnPosition(newChicken.x)) {
             this.level.enemies.push(newChicken);
         }
-        
         this.level.enemies = this.level.enemies.filter(enemy =>
             !(enemy instanceof Chicken || enemy instanceof TinyChicken) || enemy.x > -100
         );

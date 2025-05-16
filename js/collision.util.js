@@ -15,9 +15,7 @@ function checkCollisionWithEnemies() {
                 } else if (!enemy.isDying) {
                     this.character.hit();
                 }
-            } else {
-                this.character.hit();
-            }
+            } else { this.character.hit(); }
         }
     });
 }
@@ -38,7 +36,6 @@ function checkCollisionWithEndboss() {
             this.statusBar.setPercentage(this.character.energy);
         }
     });
-    
 }
 
 /**
@@ -55,20 +52,13 @@ function checkCollisionBottleEnemy() {
                 thrownBottle.hasHitObstacle = true;
                 
                 if (enemy instanceof Chicken || enemy instanceof TinyChicken) {
-                    enemy.playDeathAnimation();
-                    this.character.chickenDeath_sound.play();
+                    enemy.playDeathAnimation(); this.character.chickenDeath_sound.play();
                 } else if (enemy instanceof Endboss) {
-                    enemy.hit(); // Sound is now played inside hit() method of the endboss
-                    this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy);
-                }
-                
-                thrownBottle.playSplashAnimation();
+                    enemy.hit(); this.statusBarEndboss.setPercentageEndboss(enemy.endbossEnergy);
+                } thrownBottle.playSplashAnimation();
             }
         });
-        
-        if (thrownBottle.y > 450) {
-            this.throwableObjects.splice(thrownBottle);
-        }
+        if (thrownBottle.y > 450) { this.throwableObjects.splice(thrownBottle); }
     });
 }
 

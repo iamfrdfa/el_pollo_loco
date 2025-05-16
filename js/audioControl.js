@@ -75,15 +75,10 @@ document.addEventListener('DOMContentLoaded', initAudioControl);
 function muteSounds() {
     if (typeof world !== 'undefined' && world && world.character) {
         const sounds = [
-            world.character.walking_sound,
-            world.character.hurt_sound,
-            world.character.game_over,
-            world.character.bottle_sound,
-            world.character.coin_sound,
-            world.character.chickenDeath_sound,
-            world.character.weaponFail_sound,
-            world.character.snoring_sound,
-            world.game_sound
+            world.character.walking_sound, world.character.hurt_sound,
+            world.character.game_over, world.character.bottle_sound,
+            world.character.coin_sound, world.character.chickenDeath_sound,
+            world.character.weaponFail_sound, world.character.snoring_sound, world.game_sound
         ];
         
         sounds.forEach(sound => {
@@ -102,15 +97,10 @@ function muteSounds() {
 function unmuteSounds() {
     if (typeof world !== 'undefined' && world && world.character) {
         const sounds = [
-            world.character.walking_sound,
-            world.character.snoring_sound,
-            world.character.hurt_sound,
-            world.character.game_over,
-            world.character.bottle_sound,
-            world.character.coin_sound,
-            world.character.chickenDeath_sound,
-            world.character.weaponFail_sound,
-            world.game_sound
+            world.character.walking_sound, world.character.hurt_sound,
+            world.character.game_over, world.character.bottle_sound,
+            world.character.coin_sound, world.character.chickenDeath_sound,
+            world.character.weaponFail_sound, world.character.snoring_sound, world.game_sound
         ];
         
         sounds.forEach(sound => {

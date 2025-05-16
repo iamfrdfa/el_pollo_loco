@@ -236,32 +236,39 @@ class Endboss extends MovableObject {
      */
     moveBasedOnDistance() {
         if (!this.world || !this.world.character) return;
-        
         const distance = this.x - this.world.character.x;
+        if (distance > 500) return;
         
-        if (distance <= 500 && !this.hasTriggeredAlert) {
-            this.playAlertAnimation();
-            this.endboss_hit.play();
+        if (!this.hasTriggeredAlert) this.triggerAlert();
+        
+        this.isMovingForward
+            ? this.handleForwardMovement()
+            : this.handleBackwardMovement();
+    }
+    
+    triggerAlert() {
+        this.playAlertAnimation();
+        this.endboss_hit.play();
+        this.hasTriggeredAlert = true;
+    }
+    
+    handleForwardMovement() {
+        if (this.stepsForward < this.maxStepsForward) {
+            this.moveLeft();
+            this.stepsForward++;
+        } else {
+            this.isMovingForward = false;
+            this.stepsForward = 0;
         }
-        
-        if (distance <= 500) {
-            if (this.isMovingForward) {
-                if (this.stepsForward < this.maxStepsForward) {
-                    this.moveLeft();
-                    this.stepsForward++;
-                } else {
-                    this.isMovingForward = false;
-                    this.stepsForward = 0;
-                }
-            } else {
-                if (this.stepsBackward < this.maxStepsBackward) {
-                    this.moveRight();
-                    this.stepsBackward++;
-                } else {
-                    this.isMovingForward = true;
-                    this.stepsBackward = 0;
-                }
-            }
+    }
+    
+    handleBackwardMovement() {
+        if (this.stepsBackward < this.maxStepsBackward) {
+            this.moveRight();
+            this.stepsBackward++;
+        } else {
+            this.isMovingForward = true;
+            this.stepsBackward = 0;
         }
     }
     
