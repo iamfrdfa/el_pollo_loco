@@ -128,7 +128,7 @@ function stopGame() {
     }
     
     showScreens();
-    
+    document.getElementById('exit-icon').classList.add('hidden');
     document.getElementById('restartButton').style.display = 'block';
     document.getElementById('mobileControls').classList.add('hidden');
 }
@@ -155,9 +155,17 @@ function showScreens() {
 
 function showMobileControls() {
     const mobileControls = document.getElementById('mobileControls');
+    const infoControl = document.getElementById('infoButton');
+    const exitButton = document.getElementById('exit-icon');
     if (window.innerHeight <= 650 && window.matchMedia('(orientation: landscape)').matches && gameStarted) {
         mobileControls.classList.remove('hidden');
+        exitButton.classList.remove('hidden');
+        infoControl.classList.remove('hidden');
         mobileControls.style.display = 'flex';
+        exitButton.style.display = 'flex';
+        infoControl.style.display = 'flex';
+    } else if (window.innerHeight >= 650 && window.matchMedia('(orientation: landscape)').matches) {
+        infoControl.classList.add('hidden');
     }
 }
 
@@ -178,6 +186,8 @@ function restartGame() {
     if (gameIsMuted) {
         muteSounds();
     }
+    
+    document.getElementById('mobileControls').classList.add('hidden');
 }
 
 /**

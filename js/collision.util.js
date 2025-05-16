@@ -23,6 +23,25 @@ function checkCollisionWithEnemies() {
 }
 
 /**
+ * Handles collision detection between the character and the endboss.
+ * Manages hit for the character
+ * @method
+ * @private
+ */
+function checkCollisionWithEndboss() {
+    this.level.enemies.forEach(enemy => {
+        if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+            if (enemy instanceof Endboss) {
+                enemy.jumpBack();
+            }
+            this.character.hit();
+            this.statusBar.setPercentage(this.character.energy);
+        }
+    });
+    
+}
+
+/**
  * Handles collisions between thrown bottles and enemies.
  * Manages death animations for chickens and damage to the endboss when hit by bottles.
  * Also handles bottle splash animations and cleanup.
@@ -133,3 +152,4 @@ World.prototype.checkCollisionBottleEnemy = checkCollisionBottleEnemy;
 World.prototype.checkCollisionWithBottle = checkCollisionWithBottle;
 World.prototype.checkCollisionWithCoins = checkCollisionWithCoins;
 World.prototype.isJumpingOnEnemy = isJumpingOnEnemy;
+World.prototype.checkCollisionWithEndboss = checkCollisionWithEndboss;

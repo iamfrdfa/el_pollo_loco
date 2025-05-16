@@ -93,6 +93,15 @@ canvas {
     height: 100%;
 }
 
+.exitInformation {
+    position: absolute;
+    top: 48px;
+    right: 10px;
+    z-index: 4;
+    display: flex;
+    gap: 10px;
+}
+
 /* Steuerelemente für Einstellungen */
 .canvas-controls {
     position: absolute;
@@ -300,6 +309,13 @@ p {
     color: black;
     font-size: 26px;
     font-weight: lighter;
+}
+
+#infoText a {
+    color: black;
+    font-size: 26px;
+    font-weight: lighter;
+    text-decoration: none;
 }
 
 #orientationInfo {

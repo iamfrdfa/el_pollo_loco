@@ -277,6 +277,7 @@ class World {
         this.checkCollisionBottleEnemy()
         this.checkCollisionWithBottle();
         this.checkCollisionWithCoins();
+        this.checkCollisionWithEndboss();
     }
     
     /**

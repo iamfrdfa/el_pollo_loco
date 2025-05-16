@@ -140,19 +140,19 @@ class Endboss extends MovableObject {
      * Maximum steps forward.
      * @type {number}
      */
-    maxStepsForward = 5;
+    maxStepsForward = 10;
     
     /**
      * Maximum steps backward.
      * @type {number}
      */
-    maxStepsBackward = 3;
+    maxStepsBackward = 1;
     
     /**
      * Movement speed.
      * @type {number}
      */
-    speed = 5;
+    speed = 10;
     
     /**
      * Audio track for hit feedback.
@@ -240,12 +240,13 @@ class Endboss extends MovableObject {
         const distance = this.x - this.world.character.x;
         
         // Alert when close enough
-        if (distance <= 400 && !this.hasTriggeredAlert) {
+        if (distance <= 500 && !this.hasTriggeredAlert) {
             this.playAlertAnimation();
+            this.endboss_hit.play();
         }
         
         // Movement logic forward/backward
-        if (distance <= 300) {
+        if (distance <= 500) {
             if (this.isMovingForward) {
                 if (this.stepsForward < this.maxStepsForward) {
                     this.moveLeft();
@@ -275,6 +276,15 @@ class Endboss extends MovableObject {
                 this.moveBasedOnDistance();
             }
         }, 50);
+    }
+    
+    /**
+     * Endboss jumps back when he has hurt the character
+     */
+    jumpBack() {
+        this.x += 250;
+        this.isMovingForward = false;
+        this.stepsForward = 0;
     }
     
     /**

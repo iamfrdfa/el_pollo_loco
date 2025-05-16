@@ -107,10 +107,9 @@
         padding: 0;
     }
 
-    /*.mobile-controls {
+    #infoButton {
         display: flex !important;
-        justify-content: space-between;
-    }*/
+    }
 }
 
 #mobileControls.game-ended {

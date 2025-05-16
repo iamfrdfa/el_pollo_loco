@@ -54,6 +54,15 @@
             
             <canvas width="720" height="480" id="canvas"></canvas>
             
+            <div id="exitInformation" class="exitInformation">
+                <div class="canvas-icons">
+                    <img src="img/10_icons/mobile/exit-icon48.png" alt="Arrow Left" id="exit-icon" onclick="restartGame()" class="hidden">
+                </div>
+                <div class="canvas-icons">
+                    <img src="img/10_icons/info.png" alt="infoButton" id="infoButton" onclick="gameInfo()" class="hidden">
+                </div>
+            </div>
+            
             <div id="canvas-controls" class="canvas-controls">
                 <div class="canvas-icons">
                     <img src="img/10_icons/icon-reload50.png" alt="Arrow Left" id="reload" onclick="restartGame()">
@@ -122,7 +131,7 @@
                     </p>
                 </div>
             </div>
-            <div class="explanationIcon">
+            <!--div class="explanationIcon">
                 <div class="icon">
                     <img src="img/10_icons/escape100.png" alt="Escape">
                 </div>
@@ -131,7 +140,7 @@
                         Exit Fullscreen
                     </p>
                 </div>
-            </div>
+            </div-->
             <div class="explanationIcon">
                 <div class="icon info">
                     <img src="img/10_icons/info.png" alt="infoButton" onclick="gameInfo()">
@@ -156,6 +165,7 @@
                     <p>
                         Zudem wirst du goldene Münzen entdecken, die dir neue Energie verleihen, wenn deine Kräfte nachlassen. Sammele sie also fleißig ein!
                     </p>
+                    <a href="imprint.html" target="_blank">Impressum</a>
                 </div>
             </div>
         </div>
