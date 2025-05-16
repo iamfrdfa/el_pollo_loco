@@ -136,7 +136,6 @@ function checkAudioMute(audio) {
     }
 }
 
-
 /**
  * Overwrites the play method of the audio prototype so that no sound is played when muted.
  * @function
