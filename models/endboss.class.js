@@ -246,12 +246,18 @@ class Endboss extends MovableObject {
             : this.handleBackwardMovement();
     }
     
+    /**
+     * Triggers the Alert for the endboss
+     */
     triggerAlert() {
         this.playAlertAnimation();
         this.endboss_hit.play();
         this.hasTriggeredAlert = true;
     }
     
+    /**
+     * Handles the movement for the endboss
+     */
     handleForwardMovement() {
         if (this.stepsForward < this.maxStepsForward) {
             this.moveLeft();
@@ -262,6 +268,9 @@ class Endboss extends MovableObject {
         }
     }
     
+    /**
+     * Handles the backwardmovement for the endboss
+     */
     handleBackwardMovement() {
         if (this.stepsBackward < this.maxStepsBackward) {
             this.moveRight();
