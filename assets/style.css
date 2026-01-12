@@ -11,6 +11,10 @@ body {
     margin: 0;
     background-image: url('../img/0_background/desert.png');
     font-family: 'zabars', Arial, Helvetica, sans-serif;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
 }
 
 h1 {
@@ -260,6 +264,7 @@ p {
     height: 30px;
     padding: 8px;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 /* Restart Button */
